@@ -13,6 +13,16 @@ public struct Tile
     public int timer;
 }
 
+enum GridChannel
+{
+    TYPE,TEMP,GOOAGE,UNUSED
+}
+
+enum GridTileType
+{
+    BLANK,GOO_SPREADABLE,GOO_UNSPREADABLE,STATIC,MAX_TYPE
+}
+
 public class PracticeComputeScript : MonoBehaviour
 {
     public ComputeShader cs;
@@ -20,8 +30,8 @@ public class PracticeComputeScript : MonoBehaviour
     public Texture2D texCopy;
     public Material gooPlaneMaterial;
     public Tile[] data;
-    ComputeBuffer buffer;
-    int size = 128;
+    int xSize = 128;
+    int ySize = 128;
 
     void Start()
     {
@@ -30,8 +40,8 @@ public class PracticeComputeScript : MonoBehaviour
 
     private void OnEnable()
     {
-        texCopy = new Texture2D(size, size);
-        renderTexture = new RenderTexture(size, size,0);
+        texCopy = new Texture2D(xSize, ySize);
+        renderTexture = new RenderTexture(xSize, ySize, 0);
         renderTexture.enableRandomWrite = true;
         renderTexture.autoGenerateMips = false;
         renderTexture.Create();
@@ -47,22 +57,75 @@ public class PracticeComputeScript : MonoBehaviour
 
             cs.SetTexture(0, "Result", renderTexture);
             cs.Dispatch(0, renderTexture.width / 8, renderTexture.height / 8, 1);
-            NativeArray<Color32> array = GetGooDataFromGPU(renderTexture);
-            foreach (Color32 col in array)
-            {
-                Debug.Log(col);
-            }
+            GetGooDataFromGPU(renderTexture);
             yield return wfs;
+            WriteToGooTile(5, 5, GridChannel.TEMP, 128);
+            SendTexToGPU();
+            Debug.Log(GetPixelFromGPU(5, 5,renderTexture));
         }
     }
 
     private NativeArray<Color32> GetGooDataFromGPU(RenderTexture renderTex)
     {
         RenderTexture.active = renderTex;
-        texCopy.ReadPixels(new Rect(0, 0, size, size), 0, 0, false);
+        texCopy.ReadPixels(new Rect(0, 0, xSize, ySize), 0, 0, false);
         texCopy.Apply();
         RenderTexture.active = null;
         return texCopy.GetPixelData<Color32>(0);
+    }
+
+    private Color32 GetPixelFromGPU(int x,int y, RenderTexture renderTex)
+    {
+        NativeArray<Color32> data = GetGooDataFromGPU(renderTex);
+        return data[xSize * y + x];
+    }
+
+    ///<summary>
+    /// x and y are DIRECT int coordinates, writes to texture CPU side only
+    /// RETURNS: true if successful, false if not
+    ///</summary>
+    private bool WriteToGooTile(int x, int y,GridChannel targetChannel, float value)
+    {
+        if (x < 0 || y < 0 || x > xSize || y > ySize) return false;
+
+        Color32 currentTile = texCopy.GetPixel(x, y);
+        switch(targetChannel)
+        {
+            case GridChannel.TYPE:
+                {
+                    if (value > (int)GridTileType.MAX_TYPE || value < 0) return false;
+                    break;
+                }
+            case GridChannel.TEMP:
+                {
+                    break;
+                }
+            case GridChannel.GOOAGE:
+                {
+                    break;
+                }
+            case GridChannel.UNUSED:
+                {
+                    break;
+                }
+
+        }
+        currentTile[(int)targetChannel] = (byte)value;
+        texCopy.SetPixel(x, y, currentTile);
+        Debug.Log(GetTileValue(x, y, targetChannel));
+        return true;
+    }
+
+    private float GetTileValue(int x, int y, GridChannel targetChannel)
+    {
+        Color32 values = texCopy.GetPixel(x, y);
+        return values[(int)targetChannel];
+    }
+
+    private void SendTexToGPU()
+    {
+        texCopy.Apply();
+        Graphics.Blit(texCopy, renderTexture);
     }
 
     /*    void InitialiseTiles()
@@ -95,3 +158,14 @@ public class PracticeComputeScript : MonoBehaviour
             buffer.GetData(data);
         }*/
 }
+
+
+/*
+ *  This is how to read from the texture!
+ *  
+ *          NativeArray<Color32> array = GetGooDataFromGPU(renderTexture);
+            foreach (Color32 col in array)
+            {
+                Debug.Log(col);
+            }
+ * */

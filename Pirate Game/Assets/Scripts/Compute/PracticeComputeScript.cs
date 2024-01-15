@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using Unity.Collections;
 using UnityEngine.Rendering;
 
 [System.Serializable]
@@ -16,7 +17,7 @@ public class PracticeComputeScript : MonoBehaviour
 {
     public ComputeShader cs;
     public RenderTexture renderTexture;
-    public Texture texCopy;
+    public Texture2D texCopy;
     public Material gooPlaneMaterial;
     public Tile[] data;
     ComputeBuffer buffer;
@@ -29,8 +30,10 @@ public class PracticeComputeScript : MonoBehaviour
 
     private void OnEnable()
     {
-        renderTexture = new RenderTexture(size, size, 24);
+        texCopy = new Texture2D(size, size);
+        renderTexture = new RenderTexture(size, size,0);
         renderTexture.enableRandomWrite = true;
+        renderTexture.autoGenerateMips = false;
         renderTexture.Create();
         renderTexture.filterMode = FilterMode.Point;
         gooPlaneMaterial.mainTexture = renderTexture;
@@ -41,42 +44,54 @@ public class PracticeComputeScript : MonoBehaviour
         WaitForSeconds wfs = new WaitForSeconds(1f);
         while (true)
         {
-            
+
             cs.SetTexture(0, "Result", renderTexture);
-            cs.Dispatch(0,renderTexture.width/8,renderTexture.height/8,1);
-            texCopy = renderTexture;
-            Texture2D newTex = (Texture2D)texCopy;
+            cs.Dispatch(0, renderTexture.width / 8, renderTexture.height / 8, 1);
+            NativeArray<Color32> array = GetGooDataFromGPU(renderTexture);
+            foreach (Color32 col in array)
+            {
+                Debug.Log(col);
+            }
             yield return wfs;
         }
     }
 
-/*    void InitialiseTiles()
+    private NativeArray<Color32> GetGooDataFromGPU(RenderTexture renderTex)
     {
-        data = new Tile[size * size];
-        for (int y = 0; y < size; y++)
+        RenderTexture.active = renderTex;
+        texCopy.ReadPixels(new Rect(0, 0, size, size), 0, 0, false);
+        texCopy.Apply();
+        RenderTexture.active = null;
+        return texCopy.GetPixelData<Color32>(0);
+    }
+
+    /*    void InitialiseTiles()
         {
-            for (int x = 0; x < size; x++)
+            data = new Tile[size * size];
+            for (int y = 0; y < size; y++)
             {
-                data[y * size + x].type = 0;
-                data[y * size + x].temp = 100;
-                data[y * size + x].timer = 100;
+                for (int x = 0; x < size; x++)
+                {
+                    data[y * size + x].type = 0;
+                    data[y * size + x].temp = 100;
+                    data[y * size + x].timer = 100;
+                }
             }
+
+            data[size/2 * size + size / 2].type = 1;
+            data[size / 2 * size + size / 2].temp = 100;
+            data[size / 2 * size + size / 2].timer = 100;
         }
 
-        data[size/2 * size + size / 2].type = 1;
-        data[size / 2 * size + size / 2].temp = 100;
-        data[size / 2 * size + size / 2].timer = 100;
-    }
+        void TilesToGPU()
+        {
+            buffer.SetData(data);
+            cs.SetBuffer(0, "tiles", buffer);
+            cs.Dispatch(0, data.Length/8, 1, 1);
+        }
 
-    void TilesToGPU()
-    {
-        buffer.SetData(data);
-        cs.SetBuffer(0, "tiles", buffer);
-        cs.Dispatch(0, data.Length/8, 1, 1);
-    }
-
-    void GetDataFromGPU()
-    {
-        buffer.GetData(data);
-    }*/
+        void GetDataFromGPU()
+        {
+            buffer.GetData(data);
+        }*/
 }

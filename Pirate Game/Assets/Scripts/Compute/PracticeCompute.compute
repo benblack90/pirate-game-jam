@@ -4,30 +4,9 @@
 // Create a RenderTexture with enableRandomWrite flag and set it
 // with cs.SetTexture
 RWTexture2D<float4> Result;
-
-struct Tile
-{
-    int type;
-    int temp;
-    int timer;
-};
-
-RWStructuredBuffer<Tile> tiles;
-float resolution;
-
-[numthreads(8,1,1)]
+[numthreads(8,8,1)]
 void CSMain (uint3 id : SV_DispatchThreadID)
 {
-    Tile tile = tiles[id.x];
-    tile.temp -= 1;
     
-    tiles[id.x] = tile;
-    
-    uint2 newID;
-    newID.x = floor(id.x / 128);
-    newID.y = id.x - (128 * floor(id.x / 128));
-    
-    
-    Result[newID.xy] = float4(0, 1, 0, tile.type);
-
+    Result[id.xy] = float4(0, 100, 100, 1);
 }

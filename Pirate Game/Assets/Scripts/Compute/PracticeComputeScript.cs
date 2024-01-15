@@ -16,6 +16,7 @@ public class PracticeComputeScript : MonoBehaviour
 {
     public ComputeShader cs;
     public RenderTexture renderTexture;
+    public Texture texCopy;
     public Material gooPlaneMaterial;
     public Tile[] data;
     ComputeBuffer buffer;
@@ -33,13 +34,6 @@ public class PracticeComputeScript : MonoBehaviour
         renderTexture.Create();
         renderTexture.filterMode = FilterMode.Point;
         gooPlaneMaterial.mainTexture = renderTexture;
-        InitialiseTiles();
-        int dataSize = sizeof(int) * 3;
-        buffer = new ComputeBuffer(data.Length, dataSize);
-    }
-    void OnDisable()
-    {
-        buffer.Release();
     }
 
     IEnumerator UpdateGoo()
@@ -47,14 +41,16 @@ public class PracticeComputeScript : MonoBehaviour
         WaitForSeconds wfs = new WaitForSeconds(1f);
         while (true)
         {
+            
             cs.SetTexture(0, "Result", renderTexture);
-            TilesToGPU();
-            GetDataFromGPU();
+            cs.Dispatch(0,renderTexture.width/8,renderTexture.height/8,1);
+            texCopy = renderTexture;
+            Texture2D newTex = (Texture2D)texCopy;
             yield return wfs;
         }
     }
 
-    void InitialiseTiles()
+/*    void InitialiseTiles()
     {
         data = new Tile[size * size];
         for (int y = 0; y < size; y++)
@@ -82,5 +78,5 @@ public class PracticeComputeScript : MonoBehaviour
     void GetDataFromGPU()
     {
         buffer.GetData(data);
-    }
+    }*/
 }

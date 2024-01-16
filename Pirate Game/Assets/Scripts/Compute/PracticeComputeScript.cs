@@ -57,6 +57,13 @@ public class PracticeComputeScript : MonoBehaviour
         WriteToGooTile(1000, 1000, GridChannel.TEMP, 1);
         WriteToGooTile(1000, 1000, GridChannel.GOOAGE, 0);
 
+        for(int i = 701; i < 760; i++)
+        {
+            for(int j = 1101; j < 1190; j++)
+            {
+                WriteToGooTile(i, j, GridChannel.TYPE, 3);
+            }
+        }
         SendTexToGPU();
 
         Debug.Log(GetPixelFromGPU(2000, 2000));
@@ -71,9 +78,6 @@ public class PracticeComputeScript : MonoBehaviour
             cs.SetTexture(0, "Result", renderTexture);
             cs.Dispatch(0, renderTexture.width / 16, renderTexture.height / 16, 1);
             GetGooDataFromGPU();
-
-            Debug.Log(GetPixelFromGPU(2000, 2000));
-
             yield return wfs;
         }
     }

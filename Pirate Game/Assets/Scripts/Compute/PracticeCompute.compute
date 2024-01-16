@@ -17,7 +17,13 @@ void CSMain(uint3 id : SV_DispatchThreadID)
         //if gooage > threshold
             //spread to adjacent tiles
                 //that are not beyond the edges of the space
-    if (Result[id.xy].x!= 0)
+    
+    //This is looking for type 1, equivalent to 1/255. The shader will not accept an exact match with 1/255, so this inequality is necessary.
+    //for reference when writing future test - construct inequalities that encompass the following:
+    //  type 1: 1/255 = 0.00392
+    //  type 2: 2/255 = 0.0078
+    //  type 3: 3/255 = 0.0118
+    if (Result[id.xy].x > 0.0039 && Result[id.xy].x < 0.004)
     {
         Spread(id);
     }

@@ -4,9 +4,53 @@
 // Create a RenderTexture with enableRandomWrite flag and set it
 // with cs.SetTexture
 RWTexture2D<float4> Result;
-[numthreads(8,8,1)]
-void CSMain (uint3 id : SV_DispatchThreadID)
+int aspectX;
+int aspectY;
+void Spread(uint3 id);
+
+[numthreads(16, 16, 1)]
+void CSMain(uint3 id : SV_DispatchThreadID)
 {
     
-    //Result[id.xy] = float4(0, 0, 0, 1);
+    //if a tile is goo ... 
+        //check gooage
+        //if gooage > threshold
+            //spread to adjacent tiles
+                //that are not beyond the edges of the space
+    if (Result[id.xy].x!= 0)
+    {
+        Spread(id);
+    }
 }
+
+void Spread(uint3 id)
+{
+    
+    float4 values = Result[id.xy];
+    //values.z = 0.0f;
+    float2 temp = id.xy;
+    temp.x += 1;
+    if (temp.x < aspectX)
+    {
+        Result[temp.xy] = values;
+    }
+    temp.x -= 2;
+    if (temp.x >= 0)
+    {
+        Result[temp.xy] = values;
+    }
+    
+    temp.x += 1;
+    temp.y += 1;
+    if (temp.y < aspectY)
+    {
+        Result[temp.xy] = values;
+    }
+    
+    temp.y -= 2;
+    if (temp.y >= 0)
+    {
+        Result[temp.xy] = values;
+    }
+}
+

@@ -5,13 +5,6 @@ using UnityEngine;
 using Unity.Collections;
 using UnityEngine.Rendering;
 
-[System.Serializable]
-public struct Tile
-{
-    public int type;
-    public int temp;
-    public int timer;
-}
 
 enum GridChannel
 {
@@ -29,9 +22,8 @@ public class PracticeComputeScript : MonoBehaviour
     public RenderTexture renderTexture;
     public Texture2D texCopy;
     public Material gooPlaneMaterial;
-    public Tile[] data;
-    int xSize = 128;
-    int ySize = 128;
+    int xSize = 2560;
+    int ySize = 2560;
 
     void Start()
     {
@@ -51,32 +43,53 @@ public class PracticeComputeScript : MonoBehaviour
 
     IEnumerator UpdateGoo()
     {
-        WaitForSeconds wfs = new WaitForSeconds(1f);
+
+        DoImportantBullshit();
+        WriteToGooTile(700, 1100, GridChannel.TYPE, 1);
+        WriteToGooTile(700, 1100, GridChannel.TEMP, 255);
+
+        WriteToGooTile(2000, 2000, GridChannel.TYPE, 1);
+        WriteToGooTile(2000, 2000, GridChannel.GOOAGE, 255);
+
+        WriteToGooTile(1000, 1000, GridChannel.TYPE, 1);
+        WriteToGooTile(1000, 1000, GridChannel.TEMP, 255);
+        WriteToGooTile(1000, 1000, GridChannel.GOOAGE, 255);
+
+        SendTexToGPU();
+
+        Debug.Log(GetPixelFromGPU(1000, 1000));
+        
+        WaitForSeconds wfs = new WaitForSeconds(0.05f);
+        cs.SetInt("aspectX", xSize);
+        cs.SetInt("aspectY", ySize);
+       
         while (true)
         {
 
             cs.SetTexture(0, "Result", renderTexture);
-            cs.Dispatch(0, renderTexture.width / 8, renderTexture.height / 8, 1);
-            GetGooDataFromGPU(renderTexture);
+            cs.Dispatch(0, renderTexture.width / 16, renderTexture.height / 16, 1);
+            GetGooDataFromGPU();
             yield return wfs;
-            WriteToGooTile(5, 5, GridChannel.TEMP, 128);
-            SendTexToGPU();
-            Debug.Log(GetPixelFromGPU(5, 5,renderTexture));
         }
     }
 
-    private NativeArray<Color32> GetGooDataFromGPU(RenderTexture renderTex)
+    private void DoImportantBullshit()
     {
-        RenderTexture.active = renderTex;
+        RenderTexture.active = renderTexture;
         texCopy.ReadPixels(new Rect(0, 0, xSize, ySize), 0, 0, false);
-        texCopy.Apply();
+        RenderTexture.active = null;
+    }
+    private NativeArray<Color32> GetGooDataFromGPU()
+    {
+        RenderTexture.active = renderTexture;
+        texCopy.ReadPixels(new Rect(0, 0, xSize, ySize), 0, 0, false);
         RenderTexture.active = null;
         return texCopy.GetPixelData<Color32>(0);
     }
 
-    private Color32 GetPixelFromGPU(int x,int y, RenderTexture renderTex)
+    private Color32 GetPixelFromGPU(int x,int y)
     {
-        NativeArray<Color32> data = GetGooDataFromGPU(renderTex);
+        NativeArray<Color32> data = GetGooDataFromGPU();
         return data[xSize * y + x];
     }
 
@@ -112,7 +125,7 @@ public class PracticeComputeScript : MonoBehaviour
         }
         currentTile[(int)targetChannel] = (byte)value;
         texCopy.SetPixel(x, y, currentTile);
-        Debug.Log(GetTileValue(x, y, targetChannel));
+        //Debug.Log(GetTileValue(x, y, targetChannel));
         return true;
     }
 

@@ -19,6 +19,7 @@ enum GridTileType
 public class PracticeComputeScript : MonoBehaviour
 {
     public ComputeShader cs;
+    public ComputeShader entropyShader;
     public RenderTexture renderTexture;
     public Texture2D texCopy;
     public Material gooPlaneMaterial;
@@ -28,6 +29,22 @@ public class PracticeComputeScript : MonoBehaviour
     void Start()
     {
         StartCoroutine(UpdateGoo());
+        StartCoroutine(UpdateEntropy());
+    }
+
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            for (int i = 500; i < 700; i++)
+            {
+                for (int j = 900; j < 1000; j++)
+                {
+                    WriteToGooTile(i, j, GridChannel.TEMP, 255);
+                }
+            }
+            SendTexToGPU();
+        }
     }
 
     private void OnEnable()
@@ -43,10 +60,6 @@ public class PracticeComputeScript : MonoBehaviour
   
     IEnumerator UpdateGoo()
     {
-        float x = 1.0f / 255.0f;
-        float y = 2.0f / 255.0f;
-        float z = 3.0f / 255.0f;
-
         DoImportantBullshit();
         WriteToGooTile(700, 1100, GridChannel.TYPE, 1);
         WriteToGooTile(700, 1100, GridChannel.TEMP, 255);
@@ -89,6 +102,21 @@ public class PracticeComputeScript : MonoBehaviour
 
             cs.SetTexture(0, "Result", renderTexture);
             cs.Dispatch(0, renderTexture.width / 16, renderTexture.height / 16, 1);
+            GetGooDataFromGPU();
+            yield return wfs;
+        }
+    }
+
+    IEnumerator UpdateEntropy()
+    {
+        WaitForSeconds wfs = new WaitForSeconds(0.2f);
+        entropyShader.SetInt("aspectX", xSize);
+        entropyShader.SetInt("aspectY", ySize);
+
+        while (true)
+        {
+            entropyShader.SetTexture(0, "Result", renderTexture);
+            entropyShader.Dispatch(0, renderTexture.width / 16, renderTexture.height / 16, 1);
             GetGooDataFromGPU();
             yield return wfs;
         }
@@ -160,7 +188,7 @@ public class PracticeComputeScript : MonoBehaviour
     {
         texCopy.Apply();
         Graphics.Blit(texCopy, renderTexture);
-    }
+    } 
 
     /*    void InitialiseTiles()
         {

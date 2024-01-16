@@ -14,13 +14,6 @@ void HeatConduction(uint3 id);
 [numthreads(16, 16, 1)]
 void CSMain(uint3 id : SV_DispatchThreadID)
 {    
-    if(Result[id.xy].x * 255 <= 2.0f && Result[id.xy].x > 0)
-    {
-        Entropy(id);
-        HeatConduction(id);
-
-    }
-    
     //This is looking for type 1, equivalent to 1/255
     if (Result[id.xy].x * 255 == 1.0f)
     {            
@@ -29,50 +22,24 @@ void CSMain(uint3 id : SV_DispatchThreadID)
     }
 }
 
+float4 TargetTempEntropy(float4 values, float multiplier)
+{
+    if (values.w != 0.5f)
+    {
+        float sign = (0.5f - values.w) / abs((0.5f - values.w));
+        values.w += sign * multiplier;
+    }
+    
+    return values;
+}
+
 //multiply an arbitrary spreadage amount (1) by temperature, which should now be on a scale of 0.0-1.0.
 void BuildGooage(uint3 id)
 {
     float4 values = Result[id.xy];
-    values.z += 1.0f * values.y;
+    values.z +=  (values.y * values.y);
     Result[id.xy] = values;
 }
-
-void Entropy(uint3 id)
-{
-    //NB this multiplier can be whatever we want; it is arbitrarly set as '1' in the scale 0-255
-    float multiplier = 1.0f / 255.0f;
-    
-    
-    float4 values = Result[id.xy];
-    if (values.y == values.w)return;
-    float sign = (values.w - values.y) / abs((values.w - values.y));
-    values.y += sign * multiplier;
-    Result[id.xy] = values;
-
-}
-
-void HeatConduction(uint3 id)
-{
-    float4 values = Result[id.xy];
-    float targetTotal = 0;
-    int count = 0;
-    for (int i = -1; i < 2; i++)
-    {
-        for (int j = -1; j < 2; j++)
-        {
-            float2 temp = { i, j };
-
-            if (Result[id.xy + temp].x * 255 >= 1.0f && Result[id.xy + temp].x * 255 <= 2.0f)
-            {
-                count++;
-                targetTotal += Result[id.xy + temp].w;
-            }
-        }
-    }    
-    values.w = targetTotal / count;
-    Result[id.xy] = values;
-}
-
 void Spread(uint3 id)
 {
     
@@ -83,7 +50,10 @@ void Spread(uint3 id)
     
     values.x = 1.0f/255.0f;
     values.z = 0.0f;
-    //values.w = max(0.5f, values.w - 1.0f / 255.0f);
+   
+    values = TargetTempEntropy(values, values.x * 0.5f);
+    //values.y *= 0.9f;
+    
     float2 temp = id.xy;
     temp.x += 1;
     if (temp.x < aspectX && Result[temp.xy].x == 0)

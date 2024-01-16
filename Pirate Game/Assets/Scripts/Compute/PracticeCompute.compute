@@ -21,7 +21,7 @@ void CSMain(uint3 id : SV_DispatchThreadID)
                 //that are not beyond the edges of the space
     
     //This is looking for type 1, equivalent to 1/255
-    if (Result[id.xy].x == 1.0f/255.0f)
+    if (Result[id.xy].x * 255 == 1.0f)
     {
         BuildGooage(id);
         if(Result[id.xy].z >=1) Spread(id);
@@ -45,7 +45,7 @@ void Spread(uint3 id)
     Result[id.xy] = values;
     
     values.x = 1.0f/255.0f;
-    //values.z = 0.0f;
+    values.z = 0.0f;
     float2 temp = id.xy;
     temp.x += 1;
     if (temp.x < aspectX && Result[temp.xy].x == 0)

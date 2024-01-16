@@ -8,6 +8,33 @@ public class TestInputs : MonoBehaviour
     public Transform canvas;
 
     private GameObject activePage;
+
+    private void OnEnable()
+    {
+        LineGenerator.OnRuneComplete += CastRune;
+    }
+
+    private void OnDisable()
+    {
+        LineGenerator.OnRuneComplete -= CastRune;
+    }
+
+    public void CastRune(RuneInfo info)
+    {
+        switch (info.type)
+        {
+            case RuneTypes.Ice:
+                Debug.Log("ICE");
+                break;
+            case RuneTypes.Fire:
+                Debug.Log("FIRE");
+                break;
+            case RuneTypes.Invalid:
+                Debug.Log("INVALID");
+                break;
+        }
+    }
+
     // Start is called before the first frame update
     void Start()
     {
@@ -35,6 +62,11 @@ public class TestInputs : MonoBehaviour
             activePage = page;
         }
         if(Input.GetMouseButtonUp(1))
+        {
+            Destroy(activePage);
+            activePage = null;
+        }
+        if (Input.GetKeyDown(KeyCode.Return))
         {
             Destroy(activePage);
             activePage = null;

@@ -1,6 +1,5 @@
 // Each #kernel tells which function to compile; you can have many kernels
 #pragma kernel CSMain
-
 // Create a RenderTexture with enableRandomWrite flag and set it
 // with cs.SetTexture
 RWTexture2D<float4> Result;
@@ -9,33 +8,38 @@ int aspectY;
 
 void Spread(uint3 id);
 void BuildGooage(uint3 id);
+void Entropy(uint3 id);
+void HeatConduction(uint3 id);
 
 [numthreads(16, 16, 1)]
 void CSMain(uint3 id : SV_DispatchThreadID)
-{
-    
-    //if a tile is goo ... 
-        //check gooage
-        //if gooage > threshold
-            //spread to adjacent tiles
-                //that are not beyond the edges of the space
-    
+{    
     //This is looking for type 1, equivalent to 1/255
     if (Result[id.xy].x * 255 == 1.0f)
-    {
+    {            
         BuildGooage(id);
         if(Result[id.xy].z >=1) Spread(id);
     }
+}
+
+float4 TargetTempEntropy(float4 values, float multiplier)
+{
+    if (values.w != 0.5f)
+    {
+        float sign = (0.5f - values.w) / abs((0.5f - values.w));
+        values.w += sign * multiplier;
+    }
+    
+    return values;
 }
 
 //multiply an arbitrary spreadage amount (1) by temperature, which should now be on a scale of 0.0-1.0.
 void BuildGooage(uint3 id)
 {
     float4 values = Result[id.xy];
-    values.z += 1.0f * values.y;
+    values.z +=  (values.y * values.y);
     Result[id.xy] = values;
 }
-
 void Spread(uint3 id)
 {
     
@@ -46,6 +50,10 @@ void Spread(uint3 id)
     
     values.x = 1.0f/255.0f;
     values.z = 0.0f;
+   
+    values = TargetTempEntropy(values, values.x * 0.5f);
+    //values.y *= 0.9f;
+    
     float2 temp = id.xy;
     temp.x += 1;
     if (temp.x < aspectX && Result[temp.xy].x == 0)

@@ -321,8 +321,8 @@ Camera:
   near clip plane: 0.3
   far clip plane: 1000
   field of view: 60
-  orthographic: 0
-  orthographic size: 5
+  orthographic: 1
+  orthographic size: 15
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -366,6 +366,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cs: {fileID: 7200000, guid: 92750a1e12a20be4388750dabd5297dc, type: 3}
+  entropyShader: {fileID: 7200000, guid: 70ec169e21368b149a3f1886a9bee9b5, type: 3}
   renderTexture: {fileID: 0}
   texCopy: {fileID: 0}
   gooPlaneMaterial: {fileID: 2100000, guid: d1b8d40499ff24c41b4f87cfe189d970, type: 2}

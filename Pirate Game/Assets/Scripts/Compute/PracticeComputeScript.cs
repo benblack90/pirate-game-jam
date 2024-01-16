@@ -49,19 +49,25 @@ public class PracticeComputeScript : MonoBehaviour
 
         DoImportantBullshit();
         WriteToGooTile(700, 1100, GridChannel.TYPE, 1);
-        WriteToGooTile(700, 1100, GridChannel.TEMP, 1);
+        WriteToGooTile(700, 1100, GridChannel.TEMP, 255);
         WriteToGooTile(700, 1100, GridChannel.GOOAGE, 0);
         WriteToGooTile(700, 1100, GridChannel.TARGET_TEMP, 255);
-        
-/*        WriteToGooTile(2000, 2000, GridChannel.TYPE, 1);
-        WriteToGooTile(2000, 2000, GridChannel.TEMP, 100);
-        WriteToGooTile(2000, 2000, GridChannel.GOOAGE, 0);
-        WriteToGooTile(2000, 2000, GridChannel.TARGET_TEMP, 255);
 
-        WriteToGooTile(1000, 1000, GridChannel.TYPE, 1);
-        WriteToGooTile(1000, 1000, GridChannel.TEMP, 100);
-        WriteToGooTile(1000, 1000, GridChannel.GOOAGE, 0);
-        WriteToGooTile(1000, 1000, GridChannel.TARGET_TEMP, 0);*/
+        WriteToGooTile(700, 1000, GridChannel.TYPE, 1);
+        WriteToGooTile(700, 1000, GridChannel.TEMP, 20);
+        WriteToGooTile(700, 1000, GridChannel.GOOAGE, 0);
+        WriteToGooTile(700, 1000, GridChannel.TARGET_TEMP, 20);
+
+
+        /*        WriteToGooTile(2000, 2000, GridChannel.TYPE, 1);
+                WriteToGooTile(2000, 2000, GridChannel.TEMP, 100);
+                WriteToGooTile(2000, 2000, GridChannel.GOOAGE, 0);
+                WriteToGooTile(2000, 2000, GridChannel.TARGET_TEMP, 255);
+
+                WriteToGooTile(1000, 1000, GridChannel.TYPE, 1);
+                WriteToGooTile(1000, 1000, GridChannel.TEMP, 100);
+                WriteToGooTile(1000, 1000, GridChannel.GOOAGE, 0);
+                WriteToGooTile(1000, 1000, GridChannel.TARGET_TEMP, 0);*/
 
         for (int i = 701; i < 760; i++)
         {

@@ -8,7 +8,7 @@ using UnityEngine.Rendering;
 
 enum GridChannel
 {
-    TYPE,TEMP,GOOAGE,UNUSED
+    TYPE,TEMP,GOOAGE,TARGET_TEMP
 }
 
 enum GridTileType
@@ -40,24 +40,30 @@ public class PracticeComputeScript : MonoBehaviour
         renderTexture.filterMode = FilterMode.Point;
         gooPlaneMaterial.mainTexture = renderTexture;
     }
-
+  
     IEnumerator UpdateGoo()
     {
+        float x = 1.0f / 255.0f;
+        float y = 2.0f / 255.0f;
+        float z = 3.0f / 255.0f;
 
         DoImportantBullshit();
         WriteToGooTile(700, 1100, GridChannel.TYPE, 1);
-        WriteToGooTile(700, 1100, GridChannel.TEMP, 255);
+        WriteToGooTile(700, 1100, GridChannel.TEMP, 1);
         WriteToGooTile(700, 1100, GridChannel.GOOAGE, 0);
+        WriteToGooTile(700, 1100, GridChannel.TARGET_TEMP, 255);
         
-        WriteToGooTile(2000, 2000, GridChannel.TYPE, 1);
+/*        WriteToGooTile(2000, 2000, GridChannel.TYPE, 1);
         WriteToGooTile(2000, 2000, GridChannel.TEMP, 100);
         WriteToGooTile(2000, 2000, GridChannel.GOOAGE, 0);
-        
-        WriteToGooTile(1000, 1000, GridChannel.TYPE, 1);
-        WriteToGooTile(1000, 1000, GridChannel.TEMP, 1);
-        WriteToGooTile(1000, 1000, GridChannel.GOOAGE, 0);
+        WriteToGooTile(2000, 2000, GridChannel.TARGET_TEMP, 255);
 
-        for(int i = 701; i < 760; i++)
+        WriteToGooTile(1000, 1000, GridChannel.TYPE, 1);
+        WriteToGooTile(1000, 1000, GridChannel.TEMP, 100);
+        WriteToGooTile(1000, 1000, GridChannel.GOOAGE, 0);
+        WriteToGooTile(1000, 1000, GridChannel.TARGET_TEMP, 0);*/
+
+        for (int i = 701; i < 760; i++)
         {
             for(int j = 1101; j < 1190; j++)
             {
@@ -126,7 +132,7 @@ public class PracticeComputeScript : MonoBehaviour
                 {
                     break;
                 }
-            case GridChannel.UNUSED:
+            case GridChannel.TARGET_TEMP:
                 {
                     break;
                 }

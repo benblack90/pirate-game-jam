@@ -1,6 +1,5 @@
 // Each #kernel tells which function to compile; you can have many kernels
 #pragma kernel CSMain
-
 // Create a RenderTexture with enableRandomWrite flag and set it
 // with cs.SetTexture
 RWTexture2D<float4> Result;
@@ -9,20 +8,19 @@ int aspectY;
 
 void Spread(uint3 id);
 void BuildGooage(uint3 id);
+void Entropy(uint3 id);
 
 [numthreads(16, 16, 1)]
 void CSMain(uint3 id : SV_DispatchThreadID)
-{
-    
-    //if a tile is goo ... 
-        //check gooage
-        //if gooage > threshold
-            //spread to adjacent tiles
-                //that are not beyond the edges of the space
+{    
+    if(Result[id.xy].x * 255 <= 2.0f)
+    {
+        Entropy(id);
+    }
     
     //This is looking for type 1, equivalent to 1/255
     if (Result[id.xy].x * 255 == 1.0f)
-    {
+    {            
         BuildGooage(id);
         if(Result[id.xy].z >=1) Spread(id);
     }
@@ -36,6 +34,20 @@ void BuildGooage(uint3 id)
     Result[id.xy] = values;
 }
 
+void Entropy(uint3 id)
+{
+    //NB this multiplier can be whatever we want; it is arbitrarly set as '1' in the scale 0-255
+    float multiplier = 1.0f / 255.0f;
+    
+    
+    float4 values = Result[id.xy];
+    if (values.y == values.w)return;
+    float sign = (values.w - values.y) / abs((values.w - values.y));
+    values.y += sign * multiplier;
+    Result[id.xy] = values;
+
+}
+
 void Spread(uint3 id)
 {
     
@@ -46,6 +58,7 @@ void Spread(uint3 id)
     
     values.x = 1.0f/255.0f;
     values.z = 0.0f;
+    //values.w = max(0.5f, values.w - 1.0f / 255.0f);
     float2 temp = id.xy;
     temp.x += 1;
     if (temp.x < aspectX && Result[temp.xy].x == 0)

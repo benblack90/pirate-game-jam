@@ -29,5 +29,15 @@ public class DrawLine : MonoBehaviour
         }
     }
 
+    public void FinishLine(Vector2 position)
+    {
+        if(position == points.Last())
+        {
+            position.x += 0.01f;
+            position.y += 0.01f;
+        }
+        SetPoint(position);
+    }
+
    
 }

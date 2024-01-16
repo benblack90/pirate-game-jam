@@ -47,17 +47,19 @@ public class PracticeComputeScript : MonoBehaviour
         DoImportantBullshit();
         WriteToGooTile(700, 1100, GridChannel.TYPE, 1);
         WriteToGooTile(700, 1100, GridChannel.TEMP, 255);
-
-        WriteToGooTile(2000, 2000, GridChannel.TYPE, 2);
-        WriteToGooTile(2000, 2000, GridChannel.GOOAGE, 255);
-
-        WriteToGooTile(1000, 1000, GridChannel.TYPE, 3);
-        WriteToGooTile(1000, 1000, GridChannel.TEMP, 255);
-        WriteToGooTile(1000, 1000, GridChannel.GOOAGE, 255);
+        WriteToGooTile(700, 1100, GridChannel.GOOAGE, 0);
+        
+        WriteToGooTile(2000, 2000, GridChannel.TYPE, 1);
+        WriteToGooTile(2000, 2000, GridChannel.TEMP, 100);
+        WriteToGooTile(2000, 2000, GridChannel.GOOAGE, 0);
+        
+        WriteToGooTile(1000, 1000, GridChannel.TYPE, 1);
+        WriteToGooTile(1000, 1000, GridChannel.TEMP, 1);
+        WriteToGooTile(1000, 1000, GridChannel.GOOAGE, 0);
 
         SendTexToGPU();
 
-        Debug.Log(GetPixelFromGPU(1000, 1000));
+        Debug.Log(GetPixelFromGPU(2000, 2000));
         
         WaitForSeconds wfs = new WaitForSeconds(0.05f);
         cs.SetInt("aspectX", xSize);
@@ -69,6 +71,9 @@ public class PracticeComputeScript : MonoBehaviour
             cs.SetTexture(0, "Result", renderTexture);
             cs.Dispatch(0, renderTexture.width / 16, renderTexture.height / 16, 1);
             GetGooDataFromGPU();
+
+            Debug.Log(GetPixelFromGPU(2000, 2000));
+
             yield return wfs;
         }
     }

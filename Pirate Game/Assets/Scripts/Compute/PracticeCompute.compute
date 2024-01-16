@@ -6,7 +6,9 @@
 RWTexture2D<float4> Result;
 int aspectX;
 int aspectY;
+
 void Spread(uint3 id);
+void BuildGooage(uint3 id);
 
 [numthreads(16, 16, 1)]
 void CSMain(uint3 id : SV_DispatchThreadID)
@@ -18,43 +20,54 @@ void CSMain(uint3 id : SV_DispatchThreadID)
             //spread to adjacent tiles
                 //that are not beyond the edges of the space
     
-    //This is looking for type 1, equivalent to 1/255. The shader will not accept an exact match with 1/255, so this inequality is necessary.
-    //for reference when writing future test - construct inequalities that encompass the following:
-    //  type 1: 1/255 = 0.00392
-    //  type 2: 2/255 = 0.0078
-    //  type 3: 3/255 = 0.0118
-    if (Result[id.xy].x > 0.0039 && Result[id.xy].x < 0.004)
+    //This is looking for type 1, equivalent to 1/255
+    if (Result[id.xy].x == 1.0f/255.0f)
     {
-        Spread(id);
+        BuildGooage(id);
+        if(Result[id.xy].z >=1) Spread(id);
     }
+}
+
+//multiply an arbitrary spreadage amount (1) by temperature, which should now be on a scale of 0.0-1.0.
+void BuildGooage(uint3 id)
+{
+    float4 values = Result[id.xy];
+    values.z += 1.0f * values.y;
+    Result[id.xy] = values;
 }
 
 void Spread(uint3 id)
 {
     
     float4 values = Result[id.xy];
+    //change current tile to unspreadable
+    values.x = 2.0f/255.0f;
+    Result[id.xy] = values;
+    
+    values.x = 1.0f/255.0f;
     //values.z = 0.0f;
     float2 temp = id.xy;
     temp.x += 1;
-    if (temp.x < aspectX)
+    if (temp.x < aspectX && Result[temp.xy].x == 0)
     {
         Result[temp.xy] = values;
     }
     temp.x -= 2;
-    if (temp.x >= 0)
+    if (temp.x >= 0 && Result[temp.xy].x == 0)
     {
         Result[temp.xy] = values;
     }
     
     temp.x += 1;
     temp.y += 1;
-    if (temp.y < aspectY)
+    if (temp.y < aspectY && Result[temp.xy].x == 0)
     {
+
         Result[temp.xy] = values;
     }
     
     temp.y -= 2;
-    if (temp.y >= 0)
+    if (temp.y >= 0 && Result[temp.xy].x == 0)
     {
         Result[temp.xy] = values;
     }

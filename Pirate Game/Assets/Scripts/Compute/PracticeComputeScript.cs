@@ -8,7 +8,7 @@ using UnityEngine.Rendering;
 
 enum GridChannel
 {
-    TYPE,TEMP,GOOAGE,UNUSED
+    TYPE,TEMP,GOOAGE,TARGET_TEMP
 }
 
 enum GridTileType
@@ -19,6 +19,7 @@ enum GridTileType
 public class PracticeComputeScript : MonoBehaviour
 {
     public ComputeShader cs;
+    public ComputeShader entropyShader;
     public RenderTexture renderTexture;
     public Texture2D texCopy;
     public Material gooPlaneMaterial;
@@ -28,6 +29,22 @@ public class PracticeComputeScript : MonoBehaviour
     void Start()
     {
         StartCoroutine(UpdateGoo());
+        StartCoroutine(UpdateEntropy());
+    }
+
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            for (int i = 500; i < 700; i++)
+            {
+                for (int j = 900; j < 1000; j++)
+                {
+                    WriteToGooTile(i, j, GridChannel.TEMP, 255);
+                }
+            }
+            SendTexToGPU();
+        }
     }
 
     private void OnEnable()
@@ -40,24 +57,32 @@ public class PracticeComputeScript : MonoBehaviour
         renderTexture.filterMode = FilterMode.Point;
         gooPlaneMaterial.mainTexture = renderTexture;
     }
-
+  
     IEnumerator UpdateGoo()
     {
-
         DoImportantBullshit();
         WriteToGooTile(700, 1100, GridChannel.TYPE, 1);
         WriteToGooTile(700, 1100, GridChannel.TEMP, 255);
         WriteToGooTile(700, 1100, GridChannel.GOOAGE, 0);
-        
-        WriteToGooTile(2000, 2000, GridChannel.TYPE, 1);
-        WriteToGooTile(2000, 2000, GridChannel.TEMP, 100);
-        WriteToGooTile(2000, 2000, GridChannel.GOOAGE, 0);
-        
-        WriteToGooTile(1000, 1000, GridChannel.TYPE, 1);
-        WriteToGooTile(1000, 1000, GridChannel.TEMP, 1);
-        WriteToGooTile(1000, 1000, GridChannel.GOOAGE, 0);
+        WriteToGooTile(700, 1100, GridChannel.TARGET_TEMP, 255);
 
-        for(int i = 701; i < 760; i++)
+        WriteToGooTile(700, 1000, GridChannel.TYPE, 1);
+        WriteToGooTile(700, 1000, GridChannel.TEMP, 20);
+        WriteToGooTile(700, 1000, GridChannel.GOOAGE, 0);
+        WriteToGooTile(700, 1000, GridChannel.TARGET_TEMP, 20);
+
+
+        /*        WriteToGooTile(2000, 2000, GridChannel.TYPE, 1);
+                WriteToGooTile(2000, 2000, GridChannel.TEMP, 100);
+                WriteToGooTile(2000, 2000, GridChannel.GOOAGE, 0);
+                WriteToGooTile(2000, 2000, GridChannel.TARGET_TEMP, 255);
+
+                WriteToGooTile(1000, 1000, GridChannel.TYPE, 1);
+                WriteToGooTile(1000, 1000, GridChannel.TEMP, 100);
+                WriteToGooTile(1000, 1000, GridChannel.GOOAGE, 0);
+                WriteToGooTile(1000, 1000, GridChannel.TARGET_TEMP, 0);*/
+
+        for (int i = 701; i < 760; i++)
         {
             for(int j = 1101; j < 1190; j++)
             {
@@ -77,6 +102,21 @@ public class PracticeComputeScript : MonoBehaviour
 
             cs.SetTexture(0, "Result", renderTexture);
             cs.Dispatch(0, renderTexture.width / 16, renderTexture.height / 16, 1);
+            GetGooDataFromGPU();
+            yield return wfs;
+        }
+    }
+
+    IEnumerator UpdateEntropy()
+    {
+        WaitForSeconds wfs = new WaitForSeconds(0.2f);
+        entropyShader.SetInt("aspectX", xSize);
+        entropyShader.SetInt("aspectY", ySize);
+
+        while (true)
+        {
+            entropyShader.SetTexture(0, "Result", renderTexture);
+            entropyShader.Dispatch(0, renderTexture.width / 16, renderTexture.height / 16, 1);
             GetGooDataFromGPU();
             yield return wfs;
         }
@@ -126,7 +166,7 @@ public class PracticeComputeScript : MonoBehaviour
                 {
                     break;
                 }
-            case GridChannel.UNUSED:
+            case GridChannel.TARGET_TEMP:
                 {
                     break;
                 }
@@ -148,7 +188,7 @@ public class PracticeComputeScript : MonoBehaviour
     {
         texCopy.Apply();
         Graphics.Blit(texCopy, renderTexture);
-    }
+    } 
 
     /*    void InitialiseTiles()
         {

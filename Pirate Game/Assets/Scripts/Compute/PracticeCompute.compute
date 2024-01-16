@@ -28,6 +28,15 @@ float4 TargetTempEntropy(float4 values, float multiplier)
     {
         float sign = (0.5f - values.w) / abs((0.5f - values.w));
         values.w += sign * multiplier;
+        
+        if (values.w < 0.5f && sign < 0)
+        {
+            values.w = 0.5f;
+        }
+        else if (values.w > 0.5f && sign > 0)
+        {
+            values.w = 0.5f;
+        }
     }
     
     return values;
@@ -37,7 +46,7 @@ float4 TargetTempEntropy(float4 values, float multiplier)
 void BuildGooage(uint3 id)
 {
     float4 values = Result[id.xy];
-    values.z +=  (values.y * values.y);
+    values.z +=  (values.y * values.y * values.y);
     Result[id.xy] = values;
 }
 void Spread(uint3 id)
@@ -52,7 +61,7 @@ void Spread(uint3 id)
     values.z = 0.0f;
    
     values = TargetTempEntropy(values, values.x * 0.5f);
-    //values.y *= 0.9f;
+    values.y -= values.x;
     
     float2 temp = id.xy;
     temp.x += 1;

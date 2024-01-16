@@ -16,9 +16,8 @@ void CSMain(uint3 id : SV_DispatchThreadID)
 {    
     if(Result[id.xy].x * 255 <= 2.0f && Result[id.xy].x > 0)
     {
-        Entropy(id);
         HeatConduction(id);
-
+        Entropy(id);
     }
 }
 
@@ -28,6 +27,15 @@ float4 TargetTempEntropy(float4 values, float multiplier)
     {
         float sign = (0.5f - values.w) / abs((0.5f - values.w));
         values.w += sign * multiplier;
+        
+        if (values.w < 0.5f && sign < 0)
+        {
+            values.w = 0.5f;
+        }
+        else if(values.w>0.5f && sign > 0)
+        {
+            values.w = 0.5f;
+        }
     }
     
     return values;
@@ -43,20 +51,18 @@ void Entropy(uint3 id)
     float4 values = Result[id.xy];
     values = TargetTempEntropy(values, targetEntropyMult);
     if (values.y == values.w)return;
-    float sign = (values.w - values.y) / abs((values.w - values.y));
+    int sign = (values.w - values.y) / abs((values.w - values.y));
     values.y += sign * tempEntropyMult;
     
-    if (values.y < 0.5f && sign < 0)
+    if (values.y < values.w && sign < 0)
     {
-        values.y = 0.5f;
+        values.y = values.w;
     }
-    else if(values.y>0.5 && sign > 0)
+    else if (values.y > values.w && sign > 0)
     {
-        values.y = 0.5f;
+        values.y = values.w;
     }
     
-    
-
     Result[id.xy] = values;
 
 }
@@ -67,16 +73,16 @@ void HeatConduction(uint3 id)
     float4 values = Result[id.xy];
     float targetTotal = 0;
     int count = 0;
-    for (int i = -1; i < 2; i++)
+    for (int i = -11; i < 10; i++)
     {
-        for (int j = -1; j < 2; j++)
+        for (int j = -11; j < 10; j++)
         {
             float2 temp = { i, j };
 
             if (Result[id.xy + temp].x * 255 >= 1.0f && Result[id.xy + temp].x * 255 <= 2.0f)
             {
                 count++;
-                targetTotal += Result[id.xy + temp].w;
+                targetTotal += Result[id.xy + temp].y;
             }
         }
     }    

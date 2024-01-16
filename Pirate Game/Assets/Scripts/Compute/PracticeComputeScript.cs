@@ -34,13 +34,25 @@ public class PracticeComputeScript : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Space))
+
+        if (Input.GetKeyDown(KeyCode.H))
         {
             for (int i = 500; i < 700; i++)
             {
                 for (int j = 900; j < 1000; j++)
                 {
                     WriteToGooTile(i, j, GridChannel.TEMP, 255);
+                }
+            }
+            SendTexToGPU();
+        }
+        else if (Input.GetKeyDown(KeyCode.C))
+        {
+            for (int i = 500; i < 700; i++)
+            {
+                for (int j = 900; j < 1000; j++)
+                {
+                    WriteToGooTile(i, j, GridChannel.TEMP, 0);
                 }
             }
             SendTexToGPU();
@@ -93,7 +105,7 @@ public class PracticeComputeScript : MonoBehaviour
 
         Debug.Log(GetPixelFromGPU(2000, 2000));
         
-        WaitForSeconds wfs = new WaitForSeconds(0.05f);
+        WaitForSeconds wfs = new WaitForSeconds(0.03f);
         cs.SetInt("aspectX", xSize);
         cs.SetInt("aspectY", ySize);
        

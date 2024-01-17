@@ -48,7 +48,7 @@ public class PracticeComputeScript : MonoBehaviour
         }
         else if (Input.GetKeyDown(KeyCode.C))
         {
-            for (int i = 500; i < 700; i++)
+            for (int i = 600; i < 700; i++)
             {
                 for (int j = 900; j < 1000; j++)
                 {

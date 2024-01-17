@@ -85,30 +85,35 @@ public class LineGenerator : MonoBehaviour
                 float maxGradient = Mathf.NegativeInfinity;
                 float prevGradient = 0;
                 float streak = 0;
+                bool streakAdded = false;
                 List<bool> curves = new List<bool>();
                 for(int j = 1; j < positions.Length-1; j++)
                 {
                     float dX = positions[j].x - positions[j - 1].x;
                     float dY = positions[j].y - positions[j - 1].y;
-                    float tempDX = positions[j].x - positions[0].x;
-                    float tempDY = positions[j].y - positions[0].y;
-                    float tempGrad = tempDY / tempDX;
                     float gradient = dY / dX;
                     if (j > 1)
                     {
+                        if(gradient == prevGradient)
+                        {
+                            if (streak < 0) streak--;
+                            else if (streak > 0) streak++;
+                        }
                         if((gradient < prevGradient && !(gradient < 0 && prevGradient < 0)) || (gradient > prevGradient && gradient < 0 && prevGradient < 0))
                         {
                             if (streak < 0)
                             {
                                 streak--;
-                                if (streak == -2)
+                                if (streak <= -3 && !streakAdded)
                                 {
                                     curves.Add(false);
+                                    streakAdded = true;
                                 }
                             }
                             else if((Mathf.Abs(prevGradient - gradient) > 0.5f) || (prevGradient > 0 && gradient < 0) || (prevGradient < 0 && gradient > 0))
                             {
                                 streak = -1;
+                                streakAdded = false;
                             }
                         }
                         else if((gradient > prevGradient && !(gradient < 0 && prevGradient < 0)) || (gradient < prevGradient && gradient < 0 && prevGradient < 0))
@@ -116,24 +121,32 @@ public class LineGenerator : MonoBehaviour
                             if(streak > 0)
                             {
                                 streak++;
-                                if (streak == 2)
+                                if (streak >= 3 && !streakAdded)
                                 {
                                     curves.Add(true);
+                                    streakAdded = true;
                                 }
                             }
                             else if ((Mathf.Abs(gradient - prevGradient) > 0.5f) || (prevGradient > 0 && gradient < 0) || (prevGradient < 0 && gradient > 0))
                             {
                                 streak = 1;
+                                streakAdded = false;
                             }
                         }
                     }
                     if(gradient < minGradient) minGradient = gradient;
                     if(gradient > maxGradient) maxGradient = gradient;
                     prevGradient = gradient;
-                    Debug.Log(dX + ", " + dY + ", " + gradient + ", " + tempGrad);
+                    Debug.Log(dX + ", " + dY + ", " + gradient + ", " + streak + ", " + curves.Count);
                 }
                 Debug.Log("Min and Max: " + minGradient + ", " + maxGradient);
-                if (Mathf.Abs(minGradient) <= 0.3 || Mathf.Abs(maxGradient) <= 0.3)
+                if (curves.Count == 2 && curves[0] != curves[1])
+                {
+                    List<Vector3> linePositions = new List<Vector3>() { positions[0], positions[positions.Length / 2], positions[positions.Length - 1] };
+                    LineInfo newInfo = new LineInfo(LineTypes.Curve, linePositions, 100);
+                    lineTypes.Add(newInfo);
+                }
+                else if (Mathf.Abs(minGradient) <= 0.3 || Mathf.Abs(maxGradient) <= 0.3)
                 {
                     List<Vector3> linePositions = new List<Vector3>() { positions[0], positions[positions.Length - 1] };
                     LineInfo newInfo = new LineInfo(LineTypes.HorizontalLine, linePositions, 
@@ -143,7 +156,7 @@ public class LineGenerator : MonoBehaviour
                     lineLookup[LineTypes.HorizontalLine][0]++;
                     lineLookup[LineTypes.HorizontalLine].Add(i);
                 }
-                else if(Mathf.Abs(minGradient) > 10 || Mathf.Abs(maxGradient) > 10)
+                else if(Mathf.Abs(minGradient) > 4 || Mathf.Abs(maxGradient) > 4)
                 {
                     List<Vector3> linePositions = new List<Vector3>() { positions[0], positions[positions.Length - 1] };
                     LineInfo newInfo = new LineInfo(LineTypes.VerticalLine, linePositions, 
@@ -153,29 +166,32 @@ public class LineGenerator : MonoBehaviour
                     lineLookup[LineTypes.VerticalLine][0]++;
                     lineLookup[LineTypes.VerticalLine].Add(i);
                 }
-                else
+                else if (maxGradient - minGradient < 4)
                 {
-                    if(maxGradient - minGradient < 4)
+                    List<Vector3> linePositions = new List<Vector3>() { positions[0], positions[positions.Length - 1] };
+                    if (positions[0].x - positions[positions.Length - 1].x > -0.3f && positions[0].x - positions[positions.Length - 1].x < 0.3f)
                     {
-                        List<Vector3> linePositions = new List<Vector3>() { positions[0], positions[positions.Length - 1] };
+                        LineInfo newInfo = new LineInfo(LineTypes.VerticalLine, linePositions,
+                    100 - (int)Mathf.Max(0, 15 - Mathf.Abs(minGradient)) - (int)Mathf.Max(0, 15 - Mathf.Abs(maxGradient)));
+                        lineTypes.Add(newInfo);
+                        if (!lineLookup.ContainsKey(LineTypes.VerticalLine)) lineLookup[LineTypes.VerticalLine] = new List<int>() { 0 };
+                        lineLookup[LineTypes.VerticalLine][0]++;
+                        lineLookup[LineTypes.VerticalLine].Add(i);
+                    }
+                    else
+                    {
                         LineInfo newInfo = new LineInfo(LineTypes.DiagonalLine, linePositions, 100 - (int)(10 * (maxGradient - minGradient)));
                         lineTypes.Add(newInfo);
                         if (!lineLookup.ContainsKey(LineTypes.DiagonalLine)) lineLookup[LineTypes.DiagonalLine] = new List<int>() { 0 };
                         lineLookup[LineTypes.DiagonalLine][0]++;
                         lineLookup[LineTypes.DiagonalLine].Add(i);
                     }
-                    else if (curves.Count == 2 && curves[0] != curves[1])
-                    {
-                        List<Vector3> linePositions = new List<Vector3>() { positions[0], positions[positions.Length/2], positions[positions.Length - 1] };
-                        LineInfo newInfo = new LineInfo(LineTypes.Curve, linePositions, 100);
-                        lineTypes.Add(newInfo);
-                    }
-                    else if(curves.Count == 4 && curves[0] != curves[1] && curves[1] != curves[2] && curves[2] != curves[3] && Vector3.Distance(positions[0], positions[positions.Length-1]) < 0.1f)
-                    {
-                        List<Vector3> linePositions = new List<Vector3>() { positions[0], positions[positions.Length/4], positions[positions.Length/2], positions[positions.Length * 3 / 4] };
-                        LineInfo newInfo = new LineInfo(LineTypes.VerticalLine, linePositions, 100);
-                        lineTypes.Add(newInfo);
-                    }
+                }
+                else if (curves.Count == 4 && curves[0] != curves[1] && curves[1] != curves[2] && curves[2] != curves[3] && Vector3.Distance(positions[0], positions[positions.Length - 1]) < 0.1f)
+                {
+                    List<Vector3> linePositions = new List<Vector3>() { positions[0], positions[positions.Length / 4], positions[positions.Length / 2], positions[positions.Length * 3 / 4] };
+                    LineInfo newInfo = new LineInfo(LineTypes.VerticalLine, linePositions, 100);
+                    lineTypes.Add(newInfo);
                 }
             }
             Destroy(lines[i].gameObject);

@@ -1,0 +1,91 @@
+// Each #kernel tells which function to compile; you can have many kernels
+#pragma kernel CSMain
+// Create a RenderTexture with enableRandomWrite flag and set it
+// with cs.SetTexture
+RWTexture2D<float4> Result;
+int aspectX;
+int aspectY;
+
+void Spread(uint3 id);
+void BuildGooage(uint3 id);
+void Entropy(uint3 id);
+void HeatConduction(uint3 id);
+
+[numthreads(16, 16, 1)]
+void CSMain(uint3 id : SV_DispatchThreadID)
+{    
+    if(Result[id.xy].x * 255 <= 2.0f && Result[id.xy].x > 0)
+    {
+        HeatConduction(id);
+        Entropy(id);
+    }
+}
+
+float4 TargetTempEntropy(float4 values, float multiplier)
+{
+    if (values.w != 0.5f)
+    {
+        float sign = (0.5f - values.w) / abs((0.5f - values.w));
+        values.w += sign * multiplier;
+        
+        if (values.w < 0.5f && sign < 0)
+        {
+            values.w = 0.5f;
+        }
+        else if(values.w>0.5f && sign > 0)
+        {
+            values.w = 0.5f;
+        }
+    }
+    
+    return values;
+}
+
+void Entropy(uint3 id)
+{
+    //NB this multiplier can be whatever we want; it is arbitrarly set as '1' in the scale 0-255
+    float tempEntropyMult = 2.0f / 255.0f;
+    float targetEntropyMult = 0.5f * tempEntropyMult;
+    
+    
+    float4 values = Result[id.xy];
+    values = TargetTempEntropy(values, targetEntropyMult);
+    if (values.y == values.w)return;
+    int sign = (values.w - values.y) / abs((values.w - values.y));
+    values.y += sign * tempEntropyMult;
+    
+    if (values.y < values.w && sign < 0)
+    {
+        values.y = values.w;
+    }
+    else if (values.y > values.w && sign > 0)
+    {
+        values.y = values.w;
+    }
+    
+    Result[id.xy] = values;
+
+}
+
+
+void HeatConduction(uint3 id)
+{
+    float4 values = Result[id.xy];
+    float targetTotal = 0;
+    int count = 0;
+    for (int i = -11; i < 10; i++)
+    {
+        for (int j = -11; j < 10; j++)
+        {
+            float2 temp = { i, j };
+
+            if (Result[id.xy + temp].x * 255 >= 1.0f && Result[id.xy + temp].x * 255 <= 2.0f)
+            {
+                count++;
+                targetTotal += Result[id.xy + temp].y;
+            }
+        }
+    }    
+    values.w = targetTotal / count;
+    Result[id.xy] = values;
+}

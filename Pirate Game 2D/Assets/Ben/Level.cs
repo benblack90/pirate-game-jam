@@ -11,7 +11,7 @@ public class Level : MonoBehaviour
 
     List<GameObject> staticDestructables = new List<GameObject>();
     List<GameObject> dynamicDestructables = new List<GameObject>();
-    Vector3 playerStart;
+    Vector2 playerStart;
 
     public void InitLevel()
     {
@@ -65,7 +65,7 @@ public class Level : MonoBehaviour
 
     void UpdateCamera(Vector3 playerPos)
     {
-        mainCam.transform.position = playerPos + new Vector3(0, 20, 0);
+        mainCam.transform.position = playerPos - new Vector3(0,0,1);
     }
 
     void ReadLevelFromFile()
@@ -73,6 +73,6 @@ public class Level : MonoBehaviour
         //TODO - make this do the level reading please, Alex
 
         //this is temporary, just to make the game work in the absence of the actual level editor
-        playerStart = new Vector3(0,0,0);
+        playerStart = new Vector2(0,0);
     }
 }

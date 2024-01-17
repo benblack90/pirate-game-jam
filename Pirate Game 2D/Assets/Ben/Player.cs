@@ -19,17 +19,17 @@ public class Player : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Vector3 dir = ReadMovementInput();
+        Vector2 dir = ReadMovementInput();
         char rune = ReadRuneInput();
         ProcessMovement(dir);
         ProcessRuneCast(rune);
     }
 
-    Vector3 ReadMovementInput()
+    Vector2 ReadMovementInput()
     {
-        Vector3 dir = new Vector3();
-        if (Input.GetKey(KeyCode.W)) dir.z = 1;
-        if (Input.GetKey(KeyCode.S)) dir.z = -1;
+        Vector2 dir = new Vector2();
+        if (Input.GetKey(KeyCode.W)) dir.y = 1;
+        if (Input.GetKey(KeyCode.S)) dir.y = -1;
         if (Input.GetKey(KeyCode.D)) dir.x = 1;
         if (Input.GetKey(KeyCode.A)) dir.x = -1;
         return dir;
@@ -37,7 +37,7 @@ public class Player : MonoBehaviour
 
     void ProcessMovement(Vector3 dir)
     { 
-        playerModel.transform.position += 2 * dir * Time.deltaTime;
+        playerModel.transform.position += 2 * Time.deltaTime * dir;
     }
 
     char ReadRuneInput()

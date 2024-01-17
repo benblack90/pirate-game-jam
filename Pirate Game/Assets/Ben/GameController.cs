@@ -12,9 +12,10 @@ public class GameController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        levelList.Add(new Level());
+
         InitCamera();
         InitLevel();
-        levelList.Add(new Level());
     }
 
     // Update is called once per frame
@@ -30,6 +31,16 @@ public class GameController : MonoBehaviour
     void InitLevel()
     {
         levelList[currentLevel].InitLevel();
+    }
+
+    bool NextLevel()
+    {
+        if(currentLevel < levelList.Count-1)
+        {
+            currentLevel++;
+            return true;
+        }
+        return false;
     }
 
   

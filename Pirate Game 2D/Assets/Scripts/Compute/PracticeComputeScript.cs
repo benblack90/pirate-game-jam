@@ -6,12 +6,12 @@ using Unity.Collections;
 using UnityEngine.Rendering;
 
 
-enum GridChannel
+public enum GridChannel
 {
     TYPE,TEMP,GOOAGE,TARGET_TEMP
 }
 
-enum GridTileType
+public enum GridTileType
 {
     BLANK,GOO_SPREADABLE,GOO_UNSPREADABLE,STATIC,MAX_TYPE
 }
@@ -158,7 +158,7 @@ public class PracticeComputeScript : MonoBehaviour
     /// x and y are DIRECT int coordinates, writes to texture CPU side only
     /// RETURNS: true if successful, false if not
     ///</summary>
-    private bool WriteToGooTile(int x, int y,GridChannel targetChannel, float value)
+    public bool WriteToGooTile(int x, int y,GridChannel targetChannel, float value)
     {
         if (x < 0 || y < 0 || x > xSize || y > ySize) return false;
 
@@ -190,7 +190,7 @@ public class PracticeComputeScript : MonoBehaviour
         return true;
     }
 
-    private float GetTileValue(int x, int y, GridChannel targetChannel)
+    public float GetTileValue(int x, int y, GridChannel targetChannel)
     {
         Color32 values = texCopy.GetPixel(x, y);
         return values[(int)targetChannel];

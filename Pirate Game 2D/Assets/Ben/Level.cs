@@ -9,7 +9,7 @@ public class Level : MonoBehaviour
     public Player player;
     public Camera mainCam;
 
-    List<GameObject> staticDestructables = new List<GameObject>();
+    List<StaticDestructable> staticDestructables = new List<StaticDestructable>();
     List<GameObject> dynamicDestructables = new List<GameObject>();
     Vector2 playerStart;
 
@@ -34,7 +34,7 @@ public class Level : MonoBehaviour
 
     void UpdateStatics()
     {
-        foreach(GameObject o in staticDestructables)
+        foreach(StaticDestructable o in staticDestructables)
         {
             //check if adjacent to goo'd tile
                 //check its temperature

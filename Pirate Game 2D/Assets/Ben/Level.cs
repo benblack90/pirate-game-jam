@@ -36,6 +36,7 @@ public class Level : MonoBehaviour
     {
         foreach(StaticDestructable o in staticDestructables)
         {
+            o.CheckFireDamage();
             //check if adjacent to goo'd tile
                 //check its temperature
                     //ignite if appropriate

@@ -5,8 +5,9 @@ using UnityEngine;
 public class StaticDestructable : MonoBehaviour
 {
     float hitPoints;
-    Vector2 graphicalPos;
-    Vector2 gooPos;
+    Vector2Int graphicalPos;
+    Vector2Int gooPos;
+    int graphicsToGooRatio;
     int sideLength;
     bool onFire;
     public GameObject destructModel;
@@ -15,6 +16,10 @@ public class StaticDestructable : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        //current specs say 32 x 32 pixel square graphics, with 16 x 16 goo grid
+        sideLength = 32;
+        graphicsToGooRatio = 2;
+        gooPos = graphicalPos / graphicsToGooRatio;
         hitPoints = 100;
     }
 
@@ -24,22 +29,11 @@ public class StaticDestructable : MonoBehaviour
         
     }
 
-    IEnumerator CheckGooDamage()
+    public void CheckFireDamage()
     {
-        //am I next to hot goo?
-            //take damage
-            //ignite if hot enough
+        if(onFire) hitPoints -= 1.0f * Time.deltaTime;    
 
-        
-        yield return new WaitForSeconds(0.03f);
-    }
-
-    void CheckFireDamage()
-    {
-        if (onFire)
-        {
-            hitPoints -= 1.0f * Time.deltaTime;
-        }
+        if(hitPoints <= 0) SwapToDestroyedModel();
     }
 
     void SwapToDestroyedModel()

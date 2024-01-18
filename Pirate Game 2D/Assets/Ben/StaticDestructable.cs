@@ -29,6 +29,12 @@ public class StaticDestructable : MonoBehaviour
         
     }
 
+    public void Damage(float damage)
+    {
+        if (damage < 0) return;
+        hitPoints -= damage;
+    }
+
     public void CheckFireDamage()
     {
         if(onFire) hitPoints -= 1.0f * Time.deltaTime;    
@@ -40,5 +46,10 @@ public class StaticDestructable : MonoBehaviour
     {
         currentModel = destructModel;
         //inform the renderer, somehow!
+    }
+
+    public Vector2Int GetGooPos()
+    {
+        return gooPos;
     }
 }

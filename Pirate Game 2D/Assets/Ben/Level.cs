@@ -31,6 +31,37 @@ public class Level : MonoBehaviour
         foreach(StaticDestructable o in staticDestructables)
         {
             o.CheckFireDamage();
+           
+            //assuming a 16x16 goo tile area per 32x32 block, here
+            for(int i = 0; i < 16; i++)
+            {
+                
+                float leftBorder = gooController.GetTileValue(o.GetGooPos().x - 1, o.GetGooPos().y + i, GridChannel.TYPE);
+                float rightBorder = gooController.GetTileValue(o.GetGooPos().x + 17, o.GetGooPos().y + i, GridChannel.TYPE);
+                float topBorder = gooController.GetTileValue(o.GetGooPos().x + i, o.GetGooPos().y - 1, GridChannel.TYPE);
+                float bottomBorder = gooController.GetTileValue(o.GetGooPos().x + i, o.GetGooPos().y + 17, GridChannel.TYPE);
+
+                if(leftBorder == (float) GridTileType.GOO_UNSPREADABLE || leftBorder == (float) GridTileType.GOO_SPREADABLE)
+                {
+                    //the -200.0f is arbitrary: essentially, I'm scaling down the temperature damage, so only stuff above 200 hurts
+                    //staticDestructables ignore negative damage - see the damage method
+                    o.Damage(gooController.GetTileValue(o.GetGooPos().x - 1, o.GetGooPos().y + i, GridChannel.TEMP) - 200.0f);
+                }
+                else if(rightBorder == (float)GridTileType.GOO_UNSPREADABLE || rightBorder == (float)GridTileType.GOO_SPREADABLE)
+                {
+                    o.Damage(gooController.GetTileValue(o.GetGooPos().x +17, o.GetGooPos().y + i, GridChannel.TEMP) - 200.0f);
+                }
+                else if (topBorder == (float)GridTileType.GOO_UNSPREADABLE || topBorder == (float)GridTileType.GOO_SPREADABLE)
+                {
+                    o.Damage(gooController.GetTileValue(o.GetGooPos().x + i, o.GetGooPos().y - 1, GridChannel.TEMP) - 200.0f);
+                }
+                else if (bottomBorder == (float)GridTileType.GOO_UNSPREADABLE || bottomBorder == (float)GridTileType.GOO_SPREADABLE)
+                {
+                    o.Damage(gooController.GetTileValue(o.GetGooPos().x + i, o.GetGooPos().y + 17, GridChannel.TEMP) - 200.0f);
+                }
+
+            }
+            
             //check if adjacent to goo'd tile
                 //check its temperature
                     //ignite if appropriate

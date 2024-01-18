@@ -190,6 +190,53 @@ public class PracticeComputeScript : MonoBehaviour
         return true;
     }
 
+    public bool AddTemperatureToTile(int x, int y, float value) 
+    {
+        //temperature from 0 - 255
+        float temp = GetTileValue(x, y, GridChannel.TEMP);
+        temp = Mathf.Clamp(value + temp,0,255);
+        return WriteToGooTile(x, y, GridChannel.TEMP, temp);
+    }
+
+    public bool AddTempToArea(List<Vector2Int> coords, float value)
+    {
+        bool finalResult = true;
+        foreach(Vector2Int c in coords)
+        {
+            bool result = false;
+            if(c.x < xSize && c.y < ySize) result = AddTemperatureToTile(c.x, c.y, value);
+            if (!result) finalResult = false;
+        }
+
+        SendTexToGPU();
+        //if one of these fails, the method returns false
+        return finalResult;
+    }
+
+    public bool SetTypeOfManyTiles(List<Vector2Int> coords, GridTileType t) 
+    {
+        bool finalResult = true;
+        foreach (Vector2Int c in coords)
+        {
+            bool result = false;
+            if (c.x < xSize && c.y < ySize) result = WriteToGooTile(c.x, c.y, GridChannel.TYPE, (float) t);
+            if (!result) finalResult = false;
+        }
+
+        SendTexToGPU();
+        //if one of these fails, the method returns false
+        return finalResult;
+    }
+
+    public bool IsAreaFree(List<Vector2Int> coords) 
+    {
+        foreach(Vector2Int c in coords)
+        {           
+            if(GetTileValue(c.x,c.y,GridChannel.TYPE) != (float) GridTileType.BLANK) return false;
+        }
+        return true;
+    }
+
     public float GetTileValue(int x, int y, GridChannel targetChannel)
     {
         Color32 values = texCopy.GetPixel(x, y);

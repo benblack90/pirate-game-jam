@@ -18,6 +18,9 @@ public class CustomCharacterController : MonoBehaviour
     private Vector2 _playerCameraHalf;
     private Vector2 _mousePosition;
     private bool lockCamera = false;
+
+    private int SPELL_HOT = 0;
+    private int SPELL_COLD = 1;
     void Start()
     {
         _rb = this.GetComponent<Rigidbody2D>();
@@ -27,9 +30,16 @@ public class CustomCharacterController : MonoBehaviour
     void Update()
     {
         lockCamera = (Input.GetMouseButton(1));
-        if(Input.GetMouseButtonDown(1))
+        int spellAccuracyTest = Input.GetKey(KeyCode.LeftShift) ? 50 : 100;
+        if (Input.GetKeyDown(KeyCode.Alpha1))
         {
-
+            Debug.Log("Casting hot spell, accuracy: " + spellAccuracyTest.ToString());
+            CastSpell(SPELL_HOT, spellAccuracyTest);
+        }
+        if (Input.GetKeyDown(KeyCode.Alpha2))
+        {
+            Debug.Log("Casting cold spell, accuracy: " + spellAccuracyTest.ToString());
+            CastSpell(SPELL_COLD, spellAccuracyTest);
         }
     }
     void FixedUpdate()
@@ -71,8 +81,9 @@ public class CustomCharacterController : MonoBehaviour
 
         _camera.transform.position = new Vector3(cameraXY.x, cameraXY.y, _camera.transform.position.z);
     }
-    private void OnCollisionStay2D(Collision2D collision)
+
+    public void CastSpell(int spellId, int spellAccuracy)
     {
-        //Debug.Log("aoiu");
+
     }
 }

@@ -16,21 +16,27 @@ public class CustomCharacterController : MonoBehaviour
 
     private Rigidbody2D _rb;
     private Vector2 _playerCameraHalf;
-
+    private Vector2 _mousePosition;
+    private bool lockCamera = false;
     void Start()
     {
         _rb = this.GetComponent<Rigidbody2D>();
     }
 
     // Update is called once per frame
+    void Update()
+    {
+        lockCamera = (Input.GetMouseButton(1));
+        if(Input.GetMouseButtonDown(1))
+        {
+
+        }
+    }
     void FixedUpdate()
     {
-
         PlayerMove();
         PlayerLook();
         CameraMove();
-
-
     }
 
     void PlayerMove()
@@ -44,10 +50,15 @@ public class CustomCharacterController : MonoBehaviour
     {
         Vector2 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         Vector2 direction = (mousePos - (Vector2)transform.position).normalized;
-        transform.up = direction;
 
+
+        if (!lockCamera)
+        {
+            _mousePosition = mousePos;
+            transform.up = direction;
+        }
         Vector2 trans2D = new Vector2(this.transform.position.x, this.transform.position.y);
-        _playerCameraHalf = trans2D  - (trans2D - mousePos) * _cameraMouseRatio;
+        _playerCameraHalf = trans2D  - (trans2D - _mousePosition) * _cameraMouseRatio;
     }
 
     void CameraMove()
@@ -56,10 +67,9 @@ public class CustomCharacterController : MonoBehaviour
         Vector3 targetPosition = _playerCameraHalf;
 
 
-        Vector2 cameraXY = _camera.transform.position * _dampening + targetPosition  * (1.0f-_dampening);
+        Vector2 cameraXY = _camera.transform.position * _dampening + targetPosition  * (1.0f - _dampening);
 
         _camera.transform.position = new Vector3(cameraXY.x, cameraXY.y, _camera.transform.position.z);
-        //_camera.transform.position = this.transform.position;
     }
     private void OnCollisionStay2D(Collision2D collision)
     {

@@ -48407,6 +48407,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 69655df4706378f428f57716bc0cdd32, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  meshCollider: {fileID: 230584531}
   extrusionFactor: 0
 --- !u!1 &230584531
 GameObject:

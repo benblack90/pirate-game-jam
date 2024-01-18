@@ -429,7 +429,6 @@ GameObject:
   - component: {fileID: 1758414815}
   - component: {fileID: 1758414814}
   - component: {fileID: 1758414818}
-  - component: {fileID: 1758414817}
   - component: {fileID: 1758414816}
   m_Layer: 0
   m_Name: Game
@@ -483,19 +482,6 @@ MonoBehaviour:
   renderTexture: {fileID: 0}
   texCopy: {fileID: 0}
   gooPlaneMaterial: {fileID: 2100000, guid: d1b8d40499ff24c41b4f87cfe189d970, type: 2}
---- !u!114 &1758414817
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1758414813}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: eebdd28cd7426174785472c93313bb2c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  playerModel: {fileID: 575197335}
 --- !u!114 &1758414818
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -509,7 +495,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gooController: {fileID: 1758414816}
-  player: {fileID: 1758414817}
+  playerModel: {fileID: 575197335}
   mainCam: {fileID: 1664271257}
 --- !u!1 &2059590326
 GameObject:

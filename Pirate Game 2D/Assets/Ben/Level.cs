@@ -6,7 +6,7 @@ public class Level : MonoBehaviour
 {
 
     public PracticeComputeScript gooController;
-    public Player player;
+    public GameObject playerModel;
     public Camera mainCam;
 
     List<StaticDestructable> staticDestructables = new List<StaticDestructable>();
@@ -16,20 +16,14 @@ public class Level : MonoBehaviour
     public void InitLevel()
     {
         ReadLevelFromFile();
-        InitPlayer();
     }
 
     // Update is called once per frame
     void Update()
     {
-        UpdateCamera(player.playerModel.transform.position);
         UpdateStatics();
         UpdateDynamics();
-    }
 
-    void InitPlayer()
-    {
-        player.SetStartPos(playerStart);
     }
 
     void UpdateStatics()
@@ -64,10 +58,7 @@ public class Level : MonoBehaviour
         }
     }
 
-    void UpdateCamera(Vector3 playerPos)
-    {
-        mainCam.transform.position = playerPos - new Vector3(0,0,1);
-    }
+
 
     void ReadLevelFromFile()
     {

@@ -65,7 +65,7 @@ public class CustomCharacterController : MonoBehaviour
         if (!lockCamera)
         {
             _mousePosition = mousePos;
-            transform.up = direction;
+            //transform.up = direction;
         }
         Vector2 trans2D = new Vector2(this.transform.position.x, this.transform.position.y);
         _playerCameraHalf = trans2D  - (trans2D - _mousePosition) * _cameraMouseRatio;

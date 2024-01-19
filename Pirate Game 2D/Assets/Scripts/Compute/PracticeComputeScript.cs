@@ -23,8 +23,8 @@ public class PracticeComputeScript : MonoBehaviour
     public RenderTexture renderTexture;
     public Texture2D texCopy;
     public Material gooPlaneMaterial;
-    int xSize = 2560;
-    int ySize = 2560;
+    int xSize = 3200;
+    int ySize = 3200;
 
     void Start()
     {
@@ -73,10 +73,10 @@ public class PracticeComputeScript : MonoBehaviour
     IEnumerator UpdateGoo()
     {
         DoImportantBullshit();
-        WriteToGooTile(700, 1100, GridChannel.TYPE, 1);
-        WriteToGooTile(700, 1100, GridChannel.TEMP, 255);
-        WriteToGooTile(700, 1100, GridChannel.GOOAGE, 0);
-        WriteToGooTile(700, 1100, GridChannel.TARGET_TEMP, 255);
+        WriteToGooTile(1600, 1600, GridChannel.TYPE, 1);
+        WriteToGooTile(1600, 1600, GridChannel.TEMP, 255);
+        WriteToGooTile(1600, 1600, GridChannel.GOOAGE, 0);
+        WriteToGooTile(1600, 1600, GridChannel.TARGET_TEMP, 255);
 
 /*        WriteToGooTile(700, 1000, GridChannel.TYPE, 1);
         WriteToGooTile(700, 1000, GridChannel.TEMP, 20);
@@ -105,7 +105,7 @@ public class PracticeComputeScript : MonoBehaviour
 
         Debug.Log(GetPixelFromGPU(2000, 2000));
         
-        WaitForSeconds wfs = new WaitForSeconds(0.03f);
+        WaitForSeconds wfs = new WaitForSeconds(0.05f);
         cs.SetInt("aspectX", xSize);
         cs.SetInt("aspectY", ySize);
        

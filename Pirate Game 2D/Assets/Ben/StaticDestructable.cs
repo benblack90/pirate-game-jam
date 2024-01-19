@@ -7,10 +7,14 @@ using static StaticDestructable;
 public class StaticDestructable : MonoBehaviour
 {
     [SerializeField] int points;
-    [SerializeField] string name;
+    [SerializeField] string objectName;
     float hitPoints;
     Vector2Int graphicalPos;
     Vector2Int gooPos;
+
+    Vector2Int bottomLeftGridCoord;
+    Vector2Int topRightGridCoord;
+
     int graphicsToGooRatio;
     int sideLength;
     bool onFire;
@@ -62,11 +66,18 @@ public class StaticDestructable : MonoBehaviour
         return gooPos;
     }
 
+    void CheckSurroundingTiles()
+    {
+        int height = topRightGridCoord.y - bottomLeftGridCoord.y;
+        int width = topRightGridCoord.x - bottomLeftGridCoord.x;
+        //for(int x = bottomLeftGridCoord-1; x<height)
+    }
+
     void ObjectDestroy()
     {
         SwapToDestroyedModel();
         ObjectScorePair pair = new ObjectScorePair();
-        pair.name = name;
+        pair.name = objectName;
         pair.points = points;
         onDestructableDestroyed?.Invoke(pair);
     }

@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 using UnityEngine.UI;
 
 public class ToolSelector : MonoBehaviour
@@ -9,6 +10,8 @@ public class ToolSelector : MonoBehaviour
     public TMPro.TMP_Dropdown toolSelection;
     public LevelEditorComputeScript cs;
     public GameObject spriteImage;
+    public Tilemap walls;
+    private Tile selectedTile;
     private List<Vector2Int> tiles;
     private List<Vector2Int> selectedTiles;
 
@@ -40,14 +43,34 @@ public class ToolSelector : MonoBehaviour
         }
     }
 
+    public void TileSelection()
+    {
+        switch (tileDropdown.GetComponent<TMPro.TMP_Dropdown>().value)
+        {
+            case 0:
+                spriteImage.GetComponent<Image>().sprite = null;
+                selectedTile = null;
+                break;
+            case 1:
+                spriteImage.GetComponent<Image>().sprite = tileDropdown.GetComponent<TMPro.TMP_Dropdown>().options[1].image;
+                selectedTile = Resources.Load("testspritesheet_58") as Tile;
+                break;
+        }
+    }
+
     private void PlaceSelection()
     {
-        if(Input.GetMouseButtonDown(0))
+        Vector2 mouseCoordsFloat = Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, Camera.main.transform.position.z));
+        Vector2Int mouseCoords = new Vector2Int((int)mouseCoordsFloat.x, (int)mouseCoordsFloat.y);
+        if (Input.GetMouseButtonDown(0))
         {
-            cs.SetTypeOfManyTiles(selectedTiles, GridTileType.STATIC);
+            //cs.SetTypeOfManyTiles(selectedTiles, GridTileType.STATIC);
+            Vector3Int tileCoords = new Vector3Int((int)mouseCoords.x, (int)mouseCoords.y, 0);
+            Debug.Log(tileCoords);
+            walls.SetTile(tileCoords, selectedTile);
         }
-        Vector2 mouseCoords = Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, Camera.main.transform.position.z));
-        mouseCoords += new Vector2(50, 50);
+        Debug.Log(mouseCoords);
+        mouseCoords += new Vector2Int(50, 50);
         int xCoord = (int)(2560 * (mouseCoords.x / 100));
         int yCoord = (int)(2560 * (mouseCoords.y / 100));
         List<Vector2Int> gooCoords = new List<Vector2Int>();
@@ -56,7 +79,6 @@ public class ToolSelector : MonoBehaviour
             case 0:
                 return;
             case 1:
-                spriteImage.GetComponent<Image>().sprite = tileDropdown.GetComponent<TMPro.TMP_Dropdown>().options[1].image;
                 if (selectedTiles[0].x != xCoord && selectedTiles[0].y != yCoord)
                 {
                     for (int i = 0; i < 32; i++)

@@ -18,15 +18,23 @@ public class UIManager : MonoBehaviour
 
     int scoreCache = 0;
 
+    private void OnEnable()
+    {
+        //subscribe to some events
+    }
+    private void OnDisable()
+    {
+        //unsubscribe from events
+    }
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Space))
+/*        if (Input.GetKeyDown(KeyCode.Space))
         {
             ObjectScorePair pair = new ObjectScorePair();
             pair.name = "TEST";
             pair.points = Random.Range(0,500);
             ObjectDestroyed(pair);
-        }
+        }*/
     }
 
     void ObjectDestroyed(ObjectScorePair pair)
@@ -41,5 +49,10 @@ public class UIManager : MonoBehaviour
     {
         scoreCache = score;
         scoreDisplay.text = "SCORE: " + score;
+    }
+
+    void SetTimer(int time)
+    {
+        timeDisplay.text = "TIME: " + time;
     }
 }

@@ -62,6 +62,7 @@ Shader "Unlit/GooShader"
     else
     {
         colour = lerp(normalTemp, hotTemp, (data.y - 0.5f) * 2);
+
     }
     colour.a = ceil(data.x);
                 return colour;

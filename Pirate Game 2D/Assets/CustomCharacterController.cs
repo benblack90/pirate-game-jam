@@ -9,10 +9,12 @@ public class CustomCharacterController : MonoBehaviour
 
     public Camera _camera;
     [Range(0f,1.0f)]
-    public float _dampening;
+    public float _dampening = 0.9f;
     public float _characeterSpeed = 1.0f;
     [Range(0f, 0.5f)]
     public float _cameraMouseRatio = 0.15f;
+
+    public bool _rotatePlayer = false;
 
     private Rigidbody2D _rb;
     private Vector2 _playerCameraHalf;
@@ -65,7 +67,7 @@ public class CustomCharacterController : MonoBehaviour
         if (!lockCamera)
         {
             _mousePosition = mousePos;
-            //transform.up = direction;
+            if(_rotatePlayer) transform.up = direction;
         }
         Vector2 trans2D = new Vector2(this.transform.position.x, this.transform.position.y);
         _playerCameraHalf = trans2D  - (trans2D - _mousePosition) * _cameraMouseRatio;

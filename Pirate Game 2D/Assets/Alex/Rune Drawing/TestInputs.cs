@@ -6,7 +6,7 @@ public class TestInputs : MonoBehaviour
 {
     public GameObject runePage;
     public Transform canvas;
-
+    public Vector2 canvasOffset;
     private GameObject activePage;
 
     private void OnEnable()
@@ -48,7 +48,8 @@ public class TestInputs : MonoBehaviour
         {
             GameObject page = Instantiate(runePage, canvas);
             Vector3 position = Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, Camera.main.transform.position.z));
-            page.transform.position = new Vector3(position.x, position.y, 0);
+            
+            page.transform.position = new Vector3(position.x + canvasOffset.x, position.y + canvasOffset.y, 0);
             if (page.GetComponent<RectTransform>().anchoredPosition.x > canvas.GetComponent<RectTransform>().rect.width - 200f)
             {
                 page.GetComponent<RectTransform>().anchoredPosition = 

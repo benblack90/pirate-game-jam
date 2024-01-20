@@ -44,6 +44,36 @@ public class CustomCharacterController : MonoBehaviour
             CastSpell(SPELL_COLD, spellAccuracyTest);
         }
     }
+
+    private void OnEnable()
+    {
+        LineGenerator.OnRuneComplete += CastRune;
+    }
+
+    private void OnDisable()
+    {
+        LineGenerator.OnRuneComplete -= CastRune;
+    }
+
+    public void CastRune(RuneInfo info)
+    {
+        Debug.Log("LET'S FUCKING GOOOOOOOOO");
+        Debug.Log("ACCURACY: " + info.accuracy.ToString());
+        switch (info.type)
+        {
+            case RuneTypes.Ice:
+                Debug.Log("ICE");
+                break;
+            case RuneTypes.Fire:
+                Debug.Log("FIRE");
+                break;
+            case RuneTypes.Invalid:
+                Debug.Log("INVALID");
+                break;
+        }
+    }
+
+
     void FixedUpdate()
     {
         PlayerMove();

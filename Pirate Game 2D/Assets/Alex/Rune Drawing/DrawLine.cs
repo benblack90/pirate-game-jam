@@ -8,6 +8,14 @@ public class DrawLine : MonoBehaviour
     public LineRenderer lineRenderer;
     List<Vector2> points;
 
+    private void Update()
+    {
+        for(int i = 0; i < points.Count; i++)
+        {
+            Vector3 worldPos = new Vector3(points[i].x + Camera.main.transform.position.x, points[i].y + Camera.main.transform.position.y, 0);
+            lineRenderer.SetPosition(i, worldPos);
+        }
+    }
     void SetPoint(Vector2 point)
     {
         points.Add(point);

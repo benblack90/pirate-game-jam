@@ -12,8 +12,8 @@ public class LevelEditorComputeScript : MonoBehaviour
     public RenderTexture renderTexture;
     public Texture2D texCopy;
     public Material gooPlaneMaterial;
-    int xSize = 2560;
-    int ySize = 2560;
+    int xSize = 3200;
+    int ySize = 3200;
 
     void Start()
     {

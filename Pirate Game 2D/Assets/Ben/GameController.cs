@@ -29,7 +29,7 @@ public class GameController : MonoBehaviour
     }
     void InitLevel()
     {
-        levelList[currentLevel].InitLevel();
+        levelList[currentLevel].InitLevel(currentLevel);
     }
 
   

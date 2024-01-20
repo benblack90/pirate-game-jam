@@ -1,0 +1,52 @@
+{
+    "objectData": [
+        {
+            "objectType": 0,
+            "gooPos": {
+                "x": 1600,
+                "y": 1601
+            },
+            "graphicsPos": {
+                "x": 0.0,
+                "y": 0.0
+            }
+        },
+        {
+            "objectType": 0,
+            "gooPos": {
+                "x": 1607,
+                "y": 1601
+            },
+            "graphicsPos": {
+                "x": 1.0,
+                "y": 0.0
+            }
+        },
+        {
+            "objectType": 0,
+            "gooPos": {
+                "x": 1616,
+                "y": 1601
+            },
+            "graphicsPos": {
+                "x": 2.0,
+                "y": 0.0
+            }
+        },
+        {
+            "objectType": 0,
+            "gooPos": {
+                "x": 1623,
+                "y": 1601
+            },
+            "graphicsPos": {
+                "x": 3.0,
+                "y": 0.0
+            }
+        }
+    ],
+    "playerPos": {
+        "x": 0.0,
+        "y": 0.0
+    }
+}

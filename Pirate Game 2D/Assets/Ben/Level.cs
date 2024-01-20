@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 
 public class Level : MonoBehaviour
@@ -13,9 +14,9 @@ public class Level : MonoBehaviour
     List<GameObject> dynamicDestructables = new List<GameObject>();
     Vector2 playerStart;
 
-    public void InitLevel()
+    public void InitLevel(int level)
     {
-        ReadLevelFromFile();
+        ReadLevelFromFile(level);
     }
 
     // Update is called once per frame
@@ -91,11 +92,30 @@ public class Level : MonoBehaviour
 
 
 
-    void ReadLevelFromFile()
+    void ReadLevelFromFile(int level)
     {
         //TODO - make this do the level reading please, Alex
 
+        string levelName = "Level " + level;
+        TextAsset txtData = Resources.Load<TextAsset>(levelName);
+        string data = txtData.text;
+        LevelData levelData = JsonUtility.FromJson<LevelData>(data);
+        for(int i = 0; i < levelData.objectData.Count; i++)
+        {
+            switch (levelData.objectData[i].objectType)
+            {
+                case 0: //Wall
+                    StaticDestructable sd = new StaticDestructable(100, 
+                        new Vector2Int((int)levelData.objectData[i].graphicsPos.x, (int)levelData.objectData[i].graphicsPos.y), levelData.objectData[i].gooPos, 32, null, null);
+                    staticDestructables.Add(sd);
+                    break;
+            }
+        }
+        for(int i = 0; i < staticDestructables.Count; i++)
+        {
+            Debug.Log(staticDestructables[i].GetGooPos() + " " + levelData.objectData[i].gooPos);
+        }
         //this is temporary, just to make the game work in the absence of the actual level editor
-        playerStart = new Vector2(0,0);
+        playerStart = levelData.playerPos;
     }
 }

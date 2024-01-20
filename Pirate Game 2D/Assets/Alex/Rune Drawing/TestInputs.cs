@@ -47,7 +47,7 @@ public class TestInputs : MonoBehaviour
         if (Input.GetMouseButtonDown(1))
         {
             GameObject page = Instantiate(runePage, canvas);
-            Vector3 position = Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, Camera.main.transform.position.z)) * -1;
+            Vector3 position = Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, Camera.main.transform.position.z));
             page.transform.position = new Vector3(position.x, position.y, 0);
             if (page.GetComponent<RectTransform>().anchoredPosition.x > canvas.GetComponent<RectTransform>().rect.width - 200f)
             {

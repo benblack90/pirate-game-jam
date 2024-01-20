@@ -20,11 +20,15 @@ public class UIManager : MonoBehaviour
 
     private void OnEnable()
     {
+        StaticDestructable.onDestructableDestroyed += ObjectDestroyed;
         //subscribe to some events
     }
     private void OnDisable()
     {
+
         //unsubscribe from events
+        StaticDestructable.onDestructableDestroyed -= ObjectDestroyed;
+
     }
     private void Update()
     {

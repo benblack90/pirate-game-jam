@@ -18,6 +18,7 @@ public class CustomCharacterController : MonoBehaviour
     public float _castRange = 5.0f;
     [Range(0.0f,360.0f)]
     public float _castFieldOfView = 90.0f;
+    public float _aimDirection = 0.0f;
 
     [Header("Camera Settings")]
     public Camera _camera;
@@ -31,7 +32,7 @@ public class CustomCharacterController : MonoBehaviour
     private Vector2 _playerCameraHalf;
     private Vector2 _mousePosition;
     private bool lockCamera = false;
-    private float _aimDirection = 0.0f;
+    
 
     private int SPELL_HOT = 0;
     private int SPELL_COLD = 1;

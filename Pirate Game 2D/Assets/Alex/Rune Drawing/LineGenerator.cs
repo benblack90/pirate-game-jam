@@ -410,7 +410,8 @@ public class LineGenerator : MonoBehaviour
             {
             if (activeLine)
             {
-                Vector3 mousePos = Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, Camera.main.transform.position.z));
+                Vector3 mousePos = Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, Camera.main.transform.position.z))
+                    - new Vector3(Camera.main.transform.position.x, Camera.main.transform.position.y, 0);
                 activeLine.FinishLine(mousePos);
                 lines.Add(activeLine);
                 activeLine = null;
@@ -432,14 +433,16 @@ public class LineGenerator : MonoBehaviour
         
         if(activeLine != null)
         {
-            Vector3 mousePos = Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, Camera.main.transform.position.z));
+            Vector3 mousePos = Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, Camera.main.transform.position.z))
+                - new Vector3(Camera.main.transform.position.x, Camera.main.transform.position.y, 0);
             activeLine.UpdateLine(mousePos);
         }
     }
 
     private bool InsideBox()
     {
-        Vector2 mousePos = Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, Camera.main.transform.position.z));
+        Vector2 mousePos = Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, Camera.main.transform.position.z))
+            - new Vector3(Camera.main.transform.position.x, Camera.main.transform.position.y, 0);
         return mousePos.x > transform.position.x && mousePos.x < transform.position.x + width 
             && mousePos.y < transform.position.y && mousePos.y > transform.position.y - height;
     }

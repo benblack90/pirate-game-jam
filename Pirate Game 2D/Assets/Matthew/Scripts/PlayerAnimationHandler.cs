@@ -6,11 +6,15 @@ public class PlayerAnimationHandler : MonoBehaviour
 {
     [SerializeField] Animator _animator;
     [SerializeField] CustomCharacterController _characterController;
+    [SerializeField] Transform _bookTransform;
+
     public bool _isWalking = false;
     public bool _facingRight = true;
 
     private void Update()
     {
+
+        _bookTransform.localRotation = Quaternion.Euler( new Vector3(_bookTransform.localRotation.x, _bookTransform.localRotation.y, _characterController._aimDirection+90));
         float horizontalInput = Input.GetAxis("Horizontal");
         if ( horizontalInput!= 0 || Input.GetAxis("Vertical") != 0)
         {

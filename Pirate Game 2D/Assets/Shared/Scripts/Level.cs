@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.IO;
 using UnityEngine;
 using UnityEngine.Tilemaps;
@@ -12,7 +13,7 @@ public class Level : MonoBehaviour
     public GameObject playerModel;
     public Camera mainCam;
 
-    List<StaticDestructable> staticDestructables = new List<StaticDestructable>();
+    Dictionary<Vector2Int, StaticDestructable> staticDestructables = new Dictionary<Vector2Int, StaticDestructable>();
     List<GameObject> dynamicDestructables = new List<GameObject>();
     Vector2 playerStart;
 
@@ -24,45 +25,50 @@ public class Level : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        UpdateStatics();
+        
         UpdateDynamics();
+    }
 
+    IEnumerator CheckStaticsLoop()
+    {
+        UpdateStatics();
+
+        yield return new WaitForSeconds(1.0f);
     }
 
     void UpdateStatics()
     {
-        foreach(StaticDestructable o in staticDestructables)
+        foreach(KeyValuePair<Vector2Int, StaticDestructable> o in staticDestructables) 
         {
-            o.CheckFireDamage();
+            o.Value.CheckFireDamage();
            
-            //assuming a 16x16 goo tile area per 32x32 block, here
-            for(int i = 0; i < 16; i++)
+            //assuming a 8x8 goo tile area per 32x32 block, here
+            for(int i = 0; i < 8; i++)
             {
                 
-                float leftBorder = gooController.GetTileValue(o.GetGooPos().x - 1, o.GetGooPos().y + i, GridChannel.TYPE);
-                float rightBorder = gooController.GetTileValue(o.GetGooPos().x + 17, o.GetGooPos().y + i, GridChannel.TYPE);
-                float topBorder = gooController.GetTileValue(o.GetGooPos().x + i, o.GetGooPos().y - 1, GridChannel.TYPE);
-                float bottomBorder = gooController.GetTileValue(o.GetGooPos().x + i, o.GetGooPos().y + 17, GridChannel.TYPE);
+                float leftBorder = gooController.GetTileValue(o.Value.GetGooPos().x - 1, o.Value.GetGooPos().y + i, GridChannel.TYPE);
+                float rightBorder = gooController.GetTileValue(o.Value.GetGooPos().x + 9, o.Value.GetGooPos().y + i, GridChannel.TYPE);
+                float topBorder = gooController.GetTileValue(o.Value.GetGooPos().x + i, o.Value.GetGooPos().y - 1, GridChannel.TYPE);
+                float bottomBorder = gooController.GetTileValue(o.Value.GetGooPos().x + i, o.Value.GetGooPos().y + 9, GridChannel.TYPE);
 
                 if(leftBorder == (float) GridTileType.GOO_UNSPREADABLE || leftBorder == (float) GridTileType.GOO_SPREADABLE)
                 {
                     //the -200.0f is arbitrary: essentially, I'm scaling down the temperature damage, so only stuff above 200 hurts
                     //staticDestructables ignore negative damage - see the damage method
-                    o.Damage(gooController.GetTileValue(o.GetGooPos().x - 1, o.GetGooPos().y + i, GridChannel.TEMP) - 200.0f);
+                    o.Value.Damage(gooController.GetTileValue(o.Value.GetGooPos().x - 1, o.Value.GetGooPos().y + i, GridChannel.TEMP) - 200.0f);
                 }
                 else if(rightBorder == (float)GridTileType.GOO_UNSPREADABLE || rightBorder == (float)GridTileType.GOO_SPREADABLE)
                 {
-                    o.Damage(gooController.GetTileValue(o.GetGooPos().x +17, o.GetGooPos().y + i, GridChannel.TEMP) - 200.0f);
+                    o.Value.Damage(gooController.GetTileValue(o.Value.GetGooPos().x +9, o.Value.GetGooPos().y + i, GridChannel.TEMP) - 200.0f);
                 }
                 else if (topBorder == (float)GridTileType.GOO_UNSPREADABLE || topBorder == (float)GridTileType.GOO_SPREADABLE)
                 {
-                    o.Damage(gooController.GetTileValue(o.GetGooPos().x + i, o.GetGooPos().y - 1, GridChannel.TEMP) - 200.0f);
+                    o.Value.Damage(gooController.GetTileValue(o.Value.GetGooPos().x + i, o.Value.GetGooPos().y - 1, GridChannel.TEMP) - 200.0f);
                 }
                 else if (bottomBorder == (float)GridTileType.GOO_UNSPREADABLE || bottomBorder == (float)GridTileType.GOO_SPREADABLE)
                 {
-                    o.Damage(gooController.GetTileValue(o.GetGooPos().x + i, o.GetGooPos().y + 17, GridChannel.TEMP) - 200.0f);
+                    o.Value.Damage(gooController.GetTileValue(o.Value.GetGooPos().x + i, o.Value.GetGooPos().y + 9, GridChannel.TEMP) - 200.0f);
                 }
-
             }
             
             //check if adjacent to goo'd tile

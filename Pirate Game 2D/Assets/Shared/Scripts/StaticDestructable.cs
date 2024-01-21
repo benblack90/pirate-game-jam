@@ -4,10 +4,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using static StaticDestructable;
 
-public class StaticDestructable : MonoBehaviour
+public class StaticDestructable
 {
-    [SerializeField] int points;
-    [SerializeField] string objectName;
+    int points;
+    string objectName;
     float hitPoints;
     Vector2Int graphicalPos;
     Vector2Int gooPos;
@@ -23,8 +23,8 @@ public class StaticDestructable : MonoBehaviour
     {
         this.hitPoints = hitPoints;
         this.graphicalPos = graphicalPos;
-        this.gooPos = graphicalPos * 8;
-        this.onFire = false;
+        gooPos = graphicalPos * 8;
+        onFire = false;
         this.destructModel = destructModel;
         this.currentModel = currentModel;
     }
@@ -33,21 +33,6 @@ public class StaticDestructable : MonoBehaviour
 
     public delegate void OnDestructableDestroyed(ObjectScorePair pair);
     public static event OnDestructableDestroyed onDestructableDestroyed; //delegate called when a destructable is destroyed
-
-    // Start is called before the first frame update
-    void Start()
-    {
-        //current specs say 32 x 32 pixel square graphics, with 16 x 16 goo grid
-        /*sideLength = 32;
-        graphicsToGooRatio = 2;
-        gooPos = graphicalPos / graphicsToGooRatio;
-        hitPoints = 100;*/
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-    }
 
     public void Damage(float damage)
     {

@@ -17,9 +17,10 @@ public class AutoPlaceTile : MonoBehaviour
     public TileBase baseTile;
 
     private int numberOfUpdates = 0;
+    private PlayerValues playerValues;
     void Start()
     {
-        
+        playerValues = this.GetComponent<PlayerValues>();
     }
 
 
@@ -45,7 +46,7 @@ public class AutoPlaceTile : MonoBehaviour
                             Debug.Log(tiles[i].tile.ToString());
                             tileMapBase.SetTile(tiles[i].position, baseTile);
                             tileMapCover.SetTile(tiles[i].position, coverTile);
-                            tileMapFloor.SetTile(tiles[i].position, null);
+                            //tileMapFloor.SetTile(tiles[i].position, null);
                         }
                         else
                         {

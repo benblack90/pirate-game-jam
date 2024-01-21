@@ -28,6 +28,7 @@ public class AutoPlaceTile : MonoBehaviour
         bool detectUpdates = false;
         Tilemap.tilemapTileChanged += delegate (Tilemap tilemap, Tilemap.SyncTile[] tiles)
         {
+            //Debug.Log("EDITED");
             int numUpdates = tiles.Length;
             if (numberOfUpdates != numUpdates)
             {
@@ -42,6 +43,13 @@ public class AutoPlaceTile : MonoBehaviour
                             Debug.Log(tiles[i].tile.ToString());
                             tileMapBase.SetTile(tiles[i].position, baseTile);
                             tileMapCover.SetTile(tiles[i].position, coverTile);
+                        }
+                        else
+                        {
+                            //Debug.Log(tiles[i].tile.ToString());
+                            tileMapCover.SetTile(tiles[i].position, null);
+                            tileMapBase.SetTile(tiles[i].position, null);
+                            
                         }
                     }
                 }

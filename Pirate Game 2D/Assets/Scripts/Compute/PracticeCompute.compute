@@ -61,7 +61,7 @@ void Spread(uint3 id)
     values.z = 0.0f;
    
     values = TargetTempEntropy(values, values.x * 0.5f);
-    values.y -= values.x;
+    values.y -=  1.0f *values.x;
     
     float2 temp = id.xy;
     temp.x += 1;

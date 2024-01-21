@@ -23,8 +23,8 @@ public class PracticeComputeScript : MonoBehaviour
     public RenderTexture renderTexture;
     public Texture2D texCopy;
     public Material gooPlaneMaterial;
-    int xSize = 3200;
-    int ySize = 3200;
+    int xSize = 1600;
+    int ySize = 1600;
 
     void Start()
     {
@@ -73,15 +73,21 @@ public class PracticeComputeScript : MonoBehaviour
     IEnumerator UpdateGoo()
     {
         DoImportantBullshit();
-        WriteToGooTile(1600, 1600, GridChannel.TYPE, 1);
-        WriteToGooTile(1600, 1600, GridChannel.TEMP, 255);
-        WriteToGooTile(1600, 1600, GridChannel.GOOAGE, 0);
-        WriteToGooTile(1600, 1600, GridChannel.TARGET_TEMP, 255);
+        WriteToGooTile(0, 0, GridChannel.TYPE, 1);
+        WriteToGooTile(0, 0, GridChannel.TEMP, 255);
+        WriteToGooTile(0, 0, GridChannel.GOOAGE, 0);
+        WriteToGooTile(0, 0, GridChannel.TARGET_TEMP, 255);
 
-/*        WriteToGooTile(700, 1000, GridChannel.TYPE, 1);
-        WriteToGooTile(700, 1000, GridChannel.TEMP, 20);
-        WriteToGooTile(700, 1000, GridChannel.GOOAGE, 0);
-        WriteToGooTile(700, 1000, GridChannel.TARGET_TEMP, 20)*/;
+        WriteToGooTile(50, 50, GridChannel.TYPE, 1);
+        WriteToGooTile(50, 50, GridChannel.TEMP, 255);
+        WriteToGooTile(50, 50, GridChannel.GOOAGE, 0);
+        WriteToGooTile(50, 50, GridChannel.TARGET_TEMP, 0);
+
+        /*        WriteToGooTile(700, 1000, GridChannel.TYPE, 1);
+                WriteToGooTile(700, 1000, GridChannel.TEMP, 20);
+                WriteToGooTile(700, 1000, GridChannel.GOOAGE, 0);
+                WriteToGooTile(700, 1000, GridChannel.TARGET_TEMP, 20)*/
+        ;
 
 
         /*        WriteToGooTile(2000, 2000, GridChannel.TYPE, 1);
@@ -103,7 +109,6 @@ public class PracticeComputeScript : MonoBehaviour
         }
         SendTexToGPU();
 
-        Debug.Log(GetPixelFromGPU(2000, 2000));
         
         WaitForSeconds wfs = new WaitForSeconds(0.05f);
         cs.SetInt("aspectX", xSize);

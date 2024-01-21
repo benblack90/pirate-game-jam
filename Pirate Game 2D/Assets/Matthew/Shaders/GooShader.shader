@@ -51,20 +51,20 @@ Shader "Unlit/GooShader"
                 // sample the texture
                 fixed4 data = tex2D(_MainTex, i.uv);
     float4 coldTemp = { 0.4, 1, 1, 1 };
-    float4 normalTemp = { 0.8, 0, 0.8, 1 };
+    float4 normalTemp = { 0.4, 0, 0.4, 1 };
     float4 hotTemp = { 1, 0.2, 0, 1 };
     float4 colour;
     if (data.y <= 0.5f)
     {
-        colour = lerp(coldTemp, normalTemp, data.y * 2);
+        colour = lerp(coldTemp, normalTemp, (data.y * 2) * (data.y * 2));
 
     }
     else
     {
-        colour = lerp(normalTemp, hotTemp, (data.y - 0.5f) * 2);
+        colour = lerp(normalTemp, hotTemp, ((data.y - 0.5f) * 2) * ((data.y - 0.5f) * 2));
 
     }
-    colour.a = ceil(data.x);
+    colour.a = ceil(data.x) * (data.z * data.z);
                 return colour;
             }
             ENDCG

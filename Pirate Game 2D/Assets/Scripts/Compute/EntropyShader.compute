@@ -73,9 +73,9 @@ void HeatConduction(uint3 id)
     float4 values = Result[id.xy];
     float targetTotal = 0;
     int count = 0;
-    for (int i = -11; i < 10; i++)
+    for (int i = -3; i < 2; i++)
     {
-        for (int j = -11; j < 10; j++)
+        for (int j = -3; j < 2; j++)
         {
             float2 temp = { i, j };
 

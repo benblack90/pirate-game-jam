@@ -252,7 +252,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tileMapCover: {fileID: 1600626478}
   tileMapBase: {fileID: 2053847117}
-  tileMapFloor: {fileID: 0}
   coverTile: {fileID: 11400000, guid: e466ca9ae4dbd4e43bf54c297ef3d25e, type: 2}
   baseTile: {fileID: 11400000, guid: 9122230a4bf50464e916584e309ae9fb, type: 2}
 --- !u!156049354 &559768800
@@ -296,7 +295,7 @@ GameObject:
   - component: {fileID: 828623330}
   - component: {fileID: 828623329}
   - component: {fileID: 828623328}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Main Camera
   m_TagString: MainCamera
   m_Icon: {fileID: 0}
@@ -350,7 +349,7 @@ Camera:
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 55
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 0}
   m_TargetDisplay: 0
@@ -440,6 +439,14 @@ PrefabInstance:
     - target: {fileID: 8802904933875937998, guid: 475233161d49e9e41a51c0bafa8ead9c, type: 3}
       propertyPath: m_Name
       value: GooPlane
+      objectReference: {fileID: 0}
+    - target: {fileID: 8802904933875937998, guid: 475233161d49e9e41a51c0bafa8ead9c, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 8802904933875937998, guid: 475233161d49e9e41a51c0bafa8ead9c, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

@@ -59,4 +59,9 @@ public class UIManager : MonoBehaviour
     {
         timeDisplay.text = "TIME: " + time;
     }
+
+    void SetHealth(float healthPercentage)
+    {
+        healthBar.rectTransform.localScale = new Vector3(healthPercentage,1,1);
+    }
 }

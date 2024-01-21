@@ -11,7 +11,7 @@ public class AutoPlaceTile : MonoBehaviour
 
     public Tilemap tileMapCover;
     public Tilemap tileMapBase;
-    public Tilemap tileMapFloor;
+    //public Tilemap tileMapFloor;
 
     public TileBase coverTile;
     public TileBase baseTile;

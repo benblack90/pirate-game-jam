@@ -15,19 +15,15 @@ public class StaticDestructable : MonoBehaviour
     Vector2Int bottomLeftGridCoord;
     Vector2Int topRightGridCoord;
 
-    int graphicsToGooRatio;
-    int sideLength;
     bool onFire;
     GameObject destructModel;
     GameObject currentModel;
 
-    public StaticDestructable(float hitPoints, Vector2Int graphicalPos, Vector2Int gooPos, int sideLength, GameObject destructModel, GameObject currentModel)
+    public StaticDestructable(float hitPoints, Vector2Int graphicalPos, GameObject destructModel, GameObject currentModel)
     {
         this.hitPoints = hitPoints;
         this.graphicalPos = graphicalPos;
-        this.gooPos = gooPos;
-        this.graphicsToGooRatio = 4;
-        this.sideLength = sideLength;
+        this.gooPos = graphicalPos * 8;
         this.onFire = false;
         this.destructModel = destructModel;
         this.currentModel = currentModel;

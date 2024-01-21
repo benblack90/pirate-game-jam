@@ -9,13 +9,18 @@ public class Level : MonoBehaviour
 {
 
     public PracticeComputeScript gooController;
-    public Tilemap destructableWall;
+    public Tilemap destructableWalls;
     public GameObject playerModel;
     public Camera mainCam;
 
     Dictionary<Vector2Int, StaticDestructable> staticDestructables = new Dictionary<Vector2Int, StaticDestructable>();
     List<GameObject> dynamicDestructables = new List<GameObject>();
     Vector2 playerStart;
+
+    private void Start()
+    {
+        LoadLevel();
+    }
 
     public void InitLevel()
     {
@@ -103,7 +108,17 @@ public class Level : MonoBehaviour
     void LoadLevel()
     {
         //TODO - make this do the level reading please, Alex
-
+        for (int x = destructableWalls.cellBounds.min.x; x < destructableWalls.cellBounds.max.x; x++)
+        {
+            for (int y = destructableWalls.cellBounds.min.y; y < destructableWalls.cellBounds.max.y; y++)
+            {
+                if (destructableWalls.GetTile(new Vector3Int(x, y, 0)) != null)
+                {
+                    Vector2Int graphicalPos = new Vector2Int(x, y);
+                    staticDestructables.Add(graphicalPos, new StaticDestructable(100, graphicalPos, null, null));
+                }
+            }
+        }
 
         //this is temporary, just to make the game work in the absence of the actual level editor
         playerStart = new Vector2Int(0, 0);

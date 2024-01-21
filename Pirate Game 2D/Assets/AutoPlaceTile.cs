@@ -11,6 +11,7 @@ public class AutoPlaceTile : MonoBehaviour
 
     public Tilemap tileMapCover;
     public Tilemap tileMapBase;
+    public Tilemap tileMapFloor;
 
     public TileBase coverTile;
     public TileBase baseTile;
@@ -43,6 +44,7 @@ public class AutoPlaceTile : MonoBehaviour
                             Debug.Log(tiles[i].tile.ToString());
                             tileMapBase.SetTile(tiles[i].position, baseTile);
                             tileMapCover.SetTile(tiles[i].position, coverTile);
+                            tileMapFloor.SetTile(tiles[i].position, null);
                         }
                         else
                         {

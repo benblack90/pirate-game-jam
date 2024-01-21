@@ -147,9 +147,10 @@ public class ToolSelector : MonoBehaviour
             walls.SetTile(tileCoords, selectedTile);
             staticObjects.Add(mouseCoords, ObjectType.Wall);
         }
-        mouseCoords += new Vector2Int((int)gooPlane.transform.localScale.x, (int)gooPlane.transform.localScale.y);
+        mouseCoords += new Vector2Int((int)gooPlane.transform.localScale.x/2, (int)gooPlane.transform.localScale.y/2);
         int xCoord = (int)(3200 * (mouseCoords.x / gooPlane.transform.localScale.x));
         int yCoord = (int)(3200 * (mouseCoords.y / gooPlane.transform.localScale.y)) + 1;
+        Debug.Log(xCoord + ", " + yCoord);
         List<Vector2Int> gooCoords = new List<Vector2Int>();
         if (selectedTiles[0].x != xCoord || selectedTiles[0].y != yCoord)
         {
@@ -163,7 +164,7 @@ public class ToolSelector : MonoBehaviour
         }
         if (gooCoords.Count > 0)
         {
-            Vector2 screenCoords = Camera.main.WorldToScreenPoint(mouseCoords - new Vector2(gooPlane.transform.localScale.x, gooPlane.transform.localScale.y)) +
+            Vector2 screenCoords = Camera.main.WorldToScreenPoint(mouseCoords - new Vector2(gooPlane.transform.localScale.x/2, gooPlane.transform.localScale.y/2)) +
                 new Vector3(spriteImage.GetComponent<RectTransform>().rect.width, spriteImage.GetComponent<RectTransform>().rect.height, 0);
             spriteImage.transform.position = screenCoords;
             selectedTiles = gooCoords;
@@ -177,7 +178,7 @@ public class ToolSelector : MonoBehaviour
         {
             floor.SetTile(tileCoords, selectedTile);
         }
-        mouseCoords += new Vector2Int((int)gooPlane.transform.localScale.x, (int)gooPlane.transform.localScale.y);
+        mouseCoords += new Vector2Int((int)gooPlane.transform.localScale.x/2, (int)gooPlane.transform.localScale.y/2);
         int xCoord = (int)(3200 * (mouseCoords.x / gooPlane.transform.localScale.x));
         int yCoord = (int)(3200 * (mouseCoords.y / gooPlane.transform.localScale.y)) + 1;
         List<Vector2Int> gooCoords = new List<Vector2Int>();
@@ -193,7 +194,7 @@ public class ToolSelector : MonoBehaviour
         }
         if (gooCoords.Count > 0)
         {
-            Vector2 screenCoords = Camera.main.WorldToScreenPoint(mouseCoords - new Vector2(gooPlane.transform.localScale.x, gooPlane.transform.localScale.y)) +
+            Vector2 screenCoords = Camera.main.WorldToScreenPoint(mouseCoords - new Vector2(gooPlane.transform.localScale.x/2, gooPlane.transform.localScale.y/2)) +
                 new Vector3(spriteImage.GetComponent<RectTransform>().rect.width, spriteImage.GetComponent<RectTransform>().rect.height, 0);
             spriteImage.transform.position = screenCoords;
             selectedTiles = gooCoords;

@@ -62,6 +62,9 @@ public class LevelEditorComputeScript : MonoBehaviour
     IEnumerator UpdateGoo()
     {
         DoImportantBullshit();
+        WriteToGooTile(0, 0, GridChannel.TYPE, 1);
+        WriteToGooTile(0, 0, GridChannel.TEMP, 255);
+        SendTexToGPU();
         WaitForSeconds wfs = new WaitForSeconds(0.03f);
         cs.SetInt("aspectX", xSize);
         cs.SetInt("aspectY", ySize);

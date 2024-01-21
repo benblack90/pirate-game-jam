@@ -252,6 +252,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tileMapCover: {fileID: 1600626478}
   tileMapBase: {fileID: 2053847117}
+  tileMapFloor: {fileID: 0}
   coverTile: {fileID: 11400000, guid: e466ca9ae4dbd4e43bf54c297ef3d25e, type: 2}
   baseTile: {fileID: 11400000, guid: 9122230a4bf50464e916584e309ae9fb, type: 2}
 --- !u!156049354 &559768800
@@ -459,7 +460,7 @@ GameObject:
   - component: {fileID: 1267159928}
   - component: {fileID: 1267159932}
   m_Layer: 0
-  m_Name: Circle
+  m_Name: Player
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -608,10 +609,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 88d3ec315d5da0949ab0f619fb8987e2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _characeterSpeed: 10
+  _castRange: 5
+  _castFieldOfView: 90
+  _aimDirection: 0
   _camera: {fileID: 828623329}
   _dampening: 0
-  _characeterSpeed: 10
   _cameraMouseRatio: 0.15
+  _rotatePlayer: 0
 --- !u!1 &1424860774
 GameObject:
   m_ObjectHideFlags: 0

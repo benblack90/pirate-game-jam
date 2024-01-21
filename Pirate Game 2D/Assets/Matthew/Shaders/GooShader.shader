@@ -51,7 +51,7 @@ Shader "Unlit/GooShader"
                 // sample the texture
                 fixed4 data = tex2D(_MainTex, i.uv);
     float4 coldTemp = { 0.4, 1, 1, 1 };
-    float4 normalTemp = { 0, 0, 0, 1 };
+    float4 normalTemp = { 0.8, 0, 0.8, 1 };
     float4 hotTemp = { 1, 0.2, 0, 1 };
     float4 colour;
     if (data.y <= 0.5f)

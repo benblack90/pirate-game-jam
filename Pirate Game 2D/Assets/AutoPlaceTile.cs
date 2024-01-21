@@ -34,6 +34,7 @@ public class AutoPlaceTile : MonoBehaviour
             if (numberOfUpdates != numUpdates)
             {
                 Debug.Log(numberOfUpdates);
+    
                 if (tilemap == tileMapBase)
                 {
                     Debug.Log(tiles.Length);
@@ -53,6 +54,7 @@ public class AutoPlaceTile : MonoBehaviour
                             tileMapBase.SetTile(tiles[i].position, null);
                             
                         }
+
                     }
                 }
                 numberOfUpdates = numUpdates;

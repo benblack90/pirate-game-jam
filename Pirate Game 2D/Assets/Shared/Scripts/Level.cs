@@ -4,6 +4,7 @@ using System.Collections.Specialized;
 using System.IO;
 using UnityEngine;
 using UnityEngine.Tilemaps;
+using static UnityEditor.PlayerSettings;
 
 public class Level : MonoBehaviour
 {
@@ -49,8 +50,8 @@ public class Level : MonoBehaviour
 
     // Update is called once per frame
     void Update()
-    {        
-        if(gooRelease)
+    {
+        if (gooRelease)
         {
             timer -= Time.deltaTime;
         }
@@ -60,19 +61,19 @@ public class Level : MonoBehaviour
     IEnumerator CheckStaticsLoop()
     {
         WaitForSeconds wfs = new WaitForSeconds(1.0f);
-        while(true)
+        while (true)
         {
             ExecuteDeathRowStatics();
             UpdateStatics();
 
             yield return wfs;
         }
-        
+
     }
 
     void ExecuteDeathRowStatics()
     {
-        if(deathRow.Count > 0)
+        if (deathRow.Count > 0)
         {
             foreach (Vector2Int pos in deathRow)
             {
@@ -80,12 +81,12 @@ public class Level : MonoBehaviour
             }
 
             deathRow.Clear();
-        }        
+        }
     }
 
     void UpdateStatics()
     {
-        foreach(KeyValuePair<Vector2Int, StaticDestructable> o in staticDestructables) 
+        foreach (KeyValuePair<Vector2Int, StaticDestructable> o in staticDestructables)
         {
             o.Value.CheckFireDamage();
             CheckAdjacentGoo(o);
@@ -110,25 +111,25 @@ public class Level : MonoBehaviour
                 //the -200.0f is arbitrary: essentially, I'm scaling down the temperature damage, so only stuff above 200 hurts
                 //staticDestructables ignore negative damage - see the damage method
                 gooTemp = gooController.GetTileValue(o.Value.GetGooPos().x - 1, o.Value.GetGooPos().y + i, GridChannel.TEMP);
-                o.Value.Damage(gooTemp - 180.0f);
+                o.Value.Damage(gooTemp - 200.0f);
                 o.Value.IgnitionFromGooCheck(gooTemp);
             }
             else if (rightBorder == (float)GridTileType.GOO_UNSPREADABLE || rightBorder == (float)GridTileType.GOO_SPREADABLE)
             {
                 gooTemp = gooController.GetTileValue(o.Value.GetGooPos().x + 9, o.Value.GetGooPos().y + i, GridChannel.TEMP);
-                o.Value.Damage(gooTemp - 180.0f);
+                o.Value.Damage(gooTemp - 200.0f);
                 o.Value.IgnitionFromGooCheck(gooTemp);
             }
             else if (topBorder == (float)GridTileType.GOO_UNSPREADABLE || topBorder == (float)GridTileType.GOO_SPREADABLE)
             {
                 gooTemp = gooController.GetTileValue(o.Value.GetGooPos().x + i, o.Value.GetGooPos().y - 1, GridChannel.TEMP);
-                o.Value.Damage(gooTemp - 180.0f);
+                o.Value.Damage(gooTemp - 200.0f);
                 o.Value.IgnitionFromGooCheck(gooTemp);
             }
             else if (bottomBorder == (float)GridTileType.GOO_UNSPREADABLE || bottomBorder == (float)GridTileType.GOO_SPREADABLE)
             {
                 gooTemp = gooController.GetTileValue(o.Value.GetGooPos().x + i, o.Value.GetGooPos().y + 9, GridChannel.TEMP);
-                o.Value.Damage(gooTemp - 180.0f);
+                o.Value.Damage(gooTemp - 200.0f);
                 o.Value.IgnitionFromGooCheck(gooTemp);
             }
         }
@@ -140,9 +141,9 @@ public class Level : MonoBehaviour
         topRight.x = graphicalPos.x + 1;
         topRight.y = graphicalPos.y + 1;
 
-        for(int x = graphicalPos.x * 8; x < topRight.x * 8; x++)
+        for (int x = graphicalPos.x * 8; x < topRight.x * 8; x++)
         {
-            for(int y = graphicalPos.y * 8; y < topRight.y * 8; y++)
+            for (int y = graphicalPos.y * 8; y < topRight.y * 8; y++)
             {
                 gooController.WriteToGooTile(x, y, GridChannel.TYPE, 0.0f);
             }
@@ -152,7 +153,20 @@ public class Level : MonoBehaviour
 
     void CheckAdjacentStatics(KeyValuePair<Vector2Int, StaticDestructable> o)
     {
-
+        if (o.Value.onFire)
+        {
+            for(int dist = 1; dist < 3; dist++)
+            {
+                for (int i = 0; i < dist * 2; i++)
+                {
+                    StaticDestructable n;
+                    if(staticDestructables.TryGetValue(new Vector2Int(o.Key.x + dist - i, o.Key.y - dist), out n)) n.IgniteFromAdjacency(dist);
+                    if(staticDestructables.TryGetValue(new Vector2Int(o.Key.x + i - dist, o.Key.y + dist), out n)) n.IgniteFromAdjacency(dist);
+                    if(staticDestructables.TryGetValue(new Vector2Int(o.Key.x - dist, o.Key.y + i - dist), out n)) n.IgniteFromAdjacency(dist);
+                    if(staticDestructables.TryGetValue(new Vector2Int(o.Key.x + dist, o.Key.y + dist - i), out n)) n.IgniteFromAdjacency(dist);                    
+                }
+            }      
+        }
     }
 
     void UpdateDynamics()
@@ -160,10 +174,10 @@ public class Level : MonoBehaviour
         foreach (GameObject o in dynamicDestructables)
         {
             //check if adjacent to goo'd tile
-                //check temperature
-                //replace with burning/burnt model
-                //give points to player
-                //remove from dynamicDestructables list
+            //check temperature
+            //replace with burning/burnt model
+            //give points to player
+            //remove from dynamicDestructables list
         }
     }
 

@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using static StaticDestructable;
+using System.Runtime.ExceptionServices;
 
 public class StaticDestructable
 {
@@ -17,7 +18,7 @@ public class StaticDestructable
 
     public PracticeComputeScript gooController;
 
-    bool onFire;
+    public bool onFire;
     GameObject destructModel;
     GameObject currentModel;
 
@@ -40,7 +41,6 @@ public class StaticDestructable
     {
         if (damage <= 0) return;
         hitPoints -= damage;
-        Debug.Log(hitPoints);
         if (hitPoints <= 0) ObjectDestroy();
     }
 
@@ -48,6 +48,13 @@ public class StaticDestructable
     {
         if (onFire) return;
         onFire = (gooTemp > 240) ? true : false;
+    }
+
+    public void IgniteFromAdjacency(int dist)
+    {
+        if (onFire) return;
+        float chance = (dist > 1) ? 0.25f : 0.5f;
+        onFire = (chance < UnityEngine.Random.Range(0.0f, 1.0f)) ? true : false;
     }
 
     public void CheckFireDamage()

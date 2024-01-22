@@ -12,15 +12,35 @@ public class ObjectDestroyedDisplay : MonoBehaviour
     [SerializeField] Animator animator;
     List<string> scoreMessages = new List<string>();
 
+    bool active = false;
+    float fadeTimer = 2.0f;
+
     private void OnEnable()
     {
         mostRecentObjectDisplay.text = string.Empty;
         middleRecentObjectDisplay.text = string.Empty;
         lastObjectDisplay.text = string.Empty;
     }
+
+    private void Update()
+    {
+        if (active)
+        {
+            fadeTimer -= Time.deltaTime;
+            Color fadedColour = new Color(1, 1, 1, fadeTimer);
+            mostRecentObjectDisplay.color = fadedColour;
+            middleRecentObjectDisplay.color = fadedColour;
+            lastObjectDisplay.color = fadedColour;
+
+            if (fadeTimer <= 0) active = false;
+        }
+    }
+
     public void AddObject(ObjectScorePair pair)
     {
         string newMessage = "Destroyed " + pair.name + "! " + pair.points + "pts!";
+        fadeTimer = 2.0f;
+        active = true;
         animator.SetTrigger("ActivateTrigger");
         switch (scoreMessages.Count)
         {

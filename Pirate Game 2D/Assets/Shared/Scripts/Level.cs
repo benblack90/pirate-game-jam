@@ -157,7 +157,7 @@ public class Level : MonoBehaviour
         {
             for(int dist = 1; dist < 3; dist++)
             {
-                for (int i = 0; i < dist * 2; i++)
+                for (int i = 0; i < dist * 2 + 1; i++)
                 {
                     StaticDestructable n;
                     if(staticDestructables.TryGetValue(new Vector2Int(o.Key.x + dist - i, o.Key.y - dist), out n)) n.IgniteFromAdjacency(dist);

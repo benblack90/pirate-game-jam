@@ -51,21 +51,21 @@ void Entropy(uint3 id)
     float4 values = Result[id.xy];
     values = TargetTempEntropy(values, targetEntropyMult);
     if (values.y == values.w)return;
-    int sign = (values.w - values.y) / abs((values.w - values.y));
-    values.y += sign * tempEntropyMult;
+        int sign = (values.w - values.y) / abs((values.w - values.y));
+        values.y += sign * tempEntropyMult;
     
-    if (values.y < values.w && sign < 0)
-    {
-        values.y = values.w;
-    }
-    else if (values.y > values.w && sign > 0)
-    {
-        values.y = values.w;
-    }
+        if (values.y < values.w && sign < 0)
+        {
+            values.y = values.w;
+        }
+        else if (values.y > values.w && sign > 0)
+        {
+            values.y = values.w;
+        }
     
-    Result[id.xy] = values;
+        Result[id.xy] = values;
 
-}
+    }
 
 
 void HeatConduction(uint3 id)

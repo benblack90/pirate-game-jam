@@ -41,7 +41,7 @@ public class UIManager : MonoBehaviour
         }*/
     }
 
-    void ObjectDestroyed(ObjectScorePair pair)
+    void ObjectDestroyed(ObjectScorePair pair, Vector2Int graphicalPos, Vector2Int topRight)
     {
         objectDestroyedDisplay.AddObject(pair);
         scoreCache += pair.points;

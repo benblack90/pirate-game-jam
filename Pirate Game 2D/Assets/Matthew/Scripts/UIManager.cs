@@ -17,10 +17,14 @@ public class UIManager : MonoBehaviour
     [SerializeField] ObjectDestroyedDisplay objectDestroyedDisplay;
 
     int scoreCache = 0;
+    float test = 1;
+    float healthBarWidth;
 
     private void OnEnable()
     {
         StaticDestructable.onDestructableDestroyed += ObjectDestroyed;
+
+        healthBarWidth = healthBar.rectTransform.rect.width;
         //subscribe to some events
     }
     private void OnDisable()
@@ -32,13 +36,11 @@ public class UIManager : MonoBehaviour
     }
     private void Update()
     {
-/*        if (Input.GetKeyDown(KeyCode.Space))
+        if (Input.GetKeyDown(KeyCode.Space))
         {
-            ObjectScorePair pair = new ObjectScorePair();
-            pair.name = "TEST";
-            pair.points = Random.Range(0,500);
-            ObjectDestroyed(pair);
-        }*/
+            test -= 0.1f;
+            SetHealth(test);
+        }
     }
 
     void ObjectDestroyed(ObjectScorePair pair, Vector2Int graphicalPos, Vector2Int topRight)
@@ -62,6 +64,6 @@ public class UIManager : MonoBehaviour
 
     void SetHealth(float healthPercentage)
     {
-        healthBar.rectTransform.localScale = new Vector3(healthPercentage,1,1);
+        healthBar.rectTransform.sizeDelta = new Vector2(healthPercentage * healthBarWidth, healthBar.rectTransform.sizeDelta.y);
     }
 }

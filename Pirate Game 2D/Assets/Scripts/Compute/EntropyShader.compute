@@ -5,6 +5,7 @@
 RWTexture2D<float4> Result;
 int aspectX;
 int aspectY;
+float time;
 
 void Spread(uint3 id);
 void BuildGooage(uint3 id);
@@ -47,10 +48,22 @@ void Entropy(uint3 id)
     float tempEntropyMult = 2.0f / 255.0f;
     float targetEntropyMult = 0.5f * tempEntropyMult;
     
-    
     float4 values = Result[id.xy];
     values = TargetTempEntropy(values, targetEntropyMult);
-    if (values.y == values.w)return;
+    if (values.y == values.w)
+    {
+        /*float noise = frac(1600 * cos((id.x + id.y * ((sin(time)))) * (3.141f / 180)));
+        if (noise > 0 / 5.0f)
+        {
+            values.y += 4.0f / 255.0f;
+        }
+        else
+        {
+            values.y -= 4.0f / 255.0f;
+        }
+        Result[id.xy] = values;*/
+        return;
+    }
         int sign = (values.w - values.y) / abs((values.w - values.y));
         values.y += sign * tempEntropyMult;
     
@@ -66,8 +79,6 @@ void Entropy(uint3 id)
         Result[id.xy] = values;
 
     }
-
-
 void HeatConduction(uint3 id)
 {
     float4 values = Result[id.xy];

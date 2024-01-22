@@ -1,8 +1,10 @@
-Shader "Unlit/GooShader"
+Shader"Unlit/GooShader"
 {
     Properties
     {
         _MainTex ("Texture", 2D) = "white" {}
+        _NoiseTex("Noise",2D) = "white"{}
+
     }
     SubShader
     {
@@ -35,6 +37,7 @@ Shader "Unlit/GooShader"
             };
 
             sampler2D _MainTex;
+            sampler2D _NoiseTex;
             float4 _MainTex_ST;
 
             v2f vert (appdata v)
@@ -50,10 +53,27 @@ Shader "Unlit/GooShader"
             {
                 // sample the texture
                 fixed4 data = tex2D(_MainTex, i.uv);
+    float2 modifiedUV;
+    float2 scrollingUV;
+    
+    float timeModifier = (fmod(_Time, 1) - 0.5f) * 2.0f;
+    
+    modifiedUV.g = fmod((i.uv.g * 2) + _Time * 0.25f, 1);
+    modifiedUV.r = fmod((i.uv.r * 2) + _Time * 0.5f, 1);
+    
+    scrollingUV.g = abs(fmod((i.uv.g * 2) - _Time * 0.5f, 1));
+    scrollingUV.r = abs(fmod((i.uv.r * 2) - _Time * 0.25f, 1));
+    
+    fixed4 noiseData = tex2D(_NoiseTex, modifiedUV);
+    noiseData.a = noiseData.a + tex2D(_NoiseTex, scrollingUV).a;
+   
+    
     float4 coldTemp = { 0.4, 1, 1, 1 };
     float4 normalTemp = { 0.4, 0, 0.4, 1 };
     float4 hotTemp = { 1, 0.2, 0, 1 };
     float4 colour;
+    
+    //data.y += noiseData.a* 0.1f;
     if (data.y <= 0.5f)
     {
         colour = lerp(coldTemp, normalTemp, (data.y * 2) * (data.y * 2));

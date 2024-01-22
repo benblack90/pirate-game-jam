@@ -118,6 +118,8 @@ public class PracticeComputeScript : MonoBehaviour
         {
 
             cs.SetTexture(0, "Result", renderTexture);
+            float timeVar = (Time.time * 5.0f) % 1.0f;
+            cs.SetFloat("time", timeVar);
             cs.Dispatch(0, renderTexture.width / 16, renderTexture.height / 16, 1);
             GetGooDataFromGPU();
             yield return wfs;

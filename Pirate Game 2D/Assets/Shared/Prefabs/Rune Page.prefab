@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 7881113073673619928}
   - component: {fileID: 5743393064773058533}
   - component: {fileID: 1207363177288708000}
-  - component: {fileID: 6592320102837927657}
+  - component: {fileID: 5310830041423834688}
   m_Layer: 5
   m_Name: Rune Page
   m_TagString: Untagged
@@ -76,7 +76,7 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &6592320102837927657
+--- !u!114 &5310830041423834688
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

@@ -1199,7 +1199,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7cfa69e35c33738408ffcbec0851472c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  runePage: {fileID: 0}
+  runePage: {fileID: 3123352482658762389, guid: e04bbbea083e23c4496e13f9b60e03ed, type: 3}
   canvas: {fileID: 168895538}
   canvasOffset: {x: 0, y: 0}
 --- !u!1 &1025865673

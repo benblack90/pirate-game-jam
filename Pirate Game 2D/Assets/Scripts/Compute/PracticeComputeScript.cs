@@ -78,10 +78,10 @@ public class PracticeComputeScript : MonoBehaviour
         WriteToGooTile(0, 0, GridChannel.GOOAGE, 0);
         WriteToGooTile(0, 0, GridChannel.TARGET_TEMP, 255);
 
-        WriteToGooTile(50, 50, GridChannel.TYPE, 1);
-        WriteToGooTile(50, 50, GridChannel.TEMP, 255);
-        WriteToGooTile(50, 50, GridChannel.GOOAGE, 0);
-        WriteToGooTile(50, 50, GridChannel.TARGET_TEMP, 0);
+        WriteToGooTile(100, 50, GridChannel.TYPE, 1);
+        WriteToGooTile(100, 50, GridChannel.TEMP, 255);
+        WriteToGooTile(100, 50, GridChannel.GOOAGE, 0);
+        WriteToGooTile(100, 50, GridChannel.TARGET_TEMP, 0);
 
         /*        WriteToGooTile(700, 1000, GridChannel.TYPE, 1);
                 WriteToGooTile(700, 1000, GridChannel.TEMP, 20);

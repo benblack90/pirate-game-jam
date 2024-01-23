@@ -1083,6 +1083,7 @@ MonoBehaviour:
   destructableWalls: {fileID: 1837931518}
   playerModel: {fileID: 1837189574}
   mainCam: {fileID: 982291452}
+  fireSpritePrefab: {fileID: 8779701753397714113, guid: 9a2516cf02ab5ce4abb549bfb8e46ef1, type: 3}
 --- !u!114 &864941048 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 520414233934545174, guid: 475233161d49e9e41a51c0bafa8ead9c, type: 3}

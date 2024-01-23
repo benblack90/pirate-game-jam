@@ -154,7 +154,7 @@ public class CustomCharacterController : MonoBehaviour
     void PlayerCastArea()
     {
         Color color = new Color(1, 0, 0, 1);
-        float width = 0.05f;
+        float width = 0.025f;
         int vertexCount = 32;
         
         GameObject.Destroy(castArea);

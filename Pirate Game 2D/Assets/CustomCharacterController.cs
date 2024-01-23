@@ -28,14 +28,22 @@ public class CustomCharacterController : MonoBehaviour
     public float _cameraMouseRatio = 0.15f;
     public bool _rotatePlayer = false;
 
+    [Header("Goo Settings")]
+    public PracticeComputeScript _gooScript;
+    public int _gooPlaneScaling = 4;
+    [Range(0,100)]
+    public int _hotSpellDefaultPower = 50;
+    [Range(0, 100)]
+    public int _coldSpellDefaultPower = 50;
+
     private Rigidbody2D _rb;
     private Vector2 _playerCameraHalf;
     private Vector2 _mousePosition;
     private bool lockCamera = false;
     
 
-    private int SPELL_HOT = 0;
-    private int SPELL_COLD = 1;
+    private const int SPELL_HOT = 0;
+    private const int SPELL_COLD = 1;
 
 
     private GameObject castArea;
@@ -82,9 +90,11 @@ public class CustomCharacterController : MonoBehaviour
         {
             case RuneTypes.Ice:
                 Debug.Log("ICE");
+                CastSpell(SPELL_COLD, info.accuracy);
                 break;
             case RuneTypes.Fire:
                 Debug.Log("FIRE");
+                CastSpell(SPELL_HOT, info.accuracy);
                 break;
             case RuneTypes.Invalid:
                 Debug.Log("INVALID");
@@ -167,6 +177,39 @@ public class CustomCharacterController : MonoBehaviour
 
     public void CastSpell(int spellId, int spellAccuracy)
     {
+        List<Vector2Int> affectedGoo = new List<Vector2Int>();
 
+        Vector2Int playerPos = new Vector2Int(Mathf.RoundToInt(this.transform.position.x * _gooPlaneScaling), Mathf.RoundToInt(this.transform.position.y * _gooPlaneScaling)) ;
+        Debug.Log(playerPos);
+        int totalLines = Mathf.RoundToInt(_castFieldOfView*2);
+        int spreadDist = Mathf.RoundToInt(_castRange * _gooPlaneScaling);
+
+        int tempType = 0;
+        switch (spellId)
+        {
+            case (SPELL_HOT):
+                tempType = 100;
+                break;
+            case (SPELL_COLD):
+                tempType = -100;
+                break;
+        }
+
+        for (int spreader = 0; spreader < spreadDist; spreader++)
+        {
+            for (int i = 0; i < totalLines; i++)
+            {
+
+                float angle = (_aimDirection + 90.0f - _castFieldOfView / 2 + _castFieldOfView / (totalLines - 1) * i) * Mathf.Deg2Rad;
+                //float rnj = o;
+                int x = Mathf.RoundToInt(playerPos.x + spreader * Mathf.Cos(angle));
+                int y = Mathf.RoundToInt(playerPos.y + spreader * Mathf.Sin(angle));
+                Vector2Int shooter = new Vector2Int(x, y);
+                affectedGoo.Add(new Vector2Int(shooter.x, shooter.y));
+
+
+            }
+        }
+            _gooScript.AddTempToArea(affectedGoo, tempType);
     }
 }

@@ -1830,6 +1830,14 @@ PrefabInstance:
       propertyPath: _camera
       value: 
       objectReference: {fileID: 982291452}
+    - target: {fileID: 8688339823710186953, guid: 106263063aa423e499973ad114cf9bee, type: 3}
+      propertyPath: _gooScript
+      value: 
+      objectReference: {fileID: 864941048}
+    - target: {fileID: 8688339823710186953, guid: 106263063aa423e499973ad114cf9bee, type: 3}
+      propertyPath: _gooPlaneScaling
+      value: 8
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects:
     - {fileID: 7204906968510769565, guid: 106263063aa423e499973ad114cf9bee, type: 3}

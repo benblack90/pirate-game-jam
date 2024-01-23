@@ -45,6 +45,7 @@ public class CustomCharacterController : MonoBehaviour
     [Range(0.0f, 1.0f)]
     public float _spreadDecayRate = 0.5f;
     public float _coneQuality = 1.0f;
+    public int _spreadSpreadSpeed = 10;
 
     private Rigidbody2D _rb;
     private Vector2 _playerCameraHalf;
@@ -205,7 +206,7 @@ public class CustomCharacterController : MonoBehaviour
         }
         tempType *= spellAccuracy / 100.0f;
         float castBurstRange = _castRange * _gooPlaneScaling;
-        StartCoroutine(DelayedLineCast(castBurstRange, castBurstRange * _castRangeExtenderMultiplier, 6, tempType));
+        StartCoroutine(DelayedLineCast(castBurstRange, castBurstRange * _castRangeExtenderMultiplier, _spreadSpreadSpeed, tempType));
     }
     // This doesn't work if cast radius is >180 for some reason.
     IEnumerator DelayedLineCast(float spreadMax, float spreadBonus, int growTimeScale, float temperatureChange)

@@ -306,7 +306,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tileMapCover: {fileID: 1895114652}
   tileMapBase: {fileID: 974738780}
-  tileMapFloor: {fileID: 0}
   coverTile: {fileID: 11400000, guid: e466ca9ae4dbd4e43bf54c297ef3d25e, type: 2}
   baseTile: {fileID: 11400000, guid: 9122230a4bf50464e916584e309ae9fb, type: 2}
 --- !u!156049354 &100191097

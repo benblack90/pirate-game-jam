@@ -23,7 +23,7 @@ public class UIManager : MonoBehaviour
     private void OnEnable()
     {
         StaticDestructable.onDestructableDestroyed += ObjectDestroyed;
-
+        PlayerValuesManager.onPointsChanged += SetScore;
         healthBarWidth = healthBar.rectTransform.rect.width;
         //subscribe to some events
     }
@@ -32,6 +32,8 @@ public class UIManager : MonoBehaviour
 
         //unsubscribe from events
         StaticDestructable.onDestructableDestroyed -= ObjectDestroyed;
+        PlayerValuesManager.onPointsChanged -= SetScore;
+        PlayerValuesManager.onHealthChanged -= SetHealth;
 
     }
     private void Update()

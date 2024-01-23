@@ -35,7 +35,7 @@ public class AudioManager : MonoBehaviour
         }
     }
 
-    private void OnStaticDestroy(ObjectScorePair pair, Vector2Int graphicalPos, Vector2Int topRight)
+    private void OnStaticDestroy(ObjectScorePair pair, Vector2Int graphicalPos)
     {
         if (destroySound.isPlaying) destroySound.Stop();
         destroySound.Play();

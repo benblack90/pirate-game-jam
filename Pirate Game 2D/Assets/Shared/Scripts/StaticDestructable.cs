@@ -96,7 +96,6 @@ public class StaticDestructable
 
     void ObjectDestroy()
     {
-        SwapToDestroyedModel();
         level.ExtinguishFire(usingFireIndex);
         ObjectScorePair pair = new ObjectScorePair();
         pair.name = objectName;

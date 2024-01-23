@@ -73,7 +73,7 @@ Shader"Unlit/GooShader"
     float4 hotTemp = { 1, 0.2, 0, 1 };
     float4 colour;
     
-    data.y += noiseData.a* 0.1f;
+    //data.y += noiseData.a* 0.1f;
     if (data.y <= 0.5f)
     {
         colour = lerp(coldTemp, normalTemp, (data.y * 2) * (data.y * 2));

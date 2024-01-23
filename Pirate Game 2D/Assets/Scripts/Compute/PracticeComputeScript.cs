@@ -68,11 +68,12 @@ public class PracticeComputeScript : MonoBehaviour
         renderTexture.Create();
         renderTexture.filterMode = FilterMode.Point;
         gooPlaneMaterial.mainTexture = renderTexture;
+        DoImportantBullshit();
     }
   
     IEnumerator UpdateGoo()
     {
-        DoImportantBullshit();
+        
         WriteToGooTile(0, 0, GridChannel.TYPE, 1);
         WriteToGooTile(0, 0, GridChannel.TEMP, 255);
         WriteToGooTile(0, 0, GridChannel.GOOAGE, 0);

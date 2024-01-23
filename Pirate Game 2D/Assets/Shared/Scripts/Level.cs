@@ -22,8 +22,10 @@ public class Level : MonoBehaviour
 
     public PracticeComputeScript gooController;
     public Tilemap destructableWalls;
+    public Tilemap destructableCovers;
     public GameObject playerModel;
     public Camera mainCam;
+    public TileBase ashTile;
     [SerializeField] GameObject fireSpritePrefab;
     List<FireSprite> fireSpritePool = new List<FireSprite>();
 
@@ -79,7 +81,7 @@ public class Level : MonoBehaviour
         {
             ExecuteDeathRowStatics();
             UpdateStatics();
-
+            gooController.SendTexToGPU();
             yield return wfs;
         }
 
@@ -157,9 +159,25 @@ public class Level : MonoBehaviour
             for (int y = graphicalPos.y * 8; y < graphicalPos.y * 8 + 8; y++)
             {             
                 gooController.WriteToGooTile(x, y, GridChannel.TYPE, 0.0f);
-            }
+                
+            }        
+
         }
-        gooController.SendTexToGPU();
+
+        for(int i = 0; i < 9; i++)
+        {
+            Vector2Int bottomLeft = new Vector2Int(graphicalPos.x * 8 - 1 + i, graphicalPos.y * 8 - 1);
+            Vector2Int topLeft = new Vector2Int(graphicalPos.x * 8 - 1, graphicalPos.y * 8 + 9 - i);
+            Vector2Int bottomRight = new Vector2Int(graphicalPos.x * 8 + 9, graphicalPos.y -1 + i);
+            Vector2Int topRight = new Vector2Int(graphicalPos.x * 8 + 9 - i, graphicalPos.y * 8 + 9);
+            gooController.WriteToGooTile(bottomLeft.x, bottomLeft.y, GridChannel.TYPE, (float) GridTileType.GOO_SPREADABLE);
+            gooController.WriteToGooTile(topLeft.x, topLeft.y, GridChannel.TYPE, (float)GridTileType.GOO_SPREADABLE);
+            gooController.WriteToGooTile(bottomRight.x, bottomRight.y, GridChannel.TYPE, (float)GridTileType.GOO_SPREADABLE);
+            gooController.WriteToGooTile(topRight.x, topRight.y, GridChannel.TYPE, (float)GridTileType.GOO_SPREADABLE);
+        }
+
+        destructableWalls.SetTile(new Vector3Int(graphicalPos.x, graphicalPos.y, 0), null);
+        destructableCovers.SetTile(new Vector3Int(graphicalPos.x, graphicalPos.y, 0), null);
         deathRow.Add(graphicalPos);
     }
 
@@ -242,6 +260,7 @@ public class Level : MonoBehaviour
                 }
             }
         }
+        gooController.SendTexToGPU();
 
         //this is temporary, just to make the game work in the absence of the actual level editor
         playerStart = new Vector2Int(0, 0);
@@ -256,7 +275,8 @@ public class Level : MonoBehaviour
                 gooController.WriteToGooTile(x, y, GridChannel.TYPE, 3.0f);
             }
         }
-        gooController.SendTexToGPU();
+        gooController.WriteToGooTile(graphicalPos.x * 8, graphicalPos.y *8, GridChannel.TYPE, 3.0f);
+        
     }
 }
 

@@ -45,11 +45,13 @@ public class CustomCharacterController : MonoBehaviour
     [Range(0.0f, 1.0f)]
     public float _spreadDecayRate = 0.5f;
     public float _coneQuality = 1.0f;
+    public int _spreadSpreadSpeed = 10;
 
     private Rigidbody2D _rb;
     private Vector2 _playerCameraHalf;
     private Vector2 _mousePosition;
     private bool lockCamera = false;
+    private Vector2 _cameraLockOffset;
     
 
     private const int SPELL_HOT = 0;
@@ -123,9 +125,11 @@ public class CustomCharacterController : MonoBehaviour
 
     void PlayerMove()
     {
-        float horizontalSpeed = Input.GetAxis("Horizontal");
-        float verticalSpeed = Input.GetAxis("Vertical");
-        _rb.position += new Vector2(horizontalSpeed, verticalSpeed) * _characeterSpeed * Time.deltaTime;
+        _rb.velocity = Vector2.zero;
+        Vector2 inputs = new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
+        if (inputs.magnitude > 1) inputs = inputs.normalized;
+
+        _rb.velocity += inputs * _characeterSpeed * Time.deltaTime;
     }
 
     void PlayerLook()
@@ -139,15 +143,18 @@ public class CustomCharacterController : MonoBehaviour
             _mousePosition = mousePos;
             if (_rotatePlayer) transform.up = direction;
             _aimDirection = Mathf.Atan2(direction.x, direction.y) * Mathf.Rad2Deg * -1;
+            Vector2 trans2D = new Vector2(this.transform.position.x, this.transform.position.y);
+            _cameraLockOffset = (trans2D - _mousePosition) * _cameraMouseRatio;
         }
-        Vector2 trans2D = new Vector2(this.transform.position.x, this.transform.position.y);
-        _playerCameraHalf = trans2D - (trans2D - _mousePosition) * _cameraMouseRatio;
+        
+
+        _playerCameraHalf = this.transform.position - new Vector3(_cameraLockOffset.x, _cameraLockOffset.y,0);
     }
 
     void PlayerCastArea()
     {
         Color color = new Color(1, 0, 0, 1);
-        float width = 0.05f;
+        float width = 0.025f;
         int vertexCount = 32;
         
         GameObject.Destroy(castArea);
@@ -199,7 +206,7 @@ public class CustomCharacterController : MonoBehaviour
         }
         tempType *= spellAccuracy / 100.0f;
         float castBurstRange = _castRange * _gooPlaneScaling;
-        StartCoroutine(DelayedLineCast(castBurstRange, castBurstRange * _castRangeExtenderMultiplier, 6, tempType));
+        StartCoroutine(DelayedLineCast(castBurstRange, castBurstRange * _castRangeExtenderMultiplier, _spreadSpreadSpeed, tempType));
     }
     // This doesn't work if cast radius is >180 for some reason.
     IEnumerator DelayedLineCast(float spreadMax, float spreadBonus, int growTimeScale, float temperatureChange)

@@ -57,6 +57,7 @@ public class CustomCharacterController : MonoBehaviour
     private const int SPELL_HOT = 0;
     private const int SPELL_COLD = 1;
 
+    public AudioSource footstepSound;
 
     private GameObject castArea;
     void Start()
@@ -130,6 +131,15 @@ public class CustomCharacterController : MonoBehaviour
         if (inputs.magnitude > 1) inputs = inputs.normalized;
 
         _rb.velocity += inputs * _characeterSpeed * Time.deltaTime;
+
+        if(_rb.velocity.magnitude > 0.1f && !footstepSound.isPlaying)
+        {
+            footstepSound.Play();
+        }
+        else if(_rb.velocity.magnitude <= 0.1f && footstepSound.isPlaying)
+        {
+            footstepSound.Stop();
+        }
     }
 
     void PlayerLook()

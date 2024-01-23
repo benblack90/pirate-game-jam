@@ -85,6 +85,8 @@ Shader"Unlit/GooShader"
 
     }
     colour.a = ceil(data.x) * (data.z * data.z);
+    if (data.x >= 2.0f)
+        colour.a = 0.0f;
                 return colour;
             }
             ENDCG

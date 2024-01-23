@@ -1835,8 +1835,16 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 864941048}
     - target: {fileID: 8688339823710186953, guid: 106263063aa423e499973ad114cf9bee, type: 3}
+      propertyPath: _castFieldOfView
+      value: 90
+      objectReference: {fileID: 0}
+    - target: {fileID: 8688339823710186953, guid: 106263063aa423e499973ad114cf9bee, type: 3}
       propertyPath: _gooPlaneScaling
       value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 8688339823710186953, guid: 106263063aa423e499973ad114cf9bee, type: 3}
+      propertyPath: _spreadDecayRate
+      value: 0.1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects:

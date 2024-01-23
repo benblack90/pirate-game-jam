@@ -2,11 +2,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerValues : MonoBehaviour
+public class GooChamber : MonoBehaviour
 {
-    // Start is called before the first frame update
-    public float health = 100;
 
+    public delegate void OnGooRelease();
+    public static event OnGooRelease onGooRelease;
+
+    // Start is called before the first frame update
     void Start()
     {
         

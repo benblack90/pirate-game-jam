@@ -17,12 +17,6 @@ public class AutoPlaceTile : MonoBehaviour
     public TileBase baseTile;
 
     private int numberOfUpdates = 0;
-    private PlayerValues playerValues;
-    void Start()
-    {
-        playerValues = this.GetComponent<PlayerValues>();
-    }
-
 
     // Update is called once per frame
     void Update()

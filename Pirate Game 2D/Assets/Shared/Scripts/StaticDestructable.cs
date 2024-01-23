@@ -12,9 +12,8 @@ public class StaticDestructable
     float hitPoints;
     Vector2Int graphicalPos;
     Vector2Int gooPos;
-
-    Vector2Int bottomLeftGridCoord;
-    public Vector2Int topRightGridCoord;
+    Level level;
+    int usingFireIndex;
 
     public PracticeComputeScript gooController;
 
@@ -22,7 +21,7 @@ public class StaticDestructable
     GameObject destructModel;
     GameObject currentModel;
 
-    public StaticDestructable(float hitPoints, Vector2Int graphicalPos, GameObject destructModel, GameObject currentModel)
+    public StaticDestructable(float hitPoints, Vector2Int graphicalPos, GameObject destructModel, GameObject currentModel, Level level)
     {
         this.hitPoints = hitPoints;
         this.graphicalPos = graphicalPos;
@@ -30,11 +29,12 @@ public class StaticDestructable
         onFire = false;
         this.destructModel = destructModel;
         this.currentModel = currentModel;
+        this.level = level;
     }
 
 
 
-    public delegate void OnDestructableDestroyed(ObjectScorePair pair, Vector2Int graphicalPos, Vector2Int topRight);
+    public delegate void OnDestructableDestroyed(ObjectScorePair pair, Vector2Int graphicalPos);
     public static event OnDestructableDestroyed onDestructableDestroyed; //delegate called when a destructable is destroyed
 
     public void Damage(float damage)
@@ -47,20 +47,35 @@ public class StaticDestructable
     public void IgnitionFromGooCheck(float gooTemp)
     {
         if (onFire) return;
-        onFire = (gooTemp > 240) ? true : false;
+        if(gooTemp > 240)
+        {
+            Ignite();
+        }
     }
 
     public void IgniteFromAdjacency(int dist)
     {
         if (onFire) return;
         float chance = (dist > 1) ? 0.25f : 0.5f;
-        onFire = (chance < UnityEngine.Random.Range(0.0f, 1.0f)) ? true : false;
+        if(chance < UnityEngine.Random.Range(0.0f, 1.0f))
+        {
+            Ignite();
+        }        
+    }
+
+    void Ignite()
+    {
+        onFire = true;
+        usingFireIndex = level.AddFireSpriteToLoc(graphicalPos);
     }
 
     public void CheckFireDamage()
     {
-        if(onFire) hitPoints -= 1.0f * Time.deltaTime;
-
+        if (onFire)
+        {
+            hitPoints -= 1.0f * Time.deltaTime;
+            
+        }
         if (hitPoints <= 0)
         {
             ObjectDestroy();
@@ -82,10 +97,11 @@ public class StaticDestructable
     void ObjectDestroy()
     {
         SwapToDestroyedModel();
+        level.ExtinguishFire(usingFireIndex);
         ObjectScorePair pair = new ObjectScorePair();
         pair.name = objectName;
         pair.points = points;
-        onDestructableDestroyed?.Invoke(pair, graphicalPos, topRightGridCoord);
+        onDestructableDestroyed?.Invoke(pair, graphicalPos);
     }
 
 

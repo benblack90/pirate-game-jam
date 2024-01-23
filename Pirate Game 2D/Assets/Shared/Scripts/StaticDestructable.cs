@@ -40,7 +40,7 @@ public class StaticDestructable
     public void Damage(float damage)
     {
         if (damage <= 0) return;
-        hitPoints -= damage;
+        hitPoints -= damage * 0.1f;
         if (hitPoints <= 0) ObjectDestroy();
     }
 

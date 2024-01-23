@@ -158,7 +158,8 @@ public class Level : MonoBehaviour
             {             
                 gooController.WriteToGooTile(x, y, GridChannel.TYPE, 0.0f);
             }
-        }        
+        }
+        gooController.SendTexToGPU();
         deathRow.Add(graphicalPos);
     }
 
@@ -237,6 +238,7 @@ public class Level : MonoBehaviour
                     Vector2Int graphicalPos = new Vector2Int(x, y);
                     staticDestructables.Add(graphicalPos, new StaticDestructable(100, graphicalPos, null, null, this));
                     staticDestructables[graphicalPos].gooController = gooController;
+                    TurnGooTilesStatic(graphicalPos);
                 }
             }
         }
@@ -244,4 +246,17 @@ public class Level : MonoBehaviour
         //this is temporary, just to make the game work in the absence of the actual level editor
         playerStart = new Vector2Int(0, 0);
     }
+
+    void TurnGooTilesStatic(Vector2Int graphicalPos)
+    {
+        for (int x = graphicalPos.x * 8; x < graphicalPos.x * 8 + 8; x++)
+        {
+            for (int y = graphicalPos.y * 8; y < graphicalPos.y * 8 + 8; y++)
+            {
+                gooController.WriteToGooTile(x, y, GridChannel.TYPE, 3.0f);
+            }
+        }
+        gooController.SendTexToGPU();
+    }
 }
+

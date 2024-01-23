@@ -125,9 +125,10 @@ public class CustomCharacterController : MonoBehaviour
     void PlayerMove()
     {
         _rb.velocity = Vector2.zero;
-        float horizontalSpeed = Input.GetAxis("Horizontal");
-        float verticalSpeed = Input.GetAxis("Vertical");
-        _rb.velocity += new Vector2(horizontalSpeed, verticalSpeed) * _characeterSpeed * Time.deltaTime;
+        Vector2 inputs = new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
+        if (inputs.magnitude > 1) inputs = inputs.normalized;
+
+        _rb.velocity += inputs * _characeterSpeed * Time.deltaTime;
     }
 
     void PlayerLook()

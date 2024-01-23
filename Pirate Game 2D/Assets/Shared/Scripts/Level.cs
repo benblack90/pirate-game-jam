@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -8,11 +9,25 @@ using static UnityEditor.PlayerSettings;
 
 public class Level : MonoBehaviour
 {
+    struct FireSprite
+    {
+        public FireSprite(GameObject fireSpritePrefab)
+        { this.fireSpritePrefab = fireSpritePrefab; inUse = false; }
+
+        public GameObject fireSpritePrefab;
+        public bool inUse;
+
+        public void SetInUse(bool inUse) { this.inUse = inUse; }
+    }
 
     public PracticeComputeScript gooController;
     public Tilemap destructableWalls;
     public GameObject playerModel;
     public Camera mainCam;
+    [SerializeField] GameObject fireSpritePrefab;
+    List<FireSprite> fireSpritePool = new List<FireSprite>();
+
+
     float timer;
     float levelTime = 180.0f;
     bool gooRelease;
@@ -23,28 +38,27 @@ public class Level : MonoBehaviour
     Vector2 playerStart;
 
     private void OnEnable()
-    {
+    {        
         StaticDestructable.onDestructableDestroyed += OnStaticDestroy;
         //subscribe to some events
     }
     private void OnDisable()
     {
-
         //unsubscribe from events
         StaticDestructable.onDestructableDestroyed -= OnStaticDestroy;
-
     }
 
     private void Start()
     {
         gooRelease = false;
         timer = levelTime;
-        LoadLevel();
+        InitLevel();
         StartCoroutine(CheckStaticsLoop());
     }
 
     public void InitLevel()
     {
+        InitFirePool();
         LoadLevel();
     }
 
@@ -87,7 +101,7 @@ public class Level : MonoBehaviour
     void UpdateStatics()
     {
         foreach (KeyValuePair<Vector2Int, StaticDestructable> o in staticDestructables)
-        {
+        { 
             o.Value.CheckFireDamage();
             CheckAdjacentGoo(o);
             CheckAdjacentStatics(o);
@@ -104,7 +118,7 @@ public class Level : MonoBehaviour
             float rightBorder = gooController.GetTileValue(o.Value.GetGooPos().x + 9, o.Value.GetGooPos().y + i, GridChannel.TYPE);
             float topBorder = gooController.GetTileValue(o.Value.GetGooPos().x + i, o.Value.GetGooPos().y - 1, GridChannel.TYPE);
             float bottomBorder = gooController.GetTileValue(o.Value.GetGooPos().x + i, o.Value.GetGooPos().y + 9, GridChannel.TYPE);
-            float gooTemp = 0.0f;
+            float gooTemp;
 
             if (leftBorder == (float)GridTileType.GOO_UNSPREADABLE || leftBorder == (float)GridTileType.GOO_SPREADABLE)
             {
@@ -135,20 +149,23 @@ public class Level : MonoBehaviour
         }
     }
 
-    void OnStaticDestroy(ObjectScorePair pair, Vector2Int graphicalPos, Vector2Int topRight)
+    void OnStaticDestroy(ObjectScorePair pair, Vector2Int graphicalPos)
     {
-        //this is TEMPORARY for testing - once the level editor writes to topRight, REMOVE
-        topRight.x = graphicalPos.x + 1;
-        topRight.y = graphicalPos.y + 1;
 
-        for (int x = graphicalPos.x * 8; x < topRight.x * 8; x++)
+        for (int x = graphicalPos.x * 8; x < graphicalPos.x * 8 + 8; x++)
         {
-            for (int y = graphicalPos.y * 8; y < topRight.y * 8; y++)
-            {
+            for (int y = graphicalPos.y * 8; y < graphicalPos.y * 8 + 8; y++)
+            {             
                 gooController.WriteToGooTile(x, y, GridChannel.TYPE, 0.0f);
             }
-        }
+        }        
         deathRow.Add(graphicalPos);
+    }
+
+    public void ExtinguishFire(int index)
+    {
+        fireSpritePool[index].SetInUse(false);
+        fireSpritePool[index].fireSpritePrefab.SetActive(false);
     }
 
     void CheckAdjacentStatics(KeyValuePair<Vector2Int, StaticDestructable> o)
@@ -169,6 +186,23 @@ public class Level : MonoBehaviour
         }
     }
 
+    public int AddFireSpriteToLoc(Vector2Int loc)
+    {
+        for(int i = 0; i < fireSpritePool.Count; i++)
+        {
+            if (!fireSpritePool[i].inUse)
+            {
+                fireSpritePool[i].SetInUse(true);
+                fireSpritePool[i].fireSpritePrefab.transform.position = new Vector3(loc.x, loc.y, 0);
+                fireSpritePool[i].fireSpritePrefab.SetActive(true);
+                return i;
+            }
+        }
+        fireSpritePool.Add(new FireSprite(Instantiate(fireSpritePrefab)));
+        fireSpritePool[fireSpritePool.Count - 1].fireSpritePrefab.SetActive(true);
+        return fireSpritePool.Count - 1;
+    }    
+
     void UpdateDynamics()
     {
         foreach (GameObject o in dynamicDestructables)
@@ -182,7 +216,15 @@ public class Level : MonoBehaviour
     }
 
 
-
+    void InitFirePool()
+    {
+        for(int i = 0; i < 20; i++)
+        {
+            FireSprite fs = new FireSprite(Instantiate(fireSpritePrefab));
+            fs.fireSpritePrefab.SetActive(false);
+            fireSpritePool.Add(fs);
+        }
+    }
     void LoadLevel()
     {
         //TODO - make this do the level reading please, Alex
@@ -193,7 +235,7 @@ public class Level : MonoBehaviour
                 if (destructableWalls.GetTile(new Vector3Int(x, y, 0)) != null)
                 {
                     Vector2Int graphicalPos = new Vector2Int(x, y);
-                    staticDestructables.Add(graphicalPos, new StaticDestructable(100, graphicalPos, null, null));
+                    staticDestructables.Add(graphicalPos, new StaticDestructable(100, graphicalPos, null, null, this));
                     staticDestructables[graphicalPos].gooController = gooController;
                 }
             }

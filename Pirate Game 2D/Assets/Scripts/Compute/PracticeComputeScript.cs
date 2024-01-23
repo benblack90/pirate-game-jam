@@ -78,10 +78,10 @@ public class PracticeComputeScript : MonoBehaviour
         WriteToGooTile(0, 0, GridChannel.GOOAGE, 0);
         WriteToGooTile(0, 0, GridChannel.TARGET_TEMP, 255);
 
-        WriteToGooTile(50, 50, GridChannel.TYPE, 1);
-        WriteToGooTile(50, 50, GridChannel.TEMP, 255);
-        WriteToGooTile(50, 50, GridChannel.GOOAGE, 0);
-        WriteToGooTile(50, 50, GridChannel.TARGET_TEMP, 0);
+        WriteToGooTile(100, 50, GridChannel.TYPE, 1);
+        WriteToGooTile(100, 50, GridChannel.TEMP, 255);
+        WriteToGooTile(100, 50, GridChannel.GOOAGE, 0);
+        WriteToGooTile(100, 50, GridChannel.TARGET_TEMP, 0);
 
         /*        WriteToGooTile(700, 1000, GridChannel.TYPE, 1);
                 WriteToGooTile(700, 1000, GridChannel.TEMP, 20);
@@ -205,7 +205,7 @@ public class PracticeComputeScript : MonoBehaviour
         return WriteToGooTile(x, y, GridChannel.TEMP, temp);
     }
 
-    public bool AddTempToArea(List<Vector2Int> coords, float value)
+    public bool AddTempToArea(List<Vector2Int> coords, float value, bool sendImmediatly = true)
     {
         bool finalResult = true;
         foreach(Vector2Int c in coords)
@@ -215,7 +215,7 @@ public class PracticeComputeScript : MonoBehaviour
             if (!result) finalResult = false;
         }
 
-        SendTexToGPU();
+        if(sendImmediatly) SendTexToGPU();
         //if one of these fails, the method returns false
         return finalResult;
     }
@@ -250,7 +250,7 @@ public class PracticeComputeScript : MonoBehaviour
         return values[(int)targetChannel];
     }
 
-    private void SendTexToGPU()
+    public void SendTexToGPU()
     {
         texCopy.Apply();
         Graphics.Blit(texCopy, renderTexture);

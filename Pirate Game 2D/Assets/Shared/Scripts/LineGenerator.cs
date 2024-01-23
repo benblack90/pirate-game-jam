@@ -54,7 +54,9 @@ public class LineGenerator : MonoBehaviour
 
     public GameObject linePrefab;
 
-    public List<DrawLine> lines = new List<DrawLine>();
+    public AudioSource drawingSound;
+
+    List<DrawLine> lines = new List<DrawLine>();
 
     DrawLine activeLine;
 
@@ -334,14 +336,6 @@ public class LineGenerator : MonoBehaviour
         float yIntTwo = (gradientTwo * info[lineLookup[LineTypes.VerticalLine][1]].positions[1].x) + cTwo;
         lineAccuracy -= (int)Mathf.Abs(100 * (yIntOne - yIntTwo));
         Debug.Log("Accuracy: " + lineAccuracy);
-        /*float vertDist = Mathf.Abs(info[lineLookup[LineTypes.VerticalLine][1]].positions[0].y - info[lineLookup[LineTypes.VerticalLine][1]].positions[1].y);
-        float yDistOne = Mathf.Abs(info[lineLookup[LineTypes.DiagonalLine][1]].positions[0].y - info[lineLookup[LineTypes.DiagonalLine][1]].positions[1].y);
-        float yDistTwo = Mathf.Abs(info[lineLookup[LineTypes.DiagonalLine][2]].positions[0].y - info[lineLookup[LineTypes.DiagonalLine][2]].positions[1].y);
-        float xDistOne = Mathf.Abs(info[lineLookup[LineTypes.DiagonalLine][1]].positions[0].x - info[lineLookup[LineTypes.DiagonalLine][1]].positions[1].x);
-        float xDistTwo = Mathf.Abs(info[lineLookup[LineTypes.DiagonalLine][2]].positions[0].x - info[lineLookup[LineTypes.DiagonalLine][2]].positions[1].x);
-        lineAccuracy -= (int)((Mathf.Abs(vertDist - yDistOne) * 10) + (Mathf.Abs(vertDist - yDistTwo) * 10) 
-            + (Mathf.Abs(vertDist - xDistOne) * 10) + (Mathf.Abs(vertDist - xDistTwo) * 10));
-        Debug.Log("Accuracy: " + lineAccuracy);*/
         return lineAccuracy;
     }
 
@@ -402,6 +396,8 @@ public class LineGenerator : MonoBehaviour
         {
             if (InsideBox())
             {
+                drawingSound.loop = true;
+                drawingSound.Play();
                 GameObject newLine = Instantiate(linePrefab);
                 activeLine = newLine.GetComponent<DrawLine>();
             }
@@ -410,6 +406,8 @@ public class LineGenerator : MonoBehaviour
             {
             if (activeLine)
             {
+                drawingSound.loop = false;
+                drawingSound.Stop();
                 Vector3 mousePos = Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, Camera.main.transform.position.z))
                     - new Vector3(Camera.main.transform.position.x, Camera.main.transform.position.y, 0);
                 activeLine.FinishLine(mousePos);
@@ -421,11 +419,15 @@ public class LineGenerator : MonoBehaviour
         {
             if (!InsideBox() && activeLine)
             {
+                drawingSound.loop = false;
+                drawingSound.Stop();
                 lines.Add(activeLine);
                 activeLine = null;
             }
             else if(InsideBox() && !activeLine)
             {
+                drawingSound.loop = true;
+                drawingSound.Play();
                 GameObject newLine = Instantiate(linePrefab);
                 activeLine = newLine.GetComponent<DrawLine>();
             }

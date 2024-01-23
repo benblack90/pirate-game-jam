@@ -45,6 +45,7 @@ public class CustomCharacterController : MonoBehaviour
     [Range(0.0f, 1.0f)]
     public float _spreadDecayRate = 0.5f;
     public float _coneQuality = 1.0f;
+    public int _spreadSpreadSpeed = 10;
 
     private Rigidbody2D _rb;
     private Vector2 _playerCameraHalf;
@@ -56,6 +57,7 @@ public class CustomCharacterController : MonoBehaviour
     private const int SPELL_HOT = 0;
     private const int SPELL_COLD = 1;
 
+    public AudioSource footstepSound;
 
     private GameObject castArea;
     void Start()
@@ -125,9 +127,19 @@ public class CustomCharacterController : MonoBehaviour
     void PlayerMove()
     {
         _rb.velocity = Vector2.zero;
-        float horizontalSpeed = Input.GetAxis("Horizontal");
-        float verticalSpeed = Input.GetAxis("Vertical");
-        _rb.velocity += new Vector2(horizontalSpeed, verticalSpeed) * _characeterSpeed * Time.deltaTime;
+        Vector2 inputs = new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
+        if (inputs.magnitude > 1) inputs = inputs.normalized;
+
+        _rb.velocity += inputs * _characeterSpeed * Time.deltaTime;
+
+        if(_rb.velocity.magnitude > 0.1f && !footstepSound.isPlaying)
+        {
+            footstepSound.Play();
+        }
+        else if(_rb.velocity.magnitude <= 0.1f && footstepSound.isPlaying)
+        {
+            footstepSound.Stop();
+        }
     }
 
     void PlayerLook()
@@ -152,7 +164,7 @@ public class CustomCharacterController : MonoBehaviour
     void PlayerCastArea()
     {
         Color color = new Color(1, 0, 0, 1);
-        float width = 0.05f;
+        float width = 0.025f;
         int vertexCount = 32;
         
         GameObject.Destroy(castArea);
@@ -204,7 +216,7 @@ public class CustomCharacterController : MonoBehaviour
         }
         tempType *= spellAccuracy / 100.0f;
         float castBurstRange = _castRange * _gooPlaneScaling;
-        StartCoroutine(DelayedLineCast(castBurstRange, castBurstRange * _castRangeExtenderMultiplier, 6, tempType));
+        StartCoroutine(DelayedLineCast(castBurstRange, castBurstRange * _castRangeExtenderMultiplier, _spreadSpreadSpeed, tempType));
     }
     // This doesn't work if cast radius is >180 for some reason.
     IEnumerator DelayedLineCast(float spreadMax, float spreadBonus, int growTimeScale, float temperatureChange)

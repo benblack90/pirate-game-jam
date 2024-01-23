@@ -10,12 +10,16 @@ public class AudioManager : MonoBehaviour
     public AudioSource alarmSound;
     public AudioSource itemCollectSound;
     public AudioSource pointCollectSound;
+    public AudioSource runeCastSound;
+    public AudioClip iceCastSound;
+    public AudioClip fireCastSound;
 
     private void OnEnable()
     {
         StaticDestructable.onDestructableDestroyed += OnStaticDestroy;
         GooChamber.onGooRelease += OnAlarm;
         PointPickup.onPointPickup += OnPointGet;
+        LineGenerator.OnRuneComplete += OnRuneComplete;
     }
 
     private void OnDisable()
@@ -23,6 +27,7 @@ public class AudioManager : MonoBehaviour
         StaticDestructable.onDestructableDestroyed -= OnStaticDestroy;
         GooChamber.onGooRelease -= OnAlarm;
         PointPickup.onPointPickup -= OnPointGet;
+        LineGenerator.OnRuneComplete -= OnRuneComplete;
     }
 
     // Update is called once per frame
@@ -56,5 +61,20 @@ public class AudioManager : MonoBehaviour
     {
         if (pointCollectSound.isPlaying) pointCollectSound.Stop();
         pointCollectSound.Play();
+    }
+
+    private void OnRuneComplete(RuneInfo info)
+    {
+        switch (info.type)
+        {
+            case RuneTypes.Ice:
+                runeCastSound.clip = iceCastSound;
+                runeCastSound.Play();
+                break;
+            case RuneTypes.Fire:
+                runeCastSound.clip = fireCastSound;
+                runeCastSound.Play();
+                break;
+        }
     }
 }

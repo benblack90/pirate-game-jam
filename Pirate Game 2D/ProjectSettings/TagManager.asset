@@ -44,6 +44,9 @@ TagManager:
   - name: Floor
     uniqueID: 2621202971
     locked: 0
+  - name: Goo Layer
+    uniqueID: 1251820265
+    locked: 0
   - name: Walls
     uniqueID: 2847722545
     locked: 0

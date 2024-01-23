@@ -50,6 +50,7 @@ public class CustomCharacterController : MonoBehaviour
     private Vector2 _playerCameraHalf;
     private Vector2 _mousePosition;
     private bool lockCamera = false;
+    private Vector2 _cameraLockOffset;
     
 
     private const int SPELL_HOT = 0;
@@ -123,9 +124,10 @@ public class CustomCharacterController : MonoBehaviour
 
     void PlayerMove()
     {
+        _rb.velocity = Vector2.zero;
         float horizontalSpeed = Input.GetAxis("Horizontal");
         float verticalSpeed = Input.GetAxis("Vertical");
-        _rb.position += new Vector2(horizontalSpeed, verticalSpeed) * _characeterSpeed * Time.deltaTime;
+        _rb.velocity += new Vector2(horizontalSpeed, verticalSpeed) * _characeterSpeed * Time.deltaTime;
     }
 
     void PlayerLook()
@@ -139,9 +141,12 @@ public class CustomCharacterController : MonoBehaviour
             _mousePosition = mousePos;
             if (_rotatePlayer) transform.up = direction;
             _aimDirection = Mathf.Atan2(direction.x, direction.y) * Mathf.Rad2Deg * -1;
+            Vector2 trans2D = new Vector2(this.transform.position.x, this.transform.position.y);
+            _cameraLockOffset = (trans2D - _mousePosition) * _cameraMouseRatio;
         }
-        Vector2 trans2D = new Vector2(this.transform.position.x, this.transform.position.y);
-        _playerCameraHalf = trans2D - (trans2D - _mousePosition) * _cameraMouseRatio;
+        
+
+        _playerCameraHalf = this.transform.position - new Vector3(_cameraLockOffset.x, _cameraLockOffset.y,0);
     }
 
     void PlayerCastArea()

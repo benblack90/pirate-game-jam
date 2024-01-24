@@ -33,6 +33,7 @@ public class Level : MonoBehaviour
     float timer;
     float levelTime = 180.0f;
     bool gooRelease;
+    int gooPerGraphTile = 8;
 
     Dictionary<Vector2Int, StaticDestructable> staticDestructables = new Dictionary<Vector2Int, StaticDestructable>();
     List<Vector2Int> deathRow = new List<Vector2Int>();
@@ -112,8 +113,7 @@ public class Level : MonoBehaviour
 
     void CheckAdjacentGoo(KeyValuePair<Vector2Int, StaticDestructable> o)
     {
-        //assuming a 8x8 goo tile area per 32x32 block, here
-        for (int i = 0; i < 8; i++)
+        for (int i = 0; i < gooPerGraphTile; i++)
         {
 
             float leftBorder = gooController.GetTileValue(o.Value.GetGooPos().x - 1, o.Value.GetGooPos().y + i, GridChannel.TYPE);
@@ -154,9 +154,9 @@ public class Level : MonoBehaviour
     void OnStaticDestroy(ObjectScorePair pair, Vector2Int graphicalPos)
     {
 
-        for (int x = graphicalPos.x * 8; x < graphicalPos.x * 8 + 8; x++)
+        for (int x = graphicalPos.x * gooPerGraphTile; x < graphicalPos.x * gooPerGraphTile + gooPerGraphTile; x++)
         {
-            for (int y = graphicalPos.y * 8; y < graphicalPos.y * 8 + 8; y++)
+            for (int y = graphicalPos.y * gooPerGraphTile; y < graphicalPos.y * gooPerGraphTile + gooPerGraphTile; y++)
             {             
                 gooController.WriteToGooTile(x, y, GridChannel.TYPE, 0.0f);
                 
@@ -166,19 +166,29 @@ public class Level : MonoBehaviour
 
         for(int i = 0; i < 9; i++)
         {
-            Vector2Int bottomLeft = new Vector2Int(graphicalPos.x * 8 - 1 + i, graphicalPos.y * 8 - 1);
-            Vector2Int topLeft = new Vector2Int(graphicalPos.x * 8 - 1, graphicalPos.y * 8 + 9 - i);
-            Vector2Int bottomRight = new Vector2Int(graphicalPos.x * 8 + 9, graphicalPos.y -1 + i);
-            Vector2Int topRight = new Vector2Int(graphicalPos.x * 8 + 9 - i, graphicalPos.y * 8 + 9);
-            gooController.WriteToGooTile(bottomLeft.x, bottomLeft.y, GridChannel.TYPE, (float) GridTileType.GOO_SPREADABLE);
-            gooController.WriteToGooTile(topLeft.x, topLeft.y, GridChannel.TYPE, (float)GridTileType.GOO_SPREADABLE);
-            gooController.WriteToGooTile(bottomRight.x, bottomRight.y, GridChannel.TYPE, (float)GridTileType.GOO_SPREADABLE);
-            gooController.WriteToGooTile(topRight.x, topRight.y, GridChannel.TYPE, (float)GridTileType.GOO_SPREADABLE);
+            Vector2Int bottomLeft = new Vector2Int(graphicalPos.x * gooPerGraphTile - 1 + i, graphicalPos.y * gooPerGraphTile - 1);
+            Vector2Int topLeft = new Vector2Int(graphicalPos.x * gooPerGraphTile - 1, graphicalPos.y * gooPerGraphTile + gooPerGraphTile + 1 - i);
+            Vector2Int bottomRight = new Vector2Int(graphicalPos.x * gooPerGraphTile + gooPerGraphTile + 1, graphicalPos.y -1 + i);
+            Vector2Int topRight = new Vector2Int(graphicalPos.x * gooPerGraphTile + gooPerGraphTile + 1 - i, graphicalPos.y * gooPerGraphTile + gooPerGraphTile + 1);
+
+            WriteToGooAlongEdge(bottomLeft);
+            WriteToGooAlongEdge(topLeft);
+            WriteToGooAlongEdge(bottomRight);
+            WriteToGooAlongEdge(topRight);
+
         }
 
         destructableWalls.SetTile(new Vector3Int(graphicalPos.x, graphicalPos.y, 0), null);
         destructableCovers.SetTile(new Vector3Int(graphicalPos.x, graphicalPos.y, 0), null);
         deathRow.Add(graphicalPos);
+    }
+
+    void WriteToGooAlongEdge(Vector2Int corner)
+    {
+        if (gooController.GetTileValue(corner.x, corner.y, GridChannel.TYPE) == (float)GridTileType.GOO_UNSPREADABLE)
+        {
+            gooController.WriteToGooTile(corner.x, corner.y, GridChannel.TYPE, (float)GridTileType.GOO_SPREADABLE);
+        }
     }
 
     public void ExtinguishFire(int index)
@@ -268,14 +278,14 @@ public class Level : MonoBehaviour
 
     void TurnGooTilesStatic(Vector2Int graphicalPos)
     {
-        for (int x = graphicalPos.x * 8; x < graphicalPos.x * 8 + 8; x++)
+        for (int x = graphicalPos.x * gooPerGraphTile; x < graphicalPos.x * gooPerGraphTile + gooPerGraphTile; x++)
         {
-            for (int y = graphicalPos.y * 8; y < graphicalPos.y * 8 + 8; y++)
+            for (int y = graphicalPos.y * gooPerGraphTile; y < graphicalPos.y * gooPerGraphTile + gooPerGraphTile; y++)
             {
                 gooController.WriteToGooTile(x, y, GridChannel.TYPE, 3.0f);
             }
         }
-        gooController.WriteToGooTile(graphicalPos.x * 8, graphicalPos.y *8, GridChannel.TYPE, 3.0f);
+        gooController.WriteToGooTile(graphicalPos.x * gooPerGraphTile, graphicalPos.y *gooPerGraphTile, GridChannel.TYPE, 3.0f);
         
     }
 }

@@ -44,7 +44,7 @@ public class Level : MonoBehaviour
         return gooPerGraphTile;
     }
     private void OnEnable()
-    {        
+    {
         StaticDestructable.onDestructableDestroyed += OnStaticDestroy;
         //subscribe to some events
     }
@@ -107,11 +107,16 @@ public class Level : MonoBehaviour
     void UpdateStatics()
     {
         foreach (KeyValuePair<Vector2Int, StaticDestructable> o in staticDestructables)
-        { 
+        {
             o.Value.CheckFireDamage();
             CheckAdjacentGoo(o);
             AdjacentStaticFireSpread(o);
         }
+    }
+
+    void SpreadFireHeatToGoo(Vector2Int pos)
+    {
+        gooController.AddTemperatureToTile(pos.x, pos.y, 10.0f);
     }
 
     void CheckAdjacentGoo(KeyValuePair<Vector2Int, StaticDestructable> o)
@@ -160,24 +165,24 @@ public class Level : MonoBehaviour
         for (int x = graphicalPos.x * gooPerGraphTile; x < graphicalPos.x * gooPerGraphTile + gooPerGraphTile; x++)
         {
             for (int y = graphicalPos.y * gooPerGraphTile; y < graphicalPos.y * gooPerGraphTile + gooPerGraphTile; y++)
-            {             
+            {
                 gooController.WriteToGooTile(x, y, GridChannel.TYPE, 0.0f);
-                
-            }        
+
+            }
 
         }
 
-        for(int i = 0; i < gooPerGraphTile+1; i++)
+        for (int i = 0; i < gooPerGraphTile + 1; i++)
         {
             Vector2Int bottomLeft = new Vector2Int(graphicalPos.x * gooPerGraphTile - 1 + i, graphicalPos.y * gooPerGraphTile - 1);
             Vector2Int topLeft = new Vector2Int(graphicalPos.x * gooPerGraphTile - 1, graphicalPos.y * gooPerGraphTile + gooPerGraphTile + 1 - i);
-            Vector2Int bottomRight = new Vector2Int(graphicalPos.x * gooPerGraphTile + gooPerGraphTile + 1, graphicalPos.y -1 + i);
+            Vector2Int bottomRight = new Vector2Int(graphicalPos.x * gooPerGraphTile + gooPerGraphTile + 1, graphicalPos.y - 1 + i);
             Vector2Int topRight = new Vector2Int(graphicalPos.x * gooPerGraphTile + gooPerGraphTile + 1 - i, graphicalPos.y * gooPerGraphTile + gooPerGraphTile + 1);
 
-            WriteToGooAlongEdge(bottomLeft);
-            WriteToGooAlongEdge(topLeft);
-            WriteToGooAlongEdge(bottomRight);
-            WriteToGooAlongEdge(topRight);
+            SetGooAtEdgeToSpreadable(bottomLeft);
+            SetGooAtEdgeToSpreadable(topLeft);
+            SetGooAtEdgeToSpreadable(bottomRight);
+            SetGooAtEdgeToSpreadable(topRight);
 
         }
 
@@ -186,7 +191,7 @@ public class Level : MonoBehaviour
         deathRow.Add(graphicalPos);
     }
 
-    void WriteToGooAlongEdge(Vector2Int corner)
+    void SetGooAtEdgeToSpreadable(Vector2Int corner)
     {
         if (gooController.GetTileValue(corner.x, corner.y, GridChannel.TYPE) == (float)GridTileType.GOO_UNSPREADABLE)
         {
@@ -202,25 +207,25 @@ public class Level : MonoBehaviour
 
     void AdjacentStaticFireSpread(KeyValuePair<Vector2Int, StaticDestructable> o)
     {
-        if (o.Value.onFire)
+        if (!o.Value.onFire) return;
+
+        for (int dist = 1; dist < 3; dist++)
         {
-            for(int dist = 1; dist < 3; dist++)
+            for (int i = 0; i < dist * 2; i++)
             {
-                for (int i = 0; i < dist * 2; i++)
-                {
-                    StaticDestructable n;
-                    if (staticDestructables.TryGetValue(new Vector2Int(o.Key.x + dist - i, o.Key.y - dist), out n)) n.IgniteFromAdjacency(dist);
-                    if(staticDestructables.TryGetValue(new Vector2Int(o.Key.x + i - dist, o.Key.y + dist), out n)) n.IgniteFromAdjacency(dist);
-                    if(staticDestructables.TryGetValue(new Vector2Int(o.Key.x - dist, o.Key.y + i - dist), out n)) n.IgniteFromAdjacency(dist);
-                    if(staticDestructables.TryGetValue(new Vector2Int(o.Key.x + dist, o.Key.y + dist - i), out n)) n.IgniteFromAdjacency(dist);                    
-                }
-            }      
+                StaticDestructable n;
+                if (staticDestructables.TryGetValue(new Vector2Int(o.Key.x + dist - i, o.Key.y - dist), out n)) n.IgniteFromAdjacency(dist);
+                if (staticDestructables.TryGetValue(new Vector2Int(o.Key.x + i - dist, o.Key.y + dist), out n)) n.IgniteFromAdjacency(dist);
+                if (staticDestructables.TryGetValue(new Vector2Int(o.Key.x - dist, o.Key.y + i - dist), out n)) n.IgniteFromAdjacency(dist);
+                if (staticDestructables.TryGetValue(new Vector2Int(o.Key.x + dist, o.Key.y + dist - i), out n)) n.IgniteFromAdjacency(dist);
+            }
         }
+
     }
 
     public int AddFireSpriteToLoc(Vector2Int loc)
     {
-        for(int i = 0; i < fireSpritePool.Count; i++)
+        for (int i = 0; i < fireSpritePool.Count; i++)
         {
             if (!fireSpritePool[i].inUse)
             {
@@ -233,7 +238,7 @@ public class Level : MonoBehaviour
         fireSpritePool.Add(new FireSprite(Instantiate(fireSpritePrefab)));
         fireSpritePool[fireSpritePool.Count - 1].fireSpritePrefab.SetActive(true);
         return fireSpritePool.Count - 1;
-    }    
+    }
 
     void UpdateDynamics()
     {
@@ -250,7 +255,7 @@ public class Level : MonoBehaviour
 
     void InitFirePool()
     {
-        for(int i = 0; i < 20; i++)
+        for (int i = 0; i < 20; i++)
         {
             FireSprite fs = new FireSprite(Instantiate(fireSpritePrefab));
             fs.fireSpritePrefab.SetActive(false);
@@ -288,8 +293,8 @@ public class Level : MonoBehaviour
                 gooController.WriteToGooTile(x, y, GridChannel.TYPE, 3.0f);
             }
         }
-        gooController.WriteToGooTile(graphicalPos.x * gooPerGraphTile, graphicalPos.y *gooPerGraphTile, GridChannel.TYPE, 3.0f);
-        
+        gooController.WriteToGooTile(graphicalPos.x * gooPerGraphTile, graphicalPos.y * gooPerGraphTile, GridChannel.TYPE, 3.0f);
+
     }
 }
 

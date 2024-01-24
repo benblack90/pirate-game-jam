@@ -11,11 +11,9 @@ public class AutoPlaceTile : MonoBehaviour
 
     public Tilemap tileMapCover;
     public Tilemap tileMapBase;
-    //public Tilemap tileMapFloor;
 
-    public TileBase coverTile;
-    public TileBase baseTile;
-
+    [SerializeField] 
+    public List<BaseCoverTile.Data> baseCoverTiles = new List<BaseCoverTile.Data>();
     private int numberOfUpdates = 0;
 
     // Update is called once per frame
@@ -32,14 +30,16 @@ public class AutoPlaceTile : MonoBehaviour
     
                 if (tilemap == tileMapBase)
                 {
-                    Debug.Log(tiles.Length);
+                    
                     for (int i = 0; i < numUpdates; i++)
                     {
-                        if (tiles[i].tile)
+                        TileBase tempBase = tiles[i].tile;
+                        TileBase tempCover = CheckIfInBCList(tempBase);
+                        if (tiles[i].tile && tempCover)
                         {
-                            Debug.Log(tiles[i].tile.ToString());
-                            tileMapBase.SetTile(tiles[i].position, baseTile);
-                            tileMapCover.SetTile(tiles[i].position, coverTile);
+                            
+                            tileMapBase.SetTile(tiles[i].position, tempBase);
+                            tileMapCover.SetTile(tiles[i].position, tempCover);
                             //tileMapFloor.SetTile(tiles[i].position, null);
                         }
                         else
@@ -60,4 +60,12 @@ public class AutoPlaceTile : MonoBehaviour
         
     }
 
+    TileBase CheckIfInBCList(TileBase t)
+    {
+        foreach(BaseCoverTile.Data bc in baseCoverTiles)
+        {
+            if (t == bc.BaseTile) return bc.CoverTile;
+        }
+        return null;
+    }
 }

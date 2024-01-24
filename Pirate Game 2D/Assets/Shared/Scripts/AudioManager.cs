@@ -75,10 +75,12 @@ public class AudioManager : MonoBehaviour
         {
             case RuneTypes.Ice:
                 runeCastSound.clip = iceCastSound;
+                runeCastSound.pitch = UnityEngine.Random.Range(0.8f, 1.2f);
                 runeCastSound.Play();
                 break;
             case RuneTypes.Fire:
                 runeCastSound.clip = fireCastSound;
+                runeCastSound.pitch = UnityEngine.Random.Range(0.8f, 1.2f);
                 runeCastSound.Play();
                 break;
         }

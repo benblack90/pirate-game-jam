@@ -136,7 +136,7 @@ public class CustomCharacterController : MonoBehaviour
         {
             footstepSound.Play();
         }
-        else if(_rb.velocity.magnitude <= 0.1f && footstepSound.isPlaying)
+        else if(_rb.velocity.magnitude <= 0.3f && footstepSound.isPlaying)
         {
             footstepSound.Stop();
         }

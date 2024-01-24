@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using System;
+using UnityEngine.UIElements;
 
 enum LineTypes
 {
@@ -151,20 +152,13 @@ public class LineGenerator : MonoBehaviour
                 avgGradient /= positions.Length-2;
                 if(minGradient == Mathf.Infinity || minGradient == Mathf.NegativeInfinity)
                 {
-                    minGradient = -100;
+                    minGradient = -10 * infGrads;
                 }
                 if(maxGradient == Mathf.Infinity || maxGradient == Mathf.NegativeInfinity)
                 {
-                    maxGradient = 100;
+                    maxGradient = 10 * infGrads;
                 }
-                if (curves.Count == 2 && curves[0] != curves[1])
-                {
-                    List<Vector3> linePositions = new List<Vector3>() { positions[0], positions[positions.Length / 2], positions[positions.Length - 1] };
-                    LineInfo newInfo = new LineInfo(LineTypes.Curve, linePositions, 100);
-                    lineTypes.Add(newInfo);
-                    Debug.Log("Curve");
-                }
-                else if(avgGradient <= 0.3f && avgGradient >= -0.3f)
+                if(avgGradient <= 0.3f && avgGradient >= -0.3f)
                 {
                     List<Vector3> linePositions = new List<Vector3>() { positions[0], positions[positions.Length - 1] };
                     LineInfo newInfo = new LineInfo(LineTypes.HorizontalLine, linePositions,
@@ -304,15 +298,16 @@ public class LineGenerator : MonoBehaviour
     {
         int lineAccuracy = (info[0].accuracy + info[1].accuracy + info[2].accuracy) / 3;
         Debug.Log("Accuracy: " + lineAccuracy);
+        float vertLineMiddle = info[lineLookup[LineTypes.VerticalLine][1]].positions[0].x + (info[lineLookup[LineTypes.VerticalLine][1]].positions[1].x - info[lineLookup[LineTypes.VerticalLine][1]].positions[0].x)/2;
         float gradientOne = (info[lineLookup[LineTypes.DiagonalLine][1]].positions[0].y - info[lineLookup[LineTypes.DiagonalLine][1]].positions[1].y) /
                             (info[lineLookup[LineTypes.DiagonalLine][1]].positions[0].x - info[lineLookup[LineTypes.DiagonalLine][1]].positions[1].x);
         float cOne = info[lineLookup[LineTypes.DiagonalLine][1]].positions[0].y - (info[lineLookup[LineTypes.DiagonalLine][1]].positions[0].x * gradientOne);
-        float yIntOne = (gradientOne * info[lineLookup[LineTypes.VerticalLine][1]].positions[1].x) + cOne;
+        float yIntOne = (gradientOne * vertLineMiddle) + cOne;
         float gradientTwo = (info[lineLookup[LineTypes.DiagonalLine][2]].positions[0].y - info[lineLookup[LineTypes.DiagonalLine][2]].positions[1].y) /
                             (info[lineLookup[LineTypes.DiagonalLine][2]].positions[0].x - info[lineLookup[LineTypes.DiagonalLine][2]].positions[1].x);
         float cTwo = info[lineLookup[LineTypes.DiagonalLine][2]].positions[0].y - (info[lineLookup[LineTypes.DiagonalLine][2]].positions[0].x * gradientTwo);
-        float yIntTwo = (gradientTwo * info[lineLookup[LineTypes.VerticalLine][1]].positions[1].x) + cTwo;
-        lineAccuracy -= (int)Mathf.Abs(100 * (yIntOne - yIntTwo));
+        float yIntTwo = (gradientTwo * vertLineMiddle) + cTwo;
+        lineAccuracy -= (int)Mathf.Abs(25 * (yIntOne - yIntTwo));
         Debug.Log("Accuracy: " + lineAccuracy);
         return lineAccuracy;
     }
@@ -374,6 +369,7 @@ public class LineGenerator : MonoBehaviour
         {
             if (InsideBox())
             {
+                drawingSound.pitch = UnityEngine.Random.Range(0.8f, 1.2f);
                 drawingSound.Play();
                 GameObject newLine = Instantiate(linePrefab);
                 activeLine = newLine.GetComponent<DrawLine>();
@@ -401,6 +397,7 @@ public class LineGenerator : MonoBehaviour
             }
             else if(InsideBox() && !activeLine)
             {
+                drawingSound.pitch = UnityEngine.Random.Range(0.8f, 1.2f);
                 drawingSound.Play();
                 GameObject newLine = Instantiate(linePrefab);
                 activeLine = newLine.GetComponent<DrawLine>();

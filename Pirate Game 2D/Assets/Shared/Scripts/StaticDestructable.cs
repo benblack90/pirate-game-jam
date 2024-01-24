@@ -71,7 +71,7 @@ public class StaticDestructable
     {
         if (onFire)
         {
-            hitPoints -= 1.0f;
+            hitPoints -= 15.0f;
             timeOnFire += 1.0f;  
             if(timeOnFire > 5.0f)
             {

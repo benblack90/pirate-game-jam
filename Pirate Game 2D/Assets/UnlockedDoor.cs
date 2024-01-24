@@ -28,7 +28,7 @@ public class UnlockedDoor : MonoBehaviour
             {
                 for (int y = 0; y != yDif + yDifDirection; y += yDifDirection)
                 {
-                    Vector2Int position = new Vector2Int(doorPos.doorStart.x + x , doorPos.doorStart.y + y + 1);
+                    Vector2Int position = new Vector2Int(doorPos.doorStart.x + x , doorPos.doorStart.y + y);
                     doorPositionsBase.Add(position, tileMapRefBase.GetTile(new Vector3Int(position.x, position.y, 0)));
                     doorPositionsCover.Add(position, tileMapRefCover.GetTile(new Vector3Int(position.x, position.y, 0)));
                 }
@@ -38,7 +38,7 @@ public class UnlockedDoor : MonoBehaviour
     void OnTriggerEnter2D(Collider2D other)
     {
         Debug.Log("Trigger");
-        if (other.gameObject.tag == "Player")
+        if (other.gameObject.tag == "Player" && !forceLock)
         {
             foreach(Vector2Int position in doorPositionsBase.Keys)
             {
@@ -68,8 +68,8 @@ public class UnlockedDoor : MonoBehaviour
         Gizmos.color = new Color(0.0f, 1.0f, 0.0f);
         foreach (DoorPositions doorPos in doorTiles)
         {
-            Gizmos.DrawWireCube(new Vector3(doorPos.doorStart.x + 0.5f, doorPos.doorStart.y + 1.5f, 0), new Vector3(1, 1, 0.01f));
-            Gizmos.DrawWireCube(new Vector3(doorPos.doorEnd.x + 0.5f, doorPos.doorEnd.y + 1.5f, 0), new Vector3(1, 1, 0.01f));
+            Gizmos.DrawWireCube(new Vector3(doorPos.doorStart.x + 0.5f, doorPos.doorStart.y + 0.5f, 0), new Vector3(1, 1, 0.01f));
+            Gizmos.DrawWireCube(new Vector3(doorPos.doorEnd.x + 0.5f, doorPos.doorEnd.y + 0.5f, 0), new Vector3(1, 1, 0.01f));
 
             int xDif = doorPos.doorEnd.x - doorPos.doorStart.x;
             int xDifDirection = xDif >= 0 ? 1 : -1;
@@ -80,7 +80,7 @@ public class UnlockedDoor : MonoBehaviour
             {
                 for (int y = 0; y != yDif + yDifDirection; y += yDifDirection)
                 {
-                    Gizmos.DrawWireCube(new Vector3(doorPos.doorStart.x + 0.5f + x, doorPos.doorStart.y + 1.5f + y, 0), new Vector3(1, 1, 0.01f));
+                    Gizmos.DrawWireCube(new Vector3(doorPos.doorStart.x + 0.5f + x, doorPos.doorStart.y + 0.5f + y, 0), new Vector3(1, 1, 0.01f));
                 }
             }
         }

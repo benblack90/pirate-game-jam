@@ -2,15 +2,32 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class LockedDoor : MonoBehaviour
+public class LockedDoor : DoorBase
 {
-    // Start is called before the first frame update
+    public GameObject keyReference;
     void Start()
     {
-        
+        SetTilesForDoor();
+    }
+    void OnTriggerEnter2D(Collider2D other)
+    {
+        Debug.Log("Trigger");
+        if (other.gameObject.tag == "Player" && !forceLock)
+        {
+            
+        }
+
+    }
+    void OnTriggerExit2D(Collider2D other)
+    {
+        Debug.Log("Trigger");
+        if (other.gameObject.tag == "Player" && !forceLock)
+        {
+            
+        }
+
     }
 
-    // Update is called once per frame
     void Update()
     {
         

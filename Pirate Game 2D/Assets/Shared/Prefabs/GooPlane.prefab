@@ -13,6 +13,8 @@ GameObject:
   - component: {fileID: 5694126780433879268}
   - component: {fileID: 3573928088714368122}
   - component: {fileID: 520414233934545174}
+  - component: {fileID: 6358798401395665329}
+  - component: {fileID: 7263472926121586032}
   m_Layer: 0
   m_Name: GooPlane
   m_TagString: Untagged
@@ -30,7 +32,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
   m_LocalPosition: {x: 200, y: 200, z: 0}
-  m_LocalScale: {x: 400, y: 400, z: 100}
+  m_LocalScale: {x: 200, y: 200, z: 100}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -116,7 +118,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 8802904933875937998}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2e85d9a4fa221fc4d9ce03d7c174a665, type: 3}
+  m_Script: {fileID: 11500000, guid: 4c8ec4522d01d9940a15dd249cfcc3f7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   cs: {fileID: 7200000, guid: 92750a1e12a20be4388750dabd5297dc, type: 3}
@@ -124,3 +126,34 @@ MonoBehaviour:
   renderTexture: {fileID: 0}
   texCopy: {fileID: 0}
   gooPlaneMaterial: {fileID: 2100000, guid: d1b8d40499ff24c41b4f87cfe189d970, type: 2}
+--- !u!114 &6358798401395665329
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8802904933875937998}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1c2b97ded12703748b3c7a8ac0bcfd1c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  gooController: {fileID: 520414233934545174}
+  destructableWalls: {fileID: 0}
+  destructableCovers: {fileID: 0}
+  playerModel: {fileID: 0}
+  mainCam: {fileID: 0}
+  ashTile: {fileID: 11400000, guid: 557af84dee989f647b9457ad2891e327, type: 2}
+  fireSpritePrefab: {fileID: 8763906307607680003, guid: 907e50aaa8a965b4ca771a0fa7d807ab, type: 3}
+--- !u!210 &7263472926121586032
+SortingGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8802904933875937998}
+  m_Enabled: 1
+  m_SortingLayerID: 1251820265
+  m_SortingLayer: 2
+  m_SortingOrder: 0
+  m_SortAtRoot: 0

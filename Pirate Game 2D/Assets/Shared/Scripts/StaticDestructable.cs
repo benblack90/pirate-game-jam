@@ -19,27 +19,23 @@ public class StaticDestructable
     public GooController gooController;
 
     public bool onFire;
-    GameObject destructModel;
-    GameObject currentModel;
 
-    public StaticDestructable(float hitPoints, Vector2Int graphicalPos, GameObject destructModel, GameObject currentModel, Level level)
+    public StaticDestructable(float hitPoints, Vector2Int graphicalPos, Level level)
     {
         this.hitPoints = hitPoints;
         this.graphicalPos = graphicalPos;
         gooPos = graphicalPos * 8;
         onFire = false;
-        this.destructModel = destructModel;
-        this.currentModel = currentModel;
         this.level = level;
         this.timeOnFire = 0.0f;
     }
 
 
 
-    public delegate void OnDestructableDestroyed(ObjectScorePair pair, Vector2Int graphicalPos);
-    public static event OnDestructableDestroyed onDestructableDestroyed; //delegate called when a destructable is destroyed
+    public delegate void OnStaticDestroyed(ObjectScorePair pair, Vector2Int graphicalPos);
+    public static event OnStaticDestroyed onStaticDestroyed; //delegate called when a destructable is destroyed
 
-    public void Damage(float damage)
+    public void GooDamage(float damage)
     {
         if (damage <= 0) return;
         hitPoints -= damage * 0.1f;
@@ -90,11 +86,7 @@ public class StaticDestructable
         }
     }
 
-    void SwapToDestroyedModel()
-    {
-        currentModel = destructModel;
-        //inform the renderer, somehow!
-    }
+
 
     public Vector2Int GetGooPos()
     {
@@ -108,15 +100,6 @@ public class StaticDestructable
         ObjectScorePair pair = new ObjectScorePair();
         pair.name = objectName;
         pair.points = points;
-        onDestructableDestroyed?.Invoke(pair, graphicalPos);
-    }
-
-
-    void TestDelegate()
-    {
-        if(Input.GetKeyDown(KeyCode.Space)) 
-        {
-            ObjectDestroy();
-        }
+        onStaticDestroyed?.Invoke(pair, graphicalPos);
     }
 }

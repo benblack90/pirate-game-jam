@@ -36,7 +36,7 @@ public class Level : MonoBehaviour
 
     Dictionary<Vector2Int, StaticDestructable> staticDestructables = new Dictionary<Vector2Int, StaticDestructable>();
     List<Vector2Int> deathRow = new List<Vector2Int>();
-    List<GameObject> dynamicDestructables = new List<GameObject>();
+    List<DynamicDestructable> dynamicDestructables = new List<DynamicDestructable>();
     Vector2 playerStart;
 
     public int GetGooPerTile()
@@ -45,13 +45,13 @@ public class Level : MonoBehaviour
     }
     private void OnEnable()
     {
-        StaticDestructable.onDestructableDestroyed += OnStaticDestroy;
+        StaticDestructable.onStaticDestroyed += OnStaticDestroy;
         //subscribe to some events
     }
     private void OnDisable()
     {
         //unsubscribe from events
-        StaticDestructable.onDestructableDestroyed -= OnStaticDestroy;
+        StaticDestructable.onStaticDestroyed -= OnStaticDestroy;
     }
 
     private void Start()
@@ -135,25 +135,25 @@ public class Level : MonoBehaviour
                 //the -200.0f is arbitrary: essentially, I'm scaling down the temperature damage, so only stuff above 200 hurts
                 //staticDestructables ignore negative damage - see the damage method
                 gooTemp = gooController.GetTileValue(o.Value.GetGooPos().x - 1, o.Value.GetGooPos().y + i, GridChannel.TEMP);
-                o.Value.Damage(gooTemp - 200.0f);
+                o.Value.GooDamage(gooTemp - 200.0f);
                 o.Value.IgnitionFromGooCheck(gooTemp);
             }
             else if (rightBorder == (float)GridTileType.GOO_UNSPREADABLE || rightBorder == (float)GridTileType.GOO_SPREADABLE)
             {
                 gooTemp = gooController.GetTileValue(o.Value.GetGooPos().x + gooPerGraphTile + 1, o.Value.GetGooPos().y + i, GridChannel.TEMP);
-                o.Value.Damage(gooTemp - 200.0f);
+                o.Value.GooDamage(gooTemp - 200.0f);
                 o.Value.IgnitionFromGooCheck(gooTemp);
             }
             else if (topBorder == (float)GridTileType.GOO_UNSPREADABLE || topBorder == (float)GridTileType.GOO_SPREADABLE)
             {
                 gooTemp = gooController.GetTileValue(o.Value.GetGooPos().x + i, o.Value.GetGooPos().y - 1, GridChannel.TEMP);
-                o.Value.Damage(gooTemp - 200.0f);
+                o.Value.GooDamage(gooTemp - 200.0f);
                 o.Value.IgnitionFromGooCheck(gooTemp);
             }
             else if (bottomBorder == (float)GridTileType.GOO_UNSPREADABLE || bottomBorder == (float)GridTileType.GOO_SPREADABLE)
             {
                 gooTemp = gooController.GetTileValue(o.Value.GetGooPos().x + i, o.Value.GetGooPos().y + gooPerGraphTile + 1, GridChannel.TEMP);
-                o.Value.Damage(gooTemp - 200.0f);
+                o.Value.GooDamage(gooTemp - 200.0f);
                 o.Value.IgnitionFromGooCheck(gooTemp);
             }
         }
@@ -242,7 +242,7 @@ public class Level : MonoBehaviour
 
     void UpdateDynamics()
     {
-        foreach (GameObject o in dynamicDestructables)
+        foreach (DynamicDestructable o in dynamicDestructables)
         {
             //check if adjacent to goo'd tile
             //check temperature
@@ -272,7 +272,7 @@ public class Level : MonoBehaviour
                 if (destructableWalls.GetTile(new Vector3Int(x, y, 0)) != null)
                 {
                     Vector2Int graphicalPos = new Vector2Int(x, y);
-                    staticDestructables.Add(graphicalPos, new StaticDestructable(100, graphicalPos, null, null, this));
+                    staticDestructables.Add(graphicalPos, new StaticDestructable(100, graphicalPos, this));
                     staticDestructables[graphicalPos].gooController = gooController;
                     TurnGooTilesStatic(graphicalPos);
                 }

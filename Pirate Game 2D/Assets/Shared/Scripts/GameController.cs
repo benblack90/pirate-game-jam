@@ -17,6 +17,7 @@ public class GameController : MonoBehaviour
         InitLevel();
     }
 
+
     // Update is called once per frame
     void Update()
     {
@@ -30,13 +31,7 @@ public class GameController : MonoBehaviour
     void InitLevel()
     {
         levelList[currentLevel].InitLevel();
-    }
-
-  
-
-   
-
-    
+    }    
 }
 
 

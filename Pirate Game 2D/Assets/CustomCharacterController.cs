@@ -33,7 +33,7 @@ public class CustomCharacterController : MonoBehaviour
     public bool _rotatePlayer = false;
 
     [Header("Goo Settings")]
-    public PracticeComputeScript _gooScript;
+    public GooController _gooScript;
     public int _gooPlaneScaling = 8;
 
     [Header("Spell Settings")]

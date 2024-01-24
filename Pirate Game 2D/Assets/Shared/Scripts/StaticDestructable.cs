@@ -16,7 +16,7 @@ public class StaticDestructable
     int usingFireIndex;
     float timeOnFire;
 
-    public PracticeComputeScript gooController;
+    public GooController gooController;
 
     public bool onFire;
     GameObject destructModel;

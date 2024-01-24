@@ -19,7 +19,7 @@ public class Level : MonoBehaviour
 
     }
 
-    public PracticeComputeScript gooController;
+    public GooController gooController;
     public Tilemap destructableWalls;
     public Tilemap destructableCovers;
     public GameObject playerModel;
@@ -39,6 +39,10 @@ public class Level : MonoBehaviour
     List<GameObject> dynamicDestructables = new List<GameObject>();
     Vector2 playerStart;
 
+    public int GetGooPerTile()
+    {
+        return gooPerGraphTile;
+    }
     private void OnEnable()
     {        
         StaticDestructable.onDestructableDestroyed += OnStaticDestroy;

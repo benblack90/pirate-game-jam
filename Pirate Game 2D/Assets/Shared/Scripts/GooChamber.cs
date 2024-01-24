@@ -6,6 +6,7 @@ public class GooChamber : MonoBehaviour
 {
     [SerializeField] Level _level;
     [SerializeField] Vector2Int _gooOffset;
+    [SerializeField] Animator _anim;
     bool _hasReleased = false;
 
     public delegate void OnGooRelease();
@@ -13,6 +14,10 @@ public class GooChamber : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
+        if (_hasReleased)
+        {
+            return;
+        }
         if (collision.gameObject.CompareTag("Player"))
         {
             int gpt = _level.GetGooPerTile();
@@ -21,7 +26,8 @@ public class GooChamber : MonoBehaviour
             _level.gooController.WriteToGooTile(gooPos.x,gooPos.y,GridChannel.TEMP,127.0f);
             _level.gooController.SendTexToGPU();
             onGooRelease?.Invoke();
-            gameObject.SetActive(false);
+            _anim.SetTrigger("OnBreak");
+            //gameObject.SetActive(false);
         }
     }
 }

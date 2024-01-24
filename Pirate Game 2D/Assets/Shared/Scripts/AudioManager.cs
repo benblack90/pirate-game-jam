@@ -17,7 +17,7 @@ public class AudioManager : MonoBehaviour
 
     private void OnEnable()
     {
-        StaticDestructable.onDestructableDestroyed += OnStaticDestroy;
+        StaticDestructable.onStaticDestroyed += OnStaticDestroy;
         GooChamber.onGooRelease += OnAlarm;
         PointPickup.onPointPickup += OnPointGet;
         LineGenerator.OnRuneComplete += OnRuneComplete;
@@ -25,7 +25,7 @@ public class AudioManager : MonoBehaviour
 
     private void OnDisable()
     {
-        StaticDestructable.onDestructableDestroyed -= OnStaticDestroy;
+        StaticDestructable.onStaticDestroyed -= OnStaticDestroy;
         GooChamber.onGooRelease -= OnAlarm;
         PointPickup.onPointPickup -= OnPointGet;
         LineGenerator.OnRuneComplete -= OnRuneComplete;

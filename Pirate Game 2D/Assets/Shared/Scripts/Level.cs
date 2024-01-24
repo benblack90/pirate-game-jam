@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.IO;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 using static UnityEditor.PlayerSettings;
@@ -46,6 +47,7 @@ public class Level : MonoBehaviour
     private void OnEnable()
     {
         StaticDestructable.onStaticDestroyed += OnStaticDestroy;
+        DynamicDestructable.onDynamicDestroyed += OnDynamicDestroy;
         //subscribe to some events
     }
     private void OnDisable()
@@ -75,7 +77,7 @@ public class Level : MonoBehaviour
         {
             timer -= Time.deltaTime;
         }
-        //UpdateDynamics();
+        UpdateDynamics();
     }
 
     IEnumerator CheckStaticsLoop()
@@ -191,6 +193,11 @@ public class Level : MonoBehaviour
         deathRow.Add(graphicalPos);
     }
 
+    void OnDynamicDestroy(ObjectScorePair pair, Vector2Int graphicalPos)
+    {
+
+    }
+
     void SetGooAtEdgeToSpreadable(Vector2Int corner)
     {
         if (gooController.GetTileValue(corner.x, corner.y, GridChannel.TYPE) == (float)GridTileType.GOO_UNSPREADABLE)
@@ -244,12 +251,22 @@ public class Level : MonoBehaviour
     {
         foreach (DynamicDestructable o in dynamicDestructables)
         {
-            //check if adjacent to goo'd tile
-            //check temperature
-            //replace with burning/burnt model
-            //give points to player
-            //remove from dynamicDestructables list
-        }
+            if (!o.active) continue;
+            for(int i = 0; i < o.GetWidth(); i++)
+            {
+                float type = gooController.GetTileValue(o.GetGooPos().x + i, o.GetGooPos().y - 1, GridChannel.TYPE);
+                if (type == 1.0f || type == 2.0f)
+                {
+                    float gooTemp = gooController.GetTileValue(o.GetGooPos().x + i, o.GetGooPos().y - 1, GridChannel.TEMP);
+                    ;
+                    if (gooTemp > 200.0f)
+                    {
+                        o.GooDamage(gooTemp - 200.0f);
+                        break;
+                    }
+                }                
+            }            
+        } 
     }
 
 
@@ -279,6 +296,13 @@ public class Level : MonoBehaviour
             }
         }
         gooController.SendTexToGPU();
+
+        List<GameObject> temp = Enumerable.ToList<GameObject>(GameObject.FindGameObjectsWithTag("Dynamic"));
+        foreach (GameObject o in temp)
+        {
+            dynamicDestructables.Add(o.GetComponent<DynamicDestructable>());
+            dynamicDestructables[dynamicDestructables.Count - 1].Init(this);
+        }
 
         //this is temporary, just to make the game work in the absence of the actual level editor
         playerStart = new Vector2Int(0, 0);

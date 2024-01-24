@@ -4,7 +4,7 @@ using UnityEditor;
 using UnityEngine;
 using static StaticDestructable;
 
-public class DynamicDestructable
+public class DynamicDestructable : MonoBehaviour
 {
     [SerializeField] SpriteRenderer sp;
     [SerializeField] Transform t;
@@ -17,29 +17,43 @@ public class DynamicDestructable
     Vector2Int bottomLeft;
     Vector2Int gooPos;
     float hitPoints;
+    [SerializeField] float maxHp;
+    public bool active;
 
     public delegate void OnDynamicDestroyed(ObjectScorePair pair, Vector2Int graphicalPos);
     public static event OnDynamicDestroyed onDynamicDestroyed; //delegate called when a destructable is destroyed
 
-    DynamicDestructable(Level l, Vector2Int graphicalPos)
+    DynamicDestructable() { }
+
+    public void Init(Level l)
     {
-        bottomLeft.x = (int) t.position.x - width / 2;
-        bottomLeft.y = (int) t.position.y - height / 2;
+        bottomLeft.x = (int)t.position.x - width / 2;
+        bottomLeft.y = (int)t.position.y - height / 2;
         gooPos = bottomLeft * 8;
         this.l = l;
-        this.hitPoints = 100.0f;
+        this.hitPoints = maxHp;
+        this.active = true;
     }
 
-    Vector2Int GetGooPos()
+    public Vector2Int GetGooPos()
     {
         return gooPos;
+    }
+
+    public int GetWidth()
+    {
+        return width;
     }
 
     public void GooDamage(float damage)
     {
         if (damage <= 0) return;
-        hitPoints -= damage * 0.5f;
-        sp.color = new Color(sp.color.r-damage, sp.color.g-damage, sp.color.b-damage, sp.color.a);
+        
+        damage *= Time.deltaTime;
+        hitPoints -= damage;
+        float percentDmg = hitPoints / maxHp;
+        sp.color = new Color(percentDmg,percentDmg, percentDmg, sp.color.a);
+        Debug.Log(gameObject.name+ " "+ hitPoints);
         if (hitPoints <= 0) ObjectDestroy();
     }
 
@@ -48,6 +62,8 @@ public class DynamicDestructable
         ObjectScorePair pair = new ObjectScorePair();
         pair.name = name;
         pair.points = points;
+        sp.sprite = null;        
         onDynamicDestroyed?.Invoke(pair, bottomLeft);
+        active = false;
     }
 }

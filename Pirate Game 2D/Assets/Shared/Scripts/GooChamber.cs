@@ -27,6 +27,7 @@ public class GooChamber : MonoBehaviour
             _level.gooController.SendTexToGPU();
             onGooRelease?.Invoke();
             _anim.SetTrigger("OnBreak");
+            _hasReleased = true;
             //gameObject.SetActive(false);
         }
     }

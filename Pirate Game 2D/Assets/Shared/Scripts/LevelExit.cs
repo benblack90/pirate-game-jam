@@ -21,4 +21,15 @@ public class LevelExit : MonoBehaviour
     {
         //do something
     }
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.CompareTag("Player"))
+        {
+            if (PlayerInventory.HasItem("ExitKey"))
+            {
+                onLevelOver?.Invoke();
+            }
+        }
+    }
 }

@@ -13,15 +13,14 @@ void HeatConduction(uint3 id);
 
 [numthreads(16, 16, 1)]
 void CSMain(uint3 id : SV_DispatchThreadID)
-{    
+{
     //This is looking for type 1, equivalent to 1/255
     if (Result[id.xy].x * 255 == 1.0f)
-    {            
+    {
         BuildGooage(id);
-        if(Result[id.xy].z >=1) Spread(id);
+        if (Result[id.xy].z>1.0f)Spread(id);
     }
 }
-
 float4 TargetTempEntropy(float4 values, float multiplier)
 {
     if (values.w != 0.5f)

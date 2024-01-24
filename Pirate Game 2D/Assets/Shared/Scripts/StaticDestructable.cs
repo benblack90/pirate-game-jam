@@ -14,6 +14,7 @@ public class StaticDestructable
     Vector2Int gooPos;
     Level level;
     int usingFireIndex;
+    float timeOnFire;
 
     public PracticeComputeScript gooController;
 
@@ -30,6 +31,7 @@ public class StaticDestructable
         this.destructModel = destructModel;
         this.currentModel = currentModel;
         this.level = level;
+        this.timeOnFire = 0.0f;
     }
 
 
@@ -56,8 +58,8 @@ public class StaticDestructable
     public void IgniteFromAdjacency(int dist)
     {
         if (onFire) return;
-        float chance = (dist > 1) ? 0.25f : 0.5f;
-        if(chance < UnityEngine.Random.Range(0.0f, 1.0f))
+        float chance = (dist > 1) ? 0.05f : 0.1f;
+        if(chance > UnityEngine.Random.Range(0.0f, 1.0f))
         {
             Ignite();
         }        
@@ -73,8 +75,14 @@ public class StaticDestructable
     {
         if (onFire)
         {
-            hitPoints -= 1.0f * Time.deltaTime;
-            
+            hitPoints -= 1.0f;
+            timeOnFire += 1.0f;  
+            if(timeOnFire > 5.0f)
+            {
+                timeOnFire = 0.0f;
+                onFire = false;
+                level.ExtinguishFire(usingFireIndex);
+            }
         }
         if (hitPoints <= 0)
         {

@@ -9,7 +9,7 @@ using static UnityEditor.PlayerSettings;
 
 public class Level : MonoBehaviour
 {
-    struct FireSprite
+    class FireSprite
     {
         public FireSprite(GameObject fireSpritePrefab)
         { this.fireSpritePrefab = fireSpritePrefab; inUse = false; }
@@ -17,7 +17,6 @@ public class Level : MonoBehaviour
         public GameObject fireSpritePrefab;
         public bool inUse;
 
-        public void SetInUse(bool inUse) { this.inUse = inUse; }
     }
 
     public PracticeComputeScript gooController;
@@ -107,7 +106,7 @@ public class Level : MonoBehaviour
         { 
             o.Value.CheckFireDamage();
             CheckAdjacentGoo(o);
-            CheckAdjacentStatics(o);
+            AdjacentStaticFireSpread(o);
         }
     }
 
@@ -117,9 +116,9 @@ public class Level : MonoBehaviour
         {
 
             float leftBorder = gooController.GetTileValue(o.Value.GetGooPos().x - 1, o.Value.GetGooPos().y + i, GridChannel.TYPE);
-            float rightBorder = gooController.GetTileValue(o.Value.GetGooPos().x + 9, o.Value.GetGooPos().y + i, GridChannel.TYPE);
+            float rightBorder = gooController.GetTileValue(o.Value.GetGooPos().x + gooPerGraphTile + 1, o.Value.GetGooPos().y + i, GridChannel.TYPE);
             float topBorder = gooController.GetTileValue(o.Value.GetGooPos().x + i, o.Value.GetGooPos().y - 1, GridChannel.TYPE);
-            float bottomBorder = gooController.GetTileValue(o.Value.GetGooPos().x + i, o.Value.GetGooPos().y + 9, GridChannel.TYPE);
+            float bottomBorder = gooController.GetTileValue(o.Value.GetGooPos().x + i, o.Value.GetGooPos().y + gooPerGraphTile + 1, GridChannel.TYPE);
             float gooTemp;
 
             if (leftBorder == (float)GridTileType.GOO_UNSPREADABLE || leftBorder == (float)GridTileType.GOO_SPREADABLE)
@@ -132,7 +131,7 @@ public class Level : MonoBehaviour
             }
             else if (rightBorder == (float)GridTileType.GOO_UNSPREADABLE || rightBorder == (float)GridTileType.GOO_SPREADABLE)
             {
-                gooTemp = gooController.GetTileValue(o.Value.GetGooPos().x + 9, o.Value.GetGooPos().y + i, GridChannel.TEMP);
+                gooTemp = gooController.GetTileValue(o.Value.GetGooPos().x + gooPerGraphTile + 1, o.Value.GetGooPos().y + i, GridChannel.TEMP);
                 o.Value.Damage(gooTemp - 200.0f);
                 o.Value.IgnitionFromGooCheck(gooTemp);
             }
@@ -144,7 +143,7 @@ public class Level : MonoBehaviour
             }
             else if (bottomBorder == (float)GridTileType.GOO_UNSPREADABLE || bottomBorder == (float)GridTileType.GOO_SPREADABLE)
             {
-                gooTemp = gooController.GetTileValue(o.Value.GetGooPos().x + i, o.Value.GetGooPos().y + 9, GridChannel.TEMP);
+                gooTemp = gooController.GetTileValue(o.Value.GetGooPos().x + i, o.Value.GetGooPos().y + gooPerGraphTile + 1, GridChannel.TEMP);
                 o.Value.Damage(gooTemp - 200.0f);
                 o.Value.IgnitionFromGooCheck(gooTemp);
             }
@@ -164,7 +163,7 @@ public class Level : MonoBehaviour
 
         }
 
-        for(int i = 0; i < 9; i++)
+        for(int i = 0; i < gooPerGraphTile+1; i++)
         {
             Vector2Int bottomLeft = new Vector2Int(graphicalPos.x * gooPerGraphTile - 1 + i, graphicalPos.y * gooPerGraphTile - 1);
             Vector2Int topLeft = new Vector2Int(graphicalPos.x * gooPerGraphTile - 1, graphicalPos.y * gooPerGraphTile + gooPerGraphTile + 1 - i);
@@ -193,20 +192,20 @@ public class Level : MonoBehaviour
 
     public void ExtinguishFire(int index)
     {
-        fireSpritePool[index].SetInUse(false);
+        fireSpritePool[index].inUse = false;
         fireSpritePool[index].fireSpritePrefab.SetActive(false);
     }
 
-    void CheckAdjacentStatics(KeyValuePair<Vector2Int, StaticDestructable> o)
+    void AdjacentStaticFireSpread(KeyValuePair<Vector2Int, StaticDestructable> o)
     {
         if (o.Value.onFire)
         {
             for(int dist = 1; dist < 3; dist++)
             {
-                for (int i = 0; i < dist * 2 + 1; i++)
+                for (int i = 0; i < dist * 2; i++)
                 {
                     StaticDestructable n;
-                    if(staticDestructables.TryGetValue(new Vector2Int(o.Key.x + dist - i, o.Key.y - dist), out n)) n.IgniteFromAdjacency(dist);
+                    if (staticDestructables.TryGetValue(new Vector2Int(o.Key.x + dist - i, o.Key.y - dist), out n)) n.IgniteFromAdjacency(dist);
                     if(staticDestructables.TryGetValue(new Vector2Int(o.Key.x + i - dist, o.Key.y + dist), out n)) n.IgniteFromAdjacency(dist);
                     if(staticDestructables.TryGetValue(new Vector2Int(o.Key.x - dist, o.Key.y + i - dist), out n)) n.IgniteFromAdjacency(dist);
                     if(staticDestructables.TryGetValue(new Vector2Int(o.Key.x + dist, o.Key.y + dist - i), out n)) n.IgniteFromAdjacency(dist);                    
@@ -221,7 +220,7 @@ public class Level : MonoBehaviour
         {
             if (!fireSpritePool[i].inUse)
             {
-                fireSpritePool[i].SetInUse(true);
+                fireSpritePool[i].inUse = true;
                 fireSpritePool[i].fireSpritePrefab.transform.position = new Vector3(loc.x, loc.y, 0);
                 fireSpritePool[i].fireSpritePrefab.SetActive(true);
                 return i;

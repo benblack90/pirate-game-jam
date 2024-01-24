@@ -6,6 +6,7 @@ public class AudioManager : MonoBehaviour
 {
     public AudioSource backgroundMusic;
     public AudioClip backgroundMusicLoop;
+    public AudioClip postAlarmMusic;
     public AudioSource destroySound;
     public AudioSource alarmSound;
     public AudioSource itemCollectSound;
@@ -33,9 +34,10 @@ public class AudioManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (!backgroundMusic.isPlaying)
+        if (!backgroundMusic.isPlaying && !backgroundMusic.loop)
         {
             backgroundMusic.clip = backgroundMusicLoop;
+            backgroundMusic.loop = true;
             backgroundMusic.Play();
         }
     }
@@ -49,6 +51,10 @@ public class AudioManager : MonoBehaviour
     private void OnAlarm()
     {
         alarmSound.Play();
+        backgroundMusic.Stop();
+        backgroundMusic.loop = false;
+        backgroundMusic.clip = postAlarmMusic;
+        backgroundMusic.Play();
     }
 
     private void OnItemCollect()

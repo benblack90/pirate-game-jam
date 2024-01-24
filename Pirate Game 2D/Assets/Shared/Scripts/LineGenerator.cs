@@ -374,7 +374,6 @@ public class LineGenerator : MonoBehaviour
         {
             if (InsideBox())
             {
-                drawingSound.loop = true;
                 drawingSound.Play();
                 GameObject newLine = Instantiate(linePrefab);
                 activeLine = newLine.GetComponent<DrawLine>();
@@ -384,7 +383,6 @@ public class LineGenerator : MonoBehaviour
             {
             if (activeLine)
             {
-                drawingSound.loop = false;
                 drawingSound.Stop();
                 Vector3 mousePos = Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, Camera.main.transform.position.z))
                     - new Vector3(Camera.main.transform.position.x, Camera.main.transform.position.y, 0);
@@ -397,14 +395,12 @@ public class LineGenerator : MonoBehaviour
         {
             if (!InsideBox() && activeLine)
             {
-                drawingSound.loop = false;
                 drawingSound.Stop();
                 lines.Add(activeLine);
                 activeLine = null;
             }
             else if(InsideBox() && !activeLine)
             {
-                drawingSound.loop = true;
                 drawingSound.Play();
                 GameObject newLine = Instantiate(linePrefab);
                 activeLine = newLine.GetComponent<DrawLine>();

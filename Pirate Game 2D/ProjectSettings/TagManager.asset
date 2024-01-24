@@ -56,6 +56,9 @@ TagManager:
   - name: Cover
     uniqueID: 2818268547
     locked: 0
+  - name: Entities (Over)
+    uniqueID: 1346330925
+    locked: 0
   - name: UI
     uniqueID: 182787563
     locked: 0

@@ -34,4 +34,14 @@ public class LockedDoor : DoorBase
     {
         
     }
+    void OnDrawGizmosSelected()
+    {
+        // Orange
+        Gizmos.color = new Color(0.0f, 0.0f, 1.0f);
+        foreach (DoorPositions doorPos in doorTiles)
+        {
+            Gizmos.DrawLine(this.transform.position, keyReference.transform.position);
+           
+        }
+    }
 }

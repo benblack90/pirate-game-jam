@@ -7,6 +7,7 @@ public class AudioManager : MonoBehaviour
     public AudioSource backgroundMusic;
     public AudioClip backgroundMusicLoop;
     public AudioClip postAlarmMusic;
+    public AudioClip postAlarmLoop;
     public AudioSource destroySound;
     public AudioSource alarmSound;
     public AudioSource itemCollectSound;
@@ -44,6 +45,10 @@ public class AudioManager : MonoBehaviour
             backgroundMusic.loop = true;
             backgroundMusic.Play();
         }
+        if (alarmSound.isPlaying && alarmSound.time >= 4.0f)
+        {
+            alarmSound.volume -= 0.001f;
+        }
     }
 
     private void OnStaticDestroy(ObjectScorePair pair, Vector2Int graphicalPos)
@@ -64,6 +69,7 @@ public class AudioManager : MonoBehaviour
         backgroundMusic.Stop();
         backgroundMusic.loop = false;
         backgroundMusic.clip = postAlarmMusic;
+        backgroundMusicLoop = postAlarmLoop;
         backgroundMusic.volume += 0.2f;
         backgroundMusic.Play();
     }

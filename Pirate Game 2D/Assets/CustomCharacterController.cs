@@ -17,7 +17,8 @@ public class CustomCharacterController : MonoBehaviour
 
     
     [Header("Controller Settings")]
-    public float _characeterSpeed = 1.0f;
+    public float _characeterSpeed = 600.0f;
+    public float _characeterRunSpeed = 800.0f; 
     [Range(0.0f, 100.0f)]
     public float _castRange = 5.0f;
     [Range(0.0f,360.0f)]
@@ -133,7 +134,7 @@ public class CustomCharacterController : MonoBehaviour
         Vector2 inputs = new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
         if (inputs.magnitude > 1) inputs = inputs.normalized;
 
-        _rb.velocity += inputs * _characeterSpeed * Time.deltaTime;
+        _rb.velocity += inputs * (Input.GetKey(KeyCode.LeftShift) ? _characeterRunSpeed : _characeterSpeed) * Time.deltaTime;
 
         if(_rb.velocity.magnitude > 0.1f && !footstepSound.isPlaying)
         {

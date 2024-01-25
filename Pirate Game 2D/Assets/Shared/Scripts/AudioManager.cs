@@ -15,13 +15,17 @@ public class AudioManager : MonoBehaviour
     public AudioSource runeCastSound;
     public AudioClip iceCastSound;
     public AudioClip fireCastSound;
+    public AudioClip invalidCastSound;
+
+    private float pointComboMax = 2.0f;
+    private float pointComboTimer = 0.0f;
+    private int comboCounter = 0;
 
     private void OnEnable()
     {
         StaticDestructable.onStaticDestroyed += OnStaticDestroy;
         DynamicDestructable.onDynamicDestroyed += OnDynamicDestroy;
         GooChamber.onGooRelease += OnAlarm;
-        PointPickup.onPointPickup += OnPointGet;
         Collectable.onGenericCollectable += OnItemCollect;
         LineGenerator.OnRuneComplete += OnRuneComplete;
     }
@@ -31,7 +35,6 @@ public class AudioManager : MonoBehaviour
         StaticDestructable.onStaticDestroyed -= OnStaticDestroy;
         DynamicDestructable.onDynamicDestroyed -= OnDynamicDestroy;
         GooChamber.onGooRelease -= OnAlarm;
-        PointPickup.onPointPickup -= OnPointGet;
         Collectable.onGenericCollectable -= OnItemCollect;
         LineGenerator.OnRuneComplete -= OnRuneComplete;
     }
@@ -39,6 +42,11 @@ public class AudioManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if(pointComboTimer > 0.0f)
+        {
+            pointComboTimer -= Time.deltaTime;
+            if (pointComboTimer <= 0.0f) comboCounter = 0;
+        }
         if (!backgroundMusic.isPlaying && !backgroundMusic.loop)
         {
             backgroundMusic.clip = backgroundMusicLoop;
@@ -47,20 +55,31 @@ public class AudioManager : MonoBehaviour
         }
         if (alarmSound.isPlaying && alarmSound.time >= 4.0f)
         {
-            alarmSound.volume -= 0.001f;
+            alarmSound.volume -= 0.0003f;
+            if(alarmSound.volume == 0)
+            {
+                alarmSound.Stop();
+            }
         }
     }
 
     private void OnStaticDestroy(ObjectScorePair pair, Vector2Int graphicalPos)
     {
+        
+        pointComboTimer = pointComboMax;
+        comboCounter = Mathf.Min(10, comboCounter + 1);
         if (destroySound.isPlaying) destroySound.Stop();
         destroySound.Play();
+        OnPointGet(pair.points);
     }
 
     private void OnDynamicDestroy(ObjectScorePair pair, Vector2Int graphicalPos)
     {
+        pointComboTimer = pointComboMax;
+        comboCounter = Mathf.Min(10, comboCounter + 1);
         if (destroySound.isPlaying) destroySound.Stop();
         destroySound.Play();
+        OnPointGet(pair.points);
     }
 
     private void OnAlarm()
@@ -83,7 +102,7 @@ public class AudioManager : MonoBehaviour
     private void OnPointGet(int points)
     {
         if (pointCollectSound.isPlaying) pointCollectSound.Stop();
-        pointCollectSound.pitch = 1.0f + (points/10000.0f);
+        pointCollectSound.pitch = 1.0f + (points/500.0f) + (comboCounter/10.0f);
         pointCollectSound.Play();
     }
 
@@ -93,14 +112,15 @@ public class AudioManager : MonoBehaviour
         {
             case RuneTypes.Ice:
                 runeCastSound.clip = iceCastSound;
-                runeCastSound.pitch = UnityEngine.Random.Range(0.8f, 1.2f);
-                runeCastSound.Play();
                 break;
             case RuneTypes.Fire:
                 runeCastSound.clip = fireCastSound;
-                runeCastSound.pitch = UnityEngine.Random.Range(0.8f, 1.2f);
-                runeCastSound.Play();
+                break;
+            case RuneTypes.Invalid:
+                runeCastSound.clip = invalidCastSound;
                 break;
         }
+        runeCastSound.pitch = Random.Range(0.8f, 1.2f);
+        runeCastSound.Play();
     }
 }

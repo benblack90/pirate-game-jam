@@ -32,9 +32,14 @@ public class PlayerValuesManager : MonoBehaviour
         onPointsChanged?.Invoke(_points);
     }
 
-    void ChangeHealth(int health)
+    void SetHealth(int health)
     {
         _currentHealth = health;
         onHealthChanged?.Invoke(_currentHealth/_maxHealth);
+    }
+
+    public void SubtractHealth(int damage)
+    {
+        _currentHealth -= damage;
     }
 }

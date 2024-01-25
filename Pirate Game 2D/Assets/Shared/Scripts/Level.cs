@@ -88,25 +88,23 @@ public class Level : MonoBehaviour
     void UpdatePlayerHealth()
     {
 
-
-        foreach (DynamicDestructable o in dynamicDestructables)
+        Vector2Int playerGooPos = playerController.GetPlayerPos() * gooPerGraphTile;
+        float temp;
+        float maxTemp = 0.0f;
+        for(int i = -1; i < 2; i++)
         {
-            if (!o.active) continue;
-            for (int i = 0; i < o.GetWidth(); i++)
-            {
-                float type = gooController.GetTileValue(o.GetGooPos().x + i, o.GetGooPos().y - 1, GridChannel.TYPE);
-                if (type == 1.0f || type == 2.0f)
-                {
-                    float gooTemp = gooController.GetTileValue(o.GetGooPos().x + i, o.GetGooPos().y - 1, GridChannel.TEMP);
-                    ;
-                    if (gooTemp > 200.0f)
-                    {
-                        o.GooDamage(gooTemp - 200.0f);
-                        break;
-                    }
-                }
-            }
+            float tileType = gooController.GetTileValue(playerGooPos.x + i, playerGooPos.y, GridChannel.TYPE);
+            temp = CheckTempOfPlayerGooTiles(tileType, playerGooPos.x + i, playerGooPos.y);
+            maxTemp = (temp > maxTemp) ? temp : maxTemp;
         }
+        playerValues.SubtractHealth((int)((maxTemp - 200) * Time.deltaTime));
+    }
+
+    float CheckTempOfPlayerGooTiles(float tileType, int posX, int posY)
+    {
+        if (tileType < 1f && tileType > 2f) return 0.0f;
+        float temp = gooController.GetTileValue(posX, posY, GridChannel.TEMP);
+        return temp;
     }
 
     IEnumerator CheckStaticsLoop()
@@ -114,6 +112,7 @@ public class Level : MonoBehaviour
         WaitForSeconds wfs = new WaitForSeconds(1.0f);
         while (true)
         {
+            
             ExecuteDeathRowStatics();
             UpdateStatics();
             gooController.SendTexToGPU();

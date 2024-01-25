@@ -16,7 +16,6 @@ public class LockedDoor : DoorBase
     }
     void OnTriggerEnter2D(Collider2D other)
     {
-        Debug.Log("Trigger");
         if (!open && other.gameObject.CompareTag("Player"))
         {
             if (PlayerInventory.HasItem(keyName))

@@ -150,7 +150,7 @@ public class ToolSelector : MonoBehaviour
         mouseCoords += new Vector2Int((int)gooPlane.transform.localScale.x/2, (int)gooPlane.transform.localScale.y/2);
         int xCoord = (int)(3200 * (mouseCoords.x / gooPlane.transform.localScale.x));
         int yCoord = (int)(3200 * (mouseCoords.y / gooPlane.transform.localScale.y)) + 1;
-        Debug.Log(xCoord + ", " + yCoord);
+        //Debug.Log(xCoord + ", " + yCoord);
         List<Vector2Int> gooCoords = new List<Vector2Int>();
         if (selectedTiles[0].x != xCoord || selectedTiles[0].y != yCoord)
         {

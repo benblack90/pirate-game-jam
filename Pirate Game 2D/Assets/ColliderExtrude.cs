@@ -36,9 +36,9 @@ public class ColliderExtrude : MonoBehaviour
             thisCollider.GetPath(i, pathVerts);
             
             vertices.AddRange(pathVerts);
-            Debug.Log(vertices[i]);
+            //Debug.Log(vertices[i]);
         }
-        Debug.Log(vertices.Count);
+        //Debug.Log(vertices.Count);
 
 
     }

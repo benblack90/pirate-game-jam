@@ -53,7 +53,6 @@ public class DynamicDestructable : MonoBehaviour
         hitPoints -= damage;
         float percentDmg = hitPoints / maxHp;
         sp.color = new Color(percentDmg,percentDmg, percentDmg, sp.color.a);
-        Debug.Log(gameObject.name+ " "+ hitPoints);
         if (hitPoints <= 0) ObjectDestroy();
     }
 

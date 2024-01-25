@@ -24,6 +24,6 @@ public class PlayerInventory : MonoBehaviour
     void AddToInventory(string name)
     {
         inventory.Add(name);
-        Debug.Log(name);
+        //Debug.Log(name);
     }
 }

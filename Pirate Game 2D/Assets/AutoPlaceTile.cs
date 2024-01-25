@@ -26,7 +26,7 @@ public class AutoPlaceTile : MonoBehaviour
             int numUpdates = tiles.Length;
             if (numberOfUpdates != numUpdates)
             {
-                Debug.Log(numberOfUpdates);
+                //Debug.Log(numberOfUpdates);
     
                 if (tilemap == tileMapBase)
                 {

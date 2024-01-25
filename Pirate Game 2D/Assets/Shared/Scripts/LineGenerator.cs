@@ -205,7 +205,7 @@ public class LineGenerator : MonoBehaviour
     int IceAccuracyCalculator(List<LineInfo> info, Dictionary<LineTypes, List<int>> lineLookup)
     {
         int lineAccuracy = (info[0].accuracy + info[1].accuracy + info[2].accuracy) / 3;
-        Debug.Log("Accuracy: " + lineAccuracy);
+        //Debug.Log("Accuracy: " + lineAccuracy);
         float vertLineMiddle = info[lineLookup[LineTypes.VerticalLine][1]].positions[0].x + (info[lineLookup[LineTypes.VerticalLine][1]].positions[1].x - info[lineLookup[LineTypes.VerticalLine][1]].positions[0].x)/2;
         float gradientOne = (info[lineLookup[LineTypes.DiagonalLine][1]].positions[0].y - info[lineLookup[LineTypes.DiagonalLine][1]].positions[1].y) /
                             (info[lineLookup[LineTypes.DiagonalLine][1]].positions[0].x - info[lineLookup[LineTypes.DiagonalLine][1]].positions[1].x);
@@ -216,7 +216,7 @@ public class LineGenerator : MonoBehaviour
         float cTwo = info[lineLookup[LineTypes.DiagonalLine][2]].positions[0].y - (info[lineLookup[LineTypes.DiagonalLine][2]].positions[0].x * gradientTwo);
         float yIntTwo = (gradientTwo * vertLineMiddle) + cTwo;
         lineAccuracy -= (int)Mathf.Abs(25 * (yIntOne - yIntTwo));
-        Debug.Log("Accuracy: " + lineAccuracy);
+        //Debug.Log("Accuracy: " + lineAccuracy);
         return Mathf.Max(lineAccuracy, 10);
     }
 
@@ -247,7 +247,7 @@ public class LineGenerator : MonoBehaviour
     int FireAccuracyCalculator(List<LineInfo> info, Dictionary<LineTypes, List<int>> lineLookup)
     {
         int lineAccuracy = (info[0].accuracy + info[1].accuracy + info[2].accuracy + info[3].accuracy) / 4;
-        Debug.Log("Accuracy: " + lineAccuracy);
+        //Debug.Log("Accuracy: " + lineAccuracy);
         float minX = Mathf.Min(info[lineLookup[LineTypes.VerticalLine][1]].positions[0].x,
             Mathf.Min(info[lineLookup[LineTypes.VerticalLine][2]].positions[0].x, info[lineLookup[LineTypes.VerticalLine][3]].positions[0].x));
         float maxX = Mathf.Max(info[lineLookup[LineTypes.VerticalLine][1]].positions[0].x,
@@ -255,12 +255,12 @@ public class LineGenerator : MonoBehaviour
         float midX = info[lineLookup[LineTypes.VerticalLine][1]].positions[0].x + info[lineLookup[LineTypes.VerticalLine][2]].positions[0].x +
             info[lineLookup[LineTypes.VerticalLine][3]].positions[0].x - minX - maxX;
         lineAccuracy -= (int)Mathf.Abs((maxX - midX) - (midX - minX)) * 100;
-        Debug.Log("Accuracy: " + lineAccuracy);
+        //Debug.Log("Accuracy: " + lineAccuracy);
         float sizeOne = Mathf.Abs(info[lineLookup[LineTypes.VerticalLine][1]].positions[0].y - info[lineLookup[LineTypes.VerticalLine][1]].positions[1].y);
         float sizeTwo = Mathf.Abs(info[lineLookup[LineTypes.VerticalLine][2]].positions[0].y - info[lineLookup[LineTypes.VerticalLine][2]].positions[1].y);
         float sizeThree = Mathf.Abs(info[lineLookup[LineTypes.VerticalLine][3]].positions[0].y - info[lineLookup[LineTypes.VerticalLine][3]].positions[1].y);
         lineAccuracy -= (int)((Mathf.Abs(sizeOne - sizeTwo) * 25) + (Mathf.Abs(sizeOne - sizeThree) * 25));
-        Debug.Log("Accuracy: " + lineAccuracy);
+        //Debug.Log("Accuracy: " + lineAccuracy);
         return Mathf.Max(lineAccuracy, 10);
     }
 

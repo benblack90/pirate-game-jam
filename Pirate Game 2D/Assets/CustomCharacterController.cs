@@ -263,9 +263,22 @@ public class CustomCharacterController : MonoBehaviour
 
     void Burst(int burstId)
     {
+
         GameObject spell = Instantiate(_particleSystem, this.transform.position, Quaternion.Euler(0,0,_aimDirection));
         ParticleSystem particleRef = spell.GetComponent<ParticleSystem>();
 
+        Color color = new Color(1,1,1);
+
+        switch (burstId)
+        {
+            case (SPELL_HOT):
+                color = new Color(1,0.5f,0);
+                break;
+            case (SPELL_COLD):
+                color = new Color(0, 0.5f, 1);
+                break;
+        }
+        particleRef.startColor = color;
         particleRef.Play();
     }
     // This doesn't work if cast radius is >180 for some reason.

@@ -7,6 +7,7 @@ using UnityEngine.Tilemaps;
 public class DoorBase : MonoBehaviour
 {
     public bool forceLock = false;
+    protected bool open = false;
 
     public Tilemap tileMapRefBase = null;
     public Tilemap tileMapRefCover = null;
@@ -15,6 +16,10 @@ public class DoorBase : MonoBehaviour
 
     protected Dictionary<Vector2Int, TileBase> doorPositionsBase = new Dictionary<Vector2Int, TileBase>();
     protected Dictionary<Vector2Int, TileBase> doorPositionsCover = new Dictionary<Vector2Int, TileBase>();
+
+    public delegate void OnDoorOpenClose(Dictionary<Vector2Int, TileBase> doorPositions, GridTileType gridType);
+    public static event OnDoorOpenClose onDoorOpenClose;
+
 
     void Start()
     {
@@ -68,20 +73,26 @@ public class DoorBase : MonoBehaviour
 
     protected void OpenDoor()
     {
+        open = true;
+        onDoorOpenClose?.Invoke(doorPositionsBase, GridTileType.BLANK);
         foreach (Vector2Int position in doorPositionsBase.Keys)
         {
             tileMapRefBase.SetTile(new Vector3Int(position.x, position.y, 0), null);
             tileMapRefCover.SetTile(new Vector3Int(position.x, position.y, 0), null);
         }
+        
     }
 
     protected void CloseDoor()
     {
+        open = false;
+        onDoorOpenClose?.Invoke(doorPositionsBase, GridTileType.STATIC);
         foreach (Vector2Int position in doorPositionsBase.Keys)
         {
             tileMapRefBase.SetTile(new Vector3Int(position.x, position.y, 0), doorPositionsBase[position]);
             tileMapRefCover.SetTile(new Vector3Int(position.x, position.y, 0), doorPositionsCover[position]);
         }
+        
     }
 }
 

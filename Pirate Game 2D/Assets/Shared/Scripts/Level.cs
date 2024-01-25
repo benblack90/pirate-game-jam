@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 using static UnityEditor.PlayerSettings;
@@ -23,7 +24,9 @@ public class Level : MonoBehaviour
     public GooController gooController;
     public Tilemap destructableWalls;
     public Tilemap destructableCovers;
-    public GameObject playerModel;
+    public Tilemap baseWalls;
+    [SerializeField] CustomCharacterController playerController;
+    [SerializeField] PlayerValuesManager playerValues;
     public Camera mainCam;
     public TileBase ashTile;
     [SerializeField] GameObject fireSpritePrefab;
@@ -48,6 +51,7 @@ public class Level : MonoBehaviour
     {
         StaticDestructable.onStaticDestroyed += OnStaticDestroy;
         DynamicDestructable.onDynamicDestroyed += OnDynamicDestroy;
+        DoorBase.onDoorOpenClose += ChangeGooTilesForDoors;
         //subscribe to some events
     }
     private void OnDisable()
@@ -78,6 +82,31 @@ public class Level : MonoBehaviour
             timer -= Time.deltaTime;
         }
         UpdateDynamics();
+        UpdatePlayerHealth();
+    }
+
+    void UpdatePlayerHealth()
+    {
+
+
+        foreach (DynamicDestructable o in dynamicDestructables)
+        {
+            if (!o.active) continue;
+            for (int i = 0; i < o.GetWidth(); i++)
+            {
+                float type = gooController.GetTileValue(o.GetGooPos().x + i, o.GetGooPos().y - 1, GridChannel.TYPE);
+                if (type == 1.0f || type == 2.0f)
+                {
+                    float gooTemp = gooController.GetTileValue(o.GetGooPos().x + i, o.GetGooPos().y - 1, GridChannel.TEMP);
+                    ;
+                    if (gooTemp > 200.0f)
+                    {
+                        o.GooDamage(gooTemp - 200.0f);
+                        break;
+                    }
+                }
+            }
+        }
     }
 
     IEnumerator CheckStaticsLoop()
@@ -252,7 +281,7 @@ public class Level : MonoBehaviour
         foreach (DynamicDestructable o in dynamicDestructables)
         {
             if (!o.active) continue;
-            for(int i = 0; i < o.GetWidth(); i++)
+            for (int i = 0; i < o.GetWidth(); i++)
             {
                 float type = gooController.GetTileValue(o.GetGooPos().x + i, o.GetGooPos().y - 1, GridChannel.TYPE);
                 if (type == 1.0f || type == 2.0f)
@@ -264,9 +293,9 @@ public class Level : MonoBehaviour
                         o.GooDamage(gooTemp - 200.0f);
                         break;
                     }
-                }                
-            }            
-        } 
+                }
+            }
+        }
     }
 
 
@@ -282,9 +311,9 @@ public class Level : MonoBehaviour
     void LoadLevel()
     {
         //TODO - make this do the level reading please, Alex
-        for (int x = destructableWalls.cellBounds.min.x; x < destructableWalls.cellBounds.max.x; x++)
+        for (int x = baseWalls.cellBounds.min.x; x < baseWalls.cellBounds.max.x; x++)
         {
-            for (int y = destructableWalls.cellBounds.min.y; y < destructableWalls.cellBounds.max.y; y++)
+            for (int y = baseWalls.cellBounds.min.y; y <baseWalls.cellBounds.max.y; y++)
             {
                 if (destructableWalls.GetTile(new Vector3Int(x, y, 0)) != null)
                 {
@@ -293,6 +322,11 @@ public class Level : MonoBehaviour
                     staticDestructables[graphicalPos].gooController = gooController;
                     TurnGooTilesStatic(graphicalPos);
                 }
+                TileBase tb = baseWalls.GetTile(new Vector3Int(x, y, 0));
+                if (baseWalls.GetTile(new Vector3Int(x, y, 0)) != null)
+                {
+                    TurnGooTilesStatic(new Vector2Int(x, y));
+                }                
             }
         }
         gooController.SendTexToGPU();
@@ -319,6 +353,23 @@ public class Level : MonoBehaviour
         }
         gooController.WriteToGooTile(graphicalPos.x * gooPerGraphTile, graphicalPos.y * gooPerGraphTile, GridChannel.TYPE, 3.0f);
 
+    }
+
+    void ChangeGooTilesForDoors(Dictionary<Vector2Int, TileBase> doorPositions, GridTileType gridType)
+    {
+        foreach(Vector2Int pos in doorPositions.Keys)
+        {
+            for(int i = 0; i < 8; i++)
+            {
+                for(int j = 0; j < 8; j++)
+                {
+                    gooController.WriteToGooTile(pos.x * gooPerGraphTile + i, pos.y * gooPerGraphTile + j, GridChannel.TYPE, (float)gridType);
+                    
+                }
+            }
+            
+        }
+        gooController.SendTexToGPU();
     }
 }
 

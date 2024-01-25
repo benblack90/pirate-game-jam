@@ -76,12 +76,10 @@ public class CustomCharacterController : MonoBehaviour
         int spellAccuracyTest = Input.GetKey(KeyCode.LeftShift) ? 50 : 100;
         if (Input.GetKeyDown(KeyCode.Alpha1))
         {
-            //Debug.Log("Casting hot spell, accuracy: " + spellAccuracyTest.ToString());
             CastSpell(SPELL_HOT, spellAccuracyTest);
         }
         if (Input.GetKeyDown(KeyCode.Alpha2))
         {
-            //Debug.Log("Casting cold spell, accuracy: " + spellAccuracyTest.ToString());
             CastSpell(SPELL_COLD, spellAccuracyTest);
         }
 
@@ -101,24 +99,25 @@ public class CustomCharacterController : MonoBehaviour
 
     public void CastRune(RuneInfo info)
     {
-        //Debug.Log("LET'S FUCKING GOOOOOOOOO");
-        //Debug.Log("ACCURACY: " + info.accuracy.ToString());
+
         switch (info.type)
         {
             case RuneTypes.Ice:
-                //Debug.Log("ICE");
                 CastSpell(SPELL_COLD, info.accuracy);
                 break;
             case RuneTypes.Fire:
-                //Debug.Log("FIRE");
                 CastSpell(SPELL_HOT, info.accuracy);
                 break;
             case RuneTypes.Invalid:
-                //Debug.Log("INVALID");
                 break;
         }
     }
 
+    public Vector2Int GetPlayerPos()
+    {
+        Vector2Int pos = new Vector2Int((int) this.transform.position.x, (int) this.transform.position.y);
+        return pos;
+    }
 
     void FixedUpdate()
     {

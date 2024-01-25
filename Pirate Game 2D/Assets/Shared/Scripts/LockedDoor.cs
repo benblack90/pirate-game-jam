@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using static LevelExit;
 
@@ -16,7 +17,7 @@ public class LockedDoor : DoorBase
     void OnTriggerEnter2D(Collider2D other)
     {
         Debug.Log("Trigger");
-        if (other.gameObject.CompareTag("Player"))
+        if (!open && other.gameObject.CompareTag("Player"))
         {
             if (PlayerInventory.HasItem(keyName))
             {

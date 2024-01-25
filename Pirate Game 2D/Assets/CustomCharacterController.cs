@@ -14,13 +14,15 @@ using static UnityEngine.EventSystems.EventTrigger;
 public class CustomCharacterController : MonoBehaviour
 {
     // Start is called before the first frame update
-
+    //
     
     [Header("Controller Settings")]
     public float _characeterSpeed = 600.0f;
     public float _characeterRunSpeed = 800.0f; 
     [Range(0.0f, 100.0f)]
     public float _castRange = 5.0f;
+    [Range(0.0f, 0.5f)] public float _castStartRangeMultiplier = 0.0f;
+
     [Range(0.0f,360.0f)]
     public float _castFieldOfView = 90.0f;
     public float _aimDirection = 0.0f;
@@ -48,6 +50,9 @@ public class CustomCharacterController : MonoBehaviour
     public float _coneQuality = 1.0f;
     public int _spreadSpreadSpeed = 10;
 
+    [Header("Particle Settings")]
+    public GameObject _particleSystem;
+
     [Header("Sound Settings")]
     public AudioSource footstepSound;
 
@@ -61,9 +66,10 @@ public class CustomCharacterController : MonoBehaviour
     private const int SPELL_HOT = 0;
     private const int SPELL_COLD = 1;
 
-    
+
 
     private GameObject castArea;
+    private GameObject castAreaDeadZone;
     void Start()
     {
         _rb = this.GetComponent<Rigidbody2D>();
@@ -85,6 +91,7 @@ public class CustomCharacterController : MonoBehaviour
 
 
         PlayerCastArea();
+        PlayerCastAreaDead();
     }
 
     private void OnEnable()
@@ -169,7 +176,7 @@ public class CustomCharacterController : MonoBehaviour
         Color color = new Color(1, 0, 0, 1);
         float width = 0.025f;
         int vertexCount = 32;
-        
+
         GameObject.Destroy(castArea);
         castArea = new GameObject();
         castArea.AddComponent<LineRenderer>();
@@ -182,13 +189,43 @@ public class CustomCharacterController : MonoBehaviour
         lr.loop = true;
         for (int i = 0; i < vertexCount - 2; i++)
         {
-            float angle = (_aimDirection + 90.0f - _castFieldOfView/2 + _castFieldOfView / (vertexCount - 2 - 1) * i) * Mathf.Deg2Rad;
+            float angle = (_aimDirection + 90.0f - _castFieldOfView / 2 + _castFieldOfView / (vertexCount - 2 - 1) * i) * Mathf.Deg2Rad;
             Vector3 position = this.transform.position;
             position.x += _castRange * Mathf.Cos(angle);
             position.y += _castRange * Mathf.Sin(angle);
             lr.SetPosition(i + 1, position);
         }
-        lr.SetPosition(vertexCount-1, this.transform.position);
+        lr.SetPosition(vertexCount - 1, this.transform.position);
+
+        lr.sortingLayerName = "Lines";
+
+    }
+
+    void PlayerCastAreaDead()
+    {
+        Color color = new Color(1, 0, 0, 1);
+        float width = 0.025f;
+        int vertexCount = 32;
+
+        GameObject.Destroy(castAreaDeadZone);
+        castAreaDeadZone = new GameObject();
+        castAreaDeadZone.AddComponent<LineRenderer>();
+        LineRenderer lr = castAreaDeadZone.GetComponent<LineRenderer>();
+        lr.material = new Material(Shader.Find("Legacy Shaders/Particles/Alpha Blended Premultiply"));
+        lr.SetVertexCount(vertexCount);
+        lr.SetColors(color, color);
+        lr.SetWidth(width, width);
+        lr.SetPosition(0, this.transform.position);
+        lr.loop = true;
+        for (int i = 0; i < vertexCount - 2; i++)
+        {
+            float angle = (_aimDirection + 90.0f - _castFieldOfView / 2 + _castFieldOfView / (vertexCount - 2 - 1) * i) * Mathf.Deg2Rad;
+            Vector3 position = this.transform.position;
+            position.x += _castRange * Mathf.Cos(angle) * _castStartRangeMultiplier;
+            position.y += _castRange * Mathf.Sin(angle) * _castStartRangeMultiplier;
+            lr.SetPosition(i + 1, position);
+        }
+        lr.SetPosition(vertexCount - 1, this.transform.position);
 
         lr.sortingLayerName = "Lines";
 
@@ -217,9 +254,18 @@ public class CustomCharacterController : MonoBehaviour
                 tempType = -_coldSpellDefaultPower;
                 break;
         }
+        Burst(spellId);
         tempType *= spellAccuracy / 100.0f;
         float castBurstRange = _castRange * _gooPlaneScaling;
         StartCoroutine(DelayedLineCast(castBurstRange, castBurstRange * _castRangeExtenderMultiplier, _spreadSpreadSpeed, tempType));
+    }
+
+    void Burst(int burstId)
+    {
+        GameObject spell = Instantiate(_particleSystem, this.transform.position, Quaternion.Euler(0,0,_aimDirection));
+        ParticleSystem particleRef = spell.GetComponent<ParticleSystem>();
+
+        particleRef.Play();
     }
     // This doesn't work if cast radius is >180 for some reason.
     IEnumerator DelayedLineCast(float spreadMax, float spreadBonus, int growTimeScale, float temperatureChange)
@@ -237,7 +283,7 @@ public class CustomCharacterController : MonoBehaviour
 
         //Debug.Log("Start");
         float castedDirection = _aimDirection;
-        float spreadTo = 0;
+        float spreadTo = spreadMax * _castStartRangeMultiplier;
         bool hasFinished = false;
 
         Dictionary<float, float> anglesToWorkOn = new Dictionary<float, float>();

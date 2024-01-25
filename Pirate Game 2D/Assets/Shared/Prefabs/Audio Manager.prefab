@@ -42,7 +42,7 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 0}
+  m_audioClip: {fileID: 8300000, guid: b40e3ec7752eafb47aa986f17e5b09ad, type: 3}
   m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
@@ -186,7 +186,7 @@ MonoBehaviour:
   itemCollectSound: {fileID: 201399179655884987}
   pointCollectSound: {fileID: 3228293002646672047}
   runeCastSound: {fileID: 909562159058344410}
-  iceCastSound: {fileID: 8300000, guid: 97d9df2fd59fd6644abd4b88d625705e, type: 3}
+  iceCastSound: {fileID: 8300000, guid: 9d551d0815425ad47a904ad24a8fc3b7, type: 3}
   fireCastSound: {fileID: 8300000, guid: f96b53cd68f055e479f9b656efd652d6, type: 3}
 --- !u!1 &4218869200140481216
 GameObject:
@@ -614,7 +614,7 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 0}
+  m_audioClip: {fileID: 8300000, guid: 36f3f5809c97362418a64c17b902d13b, type: 3}
   m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1

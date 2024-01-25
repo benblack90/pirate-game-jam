@@ -18,16 +18,20 @@ public class AudioManager : MonoBehaviour
     private void OnEnable()
     {
         StaticDestructable.onStaticDestroyed += OnStaticDestroy;
+        DynamicDestructable.onDynamicDestroyed += OnDynamicDestroy;
         GooChamber.onGooRelease += OnAlarm;
         PointPickup.onPointPickup += OnPointGet;
+        Collectable.onGenericCollectable += OnItemCollect;
         LineGenerator.OnRuneComplete += OnRuneComplete;
     }
 
     private void OnDisable()
     {
         StaticDestructable.onStaticDestroyed -= OnStaticDestroy;
+        DynamicDestructable.onDynamicDestroyed -= OnDynamicDestroy;
         GooChamber.onGooRelease -= OnAlarm;
         PointPickup.onPointPickup -= OnPointGet;
+        Collectable.onGenericCollectable -= OnItemCollect;
         LineGenerator.OnRuneComplete -= OnRuneComplete;
     }
 
@@ -48,16 +52,23 @@ public class AudioManager : MonoBehaviour
         destroySound.Play();
     }
 
+    private void OnDynamicDestroy(ObjectScorePair pair, Vector2Int graphicalPos)
+    {
+        if (destroySound.isPlaying) destroySound.Stop();
+        destroySound.Play();
+    }
+
     private void OnAlarm()
     {
         alarmSound.Play();
         backgroundMusic.Stop();
         backgroundMusic.loop = false;
         backgroundMusic.clip = postAlarmMusic;
+        backgroundMusic.volume += 0.2f;
         backgroundMusic.Play();
     }
 
-    private void OnItemCollect()
+    private void OnItemCollect(string name)
     {
         if (itemCollectSound.isPlaying) itemCollectSound.Stop();
         itemCollectSound.Play();
@@ -66,6 +77,7 @@ public class AudioManager : MonoBehaviour
     private void OnPointGet(int points)
     {
         if (pointCollectSound.isPlaying) pointCollectSound.Stop();
+        pointCollectSound.pitch = 1.0f + (points/10000.0f);
         pointCollectSound.Play();
     }
 

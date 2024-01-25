@@ -14,28 +14,17 @@ public class UnlockedDoor : DoorBase
     }
     void OnTriggerEnter2D(Collider2D other)
     {
-        Debug.Log("Trigger");
         if (other.gameObject.tag == "Player" && !forceLock)
         {
-            Debug.Log("Player");
-            foreach (Vector2Int position in doorPositionsBase.Keys)
-            {
-                tileMapRefBase.SetTile(new Vector3Int(position.x, position.y, 0), null);
-                tileMapRefCover.SetTile(new Vector3Int(position.x, position.y, 0), null);
-            }
+            OpenDoor();
         }
 
     }
     void OnTriggerExit2D(Collider2D other)
     {
-        Debug.Log("Trigger");
         if (other.gameObject.tag == "Player" && !forceLock)
         {
-            foreach (Vector2Int position in doorPositionsBase.Keys)
-            {
-                tileMapRefBase.SetTile(new Vector3Int(position.x, position.y, 0), doorPositionsBase[position]);
-                tileMapRefCover.SetTile(new Vector3Int(position.x, position.y, 0), doorPositionsCover[position]);
-            }
+            CloseDoor();
         }
 
     }

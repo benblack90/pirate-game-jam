@@ -8,11 +8,17 @@ public class Collectable : MonoBehaviour
     public delegate void OnGenericCollectable(string name);
     public static event OnGenericCollectable onGenericCollectable;
 
-    private void OnCollisionEnter2D(Collision2D collision)
+    private void OnTriggerEnter2D(Collider2D collision)
     {
-        OnPickup();
+        if (collision.gameObject.tag == "Player")
+        {
+            OnPickup();
+        }
     }
-
+    public string GetName()
+    {
+        return _name;
+    }
     virtual protected void OnPickup()
     {
         onGenericCollectable?.Invoke(_name);

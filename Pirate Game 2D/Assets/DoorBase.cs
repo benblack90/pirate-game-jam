@@ -65,6 +65,24 @@ public class DoorBase : MonoBehaviour
             }
         }
     }
+
+    protected void OpenDoor()
+    {
+        foreach (Vector2Int position in doorPositionsBase.Keys)
+        {
+            tileMapRefBase.SetTile(new Vector3Int(position.x, position.y, 0), null);
+            tileMapRefCover.SetTile(new Vector3Int(position.x, position.y, 0), null);
+        }
+    }
+
+    protected void CloseDoor()
+    {
+        foreach (Vector2Int position in doorPositionsBase.Keys)
+        {
+            tileMapRefBase.SetTile(new Vector3Int(position.x, position.y, 0), doorPositionsBase[position]);
+            tileMapRefCover.SetTile(new Vector3Int(position.x, position.y, 0), doorPositionsCover[position]);
+        }
+    }
 }
 
 [Serializable]

@@ -47,6 +47,9 @@ public class CustomCharacterController : MonoBehaviour
     public float _coneQuality = 1.0f;
     public int _spreadSpreadSpeed = 10;
 
+    [Header("Sound Settings")]
+    public AudioSource footstepSound;
+
     private Rigidbody2D _rb;
     private Vector2 _playerCameraHalf;
     private Vector2 _mousePosition;
@@ -57,7 +60,7 @@ public class CustomCharacterController : MonoBehaviour
     private const int SPELL_HOT = 0;
     private const int SPELL_COLD = 1;
 
-    public AudioSource footstepSound;
+    
 
     private GameObject castArea;
     void Start()

@@ -28,6 +28,7 @@ public class StaticDestructable
         onFire = false;
         this.level = level;
         this.timeOnFire = 0.0f;
+        this.points = 50;
     }
 
 

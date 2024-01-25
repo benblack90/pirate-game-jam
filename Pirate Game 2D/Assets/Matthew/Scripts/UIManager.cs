@@ -26,6 +26,7 @@ public class UIManager : MonoBehaviour
         PlayerValuesManager.onHealthChanged += SetHealth;
         PlayerValuesManager.onPointsChanged += SetScore;
         DynamicDestructable.onDynamicDestroyed += ObjectDestroyed;
+        Level.onTimerChange += SetTimer;
         healthBarWidth = healthBar.rectTransform.rect.width;
         //subscribe to some events
     }
@@ -38,6 +39,8 @@ public class UIManager : MonoBehaviour
         StaticDestructable.onStaticDestroyed -= ObjectDestroyed;
         PlayerValuesManager.onPointsChanged -= SetScore;
         PlayerValuesManager.onHealthChanged -= SetHealth;
+        DynamicDestructable.onDynamicDestroyed -= ObjectDestroyed;
+        Level.onTimerChange -= SetTimer;
 
     }
     private void Update()
@@ -63,8 +66,9 @@ public class UIManager : MonoBehaviour
         scoreDisplay.text = "SCORE: " + score;
     }
 
-    void SetTimer(int time)
+    public void SetTimer(int time)
     {
+        Debug.Log(time);
         timeDisplay.text = "TIME: " + time;
     }
 

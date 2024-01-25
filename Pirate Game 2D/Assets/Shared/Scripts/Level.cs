@@ -43,6 +43,11 @@ public class Level : MonoBehaviour
     List<DynamicDestructable> dynamicDestructables = new List<DynamicDestructable>();
     Vector2 playerStart;
 
+    public delegate void OnTimerChange(int timer);
+    public static event OnTimerChange onTimerChange;
+
+
+
     public int GetGooPerTile()
     {
         return gooPerGraphTile;
@@ -79,11 +84,29 @@ public class Level : MonoBehaviour
     {
         if (gooRelease)
         {
+            //FIND OUT WHEN GOO RELEASE IS CHANGED
             timer -= Time.deltaTime;
+            Debug.Log(timer);
+            int intTime = (int)timer;
+            if(intTime < timer) onTimerChange?.Invoke((int)timer);            
         }
         UpdateDynamics();
         UpdatePlayerHealth();
+        if(CheckLoseConditions())
+        {
+            //DISPLAY LOSE SCREEN
+            //RESTART GAME
+        }
     }
+
+    bool CheckLoseConditions()
+    {
+        if (playerValues.GetHealth() <= 0 || timer <= 0)
+            return true;
+
+        else return false;
+    }
+    
 
     void UpdatePlayerHealth()
     {

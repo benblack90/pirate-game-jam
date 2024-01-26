@@ -30,6 +30,7 @@ public class Level : MonoBehaviour
     List<FireSprite> fireSpritePool = new List<FireSprite>();
     [Header("End UI")]
     public LoseGame loseGameRef;
+    public WinGame winGameRef;
 
 
     float timer;
@@ -61,6 +62,7 @@ public class Level : MonoBehaviour
         StaticDestructable.onStaticDestroyed += OnStaticDestroy;
         DoorBase.onDoorOpenClose += ChangeGooTilesForDoors;
         GooChamber.onGooRelease += SetGooReleaseTrue;
+        LevelExit.onLevelOver += WinScreenStuff;
         //subscribe to some events
     }
     private void OnDisable()
@@ -69,6 +71,7 @@ public class Level : MonoBehaviour
         StaticDestructable.onStaticDestroyed -= OnStaticDestroy;
         DoorBase.onDoorOpenClose -= ChangeGooTilesForDoors;
         GooChamber.onGooRelease -= SetGooReleaseTrue;
+        LevelExit.onLevelOver -= WinScreenStuff;
     }
 
     private void Start()
@@ -107,6 +110,10 @@ public class Level : MonoBehaviour
         }
     }
 
+    void WinScreenStuff()
+    {
+        winGameRef.EnableScreen();
+    }
     void SetGooReleaseTrue()
     {
         gooRelease = true;

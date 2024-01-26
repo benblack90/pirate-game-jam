@@ -23,8 +23,8 @@ public class GooController : MonoBehaviour
     public RenderTexture renderTexture;
     public Texture2D texCopy;
     public Material gooPlaneMaterial;
-    int xSize = 1600;
-    int ySize = 1600;
+    int xSize = 960;
+    int ySize = 960;
 
     void Start()
     {

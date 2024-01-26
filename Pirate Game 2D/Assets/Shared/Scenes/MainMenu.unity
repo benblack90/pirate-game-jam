@@ -267,6 +267,8 @@ GameObject:
   - component: {fileID: 232234089}
   - component: {fileID: 232234091}
   - component: {fileID: 232234090}
+  - component: {fileID: 232234092}
+  - component: {fileID: 232234093}
   m_Layer: 5
   m_Name: Image
   m_TagString: Untagged
@@ -331,6 +333,40 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 232234088}
   m_CullTransparentMesh: 1
+--- !u!95 &232234092
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 232234088}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 444bd05d111474b4ab84c5fc8982faf8, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &232234093
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 232234088}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cafcb341fba641b4282e493e81763b88, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isFinished: 0
 --- !u!1 &275809026
 GameObject:
   m_ObjectHideFlags: 0
@@ -603,6 +639,7 @@ MonoBehaviour:
   _gooOne: {fileID: 275809028}
   _gooTwo: {fileID: 356980578}
   _gooThree: {fileID: 636373937}
+  _book: {fileID: 232234088}
   _audioSource: {fileID: 542978474}
 --- !u!82 &542978474
 AudioSource:

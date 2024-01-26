@@ -26,8 +26,9 @@ public class LevelExit : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Player"))
         {
-            if (PlayerInventory.HasItem("ExitKey"))
+            if (PlayerInventory.HasItem("Schematics"))
             {
+                Debug.Log("WIN!!!!!");
                 onLevelOver?.Invoke();
             }
         }

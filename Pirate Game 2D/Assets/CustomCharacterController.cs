@@ -37,8 +37,6 @@ public class CustomCharacterController : MonoBehaviour
     [Range(0f, 1.0f)]
     public float _globalShakeIntensity = 1.0f;
 
-    [SerializeField] GameObject _aimingGizmo;
-
     [Header("Goo Settings")]
     public GooController _gooScript;
     public int _gooPlaneScaling = 8;
@@ -82,7 +80,6 @@ public class CustomCharacterController : MonoBehaviour
     {
         preShakePosition = _camera.transform.position;  
         _rb = this.GetComponent<Rigidbody2D>();
-        _aimingGizmo.SetActive(false);
     }
 
     // Update is called once per frame

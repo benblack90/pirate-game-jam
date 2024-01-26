@@ -127,6 +127,8 @@ public class Level : MonoBehaviour
         for(int i = -1; i < 2; i++)
         {
             float tileType = gooController.GetTileValue(playerGooPos.x + i, playerGooPos.y, GridChannel.TYPE);
+            Debug.Log(tileType);
+            if (tileType < 1f || tileType > 2f)continue;
             temp = CheckTempOfPlayerGooTiles(tileType, playerGooPos.x + i, playerGooPos.y);
             maxTemp = (temp > maxTemp) ? temp : maxTemp;
         }
@@ -135,7 +137,7 @@ public class Level : MonoBehaviour
 
     float CheckTempOfPlayerGooTiles(float tileType, int posX, int posY)
     {
-        if (tileType < 1f && tileType > 2f) return 0.0f;
+        
         float temp = gooController.GetTileValue(posX, posY, GridChannel.TEMP);
         return temp;
     }

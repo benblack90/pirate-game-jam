@@ -61,7 +61,7 @@ public class DynamicDestructable : MonoBehaviour
         ObjectScorePair pair = new ObjectScorePair();
         pair.name = name;
         pair.points = points;
-        sp.sprite = null;        
+        sp.enabled = false;       
         onDynamicDestroyed?.Invoke(pair, bottomLeft);
         active = false;
     }

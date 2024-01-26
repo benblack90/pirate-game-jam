@@ -110,6 +110,10 @@ public class CustomCharacterController : MonoBehaviour
             }
         }
     }
+    void DestroyedObject(ObjectScorePair pair, Vector2Int graphicalPos)
+    {
+        CameraShake(new Vector2(1.0f,1.0f) * 0.0005f * pair.points, 0.5f);
+    }
     public void CameraShake(Vector2 intensity, float timer)
     {
         cameraShakeIntensity = intensity;
@@ -123,13 +127,15 @@ public class CustomCharacterController : MonoBehaviour
     private void OnEnable()
     {
         LineGenerator.OnRuneComplete += CastRune;
+        DynamicDestructable.onDynamicDestroyed += DestroyedObject;
     }
 
     private void OnDisable()
     {
         LineGenerator.OnRuneComplete -= CastRune;
+        DynamicDestructable.onDynamicDestroyed -= DestroyedObject;
     }
-
+    
     public void CastRune(RuneInfo info)
     {
 

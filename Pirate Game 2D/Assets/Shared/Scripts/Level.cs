@@ -55,14 +55,16 @@ public class Level : MonoBehaviour
     private void OnEnable()
     {
         StaticDestructable.onStaticDestroyed += OnStaticDestroy;
-        DynamicDestructable.onDynamicDestroyed += OnDynamicDestroy;
         DoorBase.onDoorOpenClose += ChangeGooTilesForDoors;
+        GooChamber.onGooRelease += SetGooReleaseTrue;
         //subscribe to some events
     }
     private void OnDisable()
     {
         //unsubscribe from events
         StaticDestructable.onStaticDestroyed -= OnStaticDestroy;
+        DoorBase.onDoorOpenClose -= ChangeGooTilesForDoors;
+        GooChamber.onGooRelease -= SetGooReleaseTrue;
     }
 
     private void Start()
@@ -84,11 +86,8 @@ public class Level : MonoBehaviour
     {
         if (gooRelease)
         {
-            //FIND OUT WHEN GOO RELEASE IS CHANGED
-            timer -= Time.deltaTime;
-            Debug.Log(timer);
-            int intTime = (int)timer;
-            if(intTime < timer) onTimerChange?.Invoke((int)timer);            
+            timer -= Time.deltaTime;            
+            onTimerChange?.Invoke((int)timer);            
         }
         UpdateDynamics();
         UpdatePlayerHealth();
@@ -97,6 +96,11 @@ public class Level : MonoBehaviour
             //DISPLAY LOSE SCREEN
             //RESTART GAME
         }
+    }
+
+    void SetGooReleaseTrue()
+    {
+        gooRelease = true;
     }
 
     bool CheckLoseConditions()
@@ -167,10 +171,6 @@ public class Level : MonoBehaviour
         }
     }
 
-    void SpreadFireHeatToGoo(Vector2Int pos)
-    {
-        gooController.AddTemperatureToTile(pos.x, pos.y, 10.0f);
-    }
 
     void CheckAdjacentGoo(KeyValuePair<Vector2Int, StaticDestructable> o)
     {
@@ -186,32 +186,35 @@ public class Level : MonoBehaviour
             if (leftBorder == (float)GridTileType.GOO_UNSPREADABLE || leftBorder == (float)GridTileType.GOO_SPREADABLE)
             {
                 //the -200.0f is arbitrary: essentially, I'm scaling down the temperature damage, so only stuff above 200 hurts
-                //staticDestructables ignore negative damage - see the damage method
+                //staticDestructables ignore negative damage - see the GooDamage method
                 gooTemp = gooController.GetTileValue(o.Value.GetGooPos().x - 1, o.Value.GetGooPos().y + i, GridChannel.TEMP);
                 o.Value.GooDamage(gooTemp - 200.0f);
+                if (o.Value.destroyed) return;
                 o.Value.IgnitionFromGooCheck(gooTemp);
             }
             else if (rightBorder == (float)GridTileType.GOO_UNSPREADABLE || rightBorder == (float)GridTileType.GOO_SPREADABLE)
             {
                 gooTemp = gooController.GetTileValue(o.Value.GetGooPos().x + gooPerGraphTile + 1, o.Value.GetGooPos().y + i, GridChannel.TEMP);
                 o.Value.GooDamage(gooTemp - 200.0f);
+                if (o.Value.destroyed) return;
                 o.Value.IgnitionFromGooCheck(gooTemp);
             }
             else if (topBorder == (float)GridTileType.GOO_UNSPREADABLE || topBorder == (float)GridTileType.GOO_SPREADABLE)
             {
                 gooTemp = gooController.GetTileValue(o.Value.GetGooPos().x + i, o.Value.GetGooPos().y - 1, GridChannel.TEMP);
                 o.Value.GooDamage(gooTemp - 200.0f);
+                if (o.Value.destroyed) return;
                 o.Value.IgnitionFromGooCheck(gooTemp);
             }
             else if (bottomBorder == (float)GridTileType.GOO_UNSPREADABLE || bottomBorder == (float)GridTileType.GOO_SPREADABLE)
             {
                 gooTemp = gooController.GetTileValue(o.Value.GetGooPos().x + i, o.Value.GetGooPos().y + gooPerGraphTile + 1, GridChannel.TEMP);
                 o.Value.GooDamage(gooTemp - 200.0f);
+                if (o.Value.destroyed) return;
                 o.Value.IgnitionFromGooCheck(gooTemp);
             }
         }
     }
-
     void OnStaticDestroy(ObjectScorePair pair, Vector2Int graphicalPos)
     {
 
@@ -244,10 +247,6 @@ public class Level : MonoBehaviour
         deathRow.Add(graphicalPos);
     }
 
-    void OnDynamicDestroy(ObjectScorePair pair, Vector2Int graphicalPos)
-    {
-
-    }
 
     void SetGooAtEdgeToSpreadable(Vector2Int corner)
     {
@@ -323,7 +322,7 @@ public class Level : MonoBehaviour
 
     void InitFirePool()
     {
-        for (int i = 0; i < 20; i++)
+        for (int i = 0; i < 40; i++)
         {
             FireSprite fs = new FireSprite(Instantiate(fireSpritePrefab));
             fs.fireSpritePrefab.SetActive(false);

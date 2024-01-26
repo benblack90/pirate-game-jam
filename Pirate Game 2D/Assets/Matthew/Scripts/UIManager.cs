@@ -68,7 +68,6 @@ public class UIManager : MonoBehaviour
 
     public void SetTimer(int time)
     {
-        Debug.Log(time);
         timeDisplay.text = "TIME: " + time;
     }
 

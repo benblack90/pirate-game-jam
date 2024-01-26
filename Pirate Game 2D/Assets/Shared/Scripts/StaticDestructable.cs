@@ -17,7 +17,7 @@ public class StaticDestructable
     float timeOnFire;
 
     public GooController gooController;
-
+    public bool destroyed;
     public bool onFire;
 
     public StaticDestructable(float hitPoints, Vector2Int graphicalPos, Level level)
@@ -38,7 +38,7 @@ public class StaticDestructable
 
     public void GooDamage(float damage)
     {
-        if (damage <= 0) return;
+        if (damage <= 0 || destroyed) return;
         hitPoints -= damage * 0.1f;
         if (hitPoints <= 0) ObjectDestroy();
     }
@@ -70,6 +70,7 @@ public class StaticDestructable
 
     public void CheckFireDamage()
     {
+        if (destroyed) return;
         if (onFire)
         {
             hitPoints -= 15.0f;
@@ -97,10 +98,12 @@ public class StaticDestructable
 
     void ObjectDestroy()
     {
+        if (destroyed) return;
         level.ExtinguishFire(usingFireIndex);
         ObjectScorePair pair = new ObjectScorePair();
         pair.name = objectName;
         pair.points = points;
+        destroyed = true;
         onStaticDestroyed?.Invoke(pair, graphicalPos);
     }
 }

@@ -79,7 +79,7 @@ public class AudioManager : MonoBehaviour
     {
         
         pointComboTimer = pointComboMax;
-        comboCounter = Mathf.Min(10, comboCounter + 1);
+        comboCounter = Mathf.Min(30, comboCounter + 1);
         if (destroySound.isPlaying) destroySound.Stop();
         destroySound.Play();
         OnPointGet(pair.points);
@@ -88,7 +88,7 @@ public class AudioManager : MonoBehaviour
     private void OnDynamicDestroy(ObjectScorePair pair, Vector2Int graphicalPos)
     {
         pointComboTimer = pointComboMax;
-        comboCounter = Mathf.Min(10, comboCounter + 1);
+        comboCounter = Mathf.Min(30, comboCounter + 1);
         if (destroySound.isPlaying) destroySound.Stop();
         destroySound.Play();
         OnPointGet(pair.points);

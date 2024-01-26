@@ -20,6 +20,8 @@ public class AudioManager : MonoBehaviour
     public AudioSource doorOperateSound;
     public AudioClip doorOpenSound;
     public AudioClip doorCloseSound;
+    public AudioSource loseSound;
+    public AudioSource winSound;
 
     private float pointComboMax = 2.0f;
     private float pointComboTimer = 0.0f;
@@ -33,6 +35,8 @@ public class AudioManager : MonoBehaviour
         Collectable.onGenericCollectable += OnItemCollect;
         LineGenerator.OnRuneComplete += OnRuneComplete;
         DoorBase.onDoorOpenClose += OnDoorOpenClose;
+        LevelExit.onLevelOver += OnWin;
+        Level.onLose += OnLose;
     }
 
     private void OnDisable()
@@ -43,6 +47,8 @@ public class AudioManager : MonoBehaviour
         Collectable.onGenericCollectable -= OnItemCollect;
         LineGenerator.OnRuneComplete -= OnRuneComplete;
         DoorBase.onDoorOpenClose -= OnDoorOpenClose;
+        LevelExit.onLevelOver -= OnWin;
+        Level.onLose -= OnLose;
     }
 
     // Update is called once per frame
@@ -108,7 +114,7 @@ public class AudioManager : MonoBehaviour
     private void OnPointGet(int points)
     {
         if (pointCollectSound.isPlaying) pointCollectSound.Stop();
-        pointCollectSound.pitch = 1.0f + (points/500.0f) + (comboCounter/10.0f);
+        pointCollectSound.pitch = 1.0f + (points/500.0f) + (comboCounter/50.0f);
         pointCollectSound.Play();
     }
 
@@ -142,5 +148,15 @@ public class AudioManager : MonoBehaviour
                 break;
         }
         doorOperateSound.Play();
+    }
+
+    private void OnWin()
+    {
+        winSound.Play();
+    }
+
+    private void OnLose()
+    {
+        loseSound.Play();
     }
 }

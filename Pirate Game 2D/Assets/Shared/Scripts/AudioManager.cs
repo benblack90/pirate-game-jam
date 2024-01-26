@@ -23,7 +23,7 @@ public class AudioManager : MonoBehaviour
     public AudioSource loseSound;
     public AudioSource winSound;
 
-    private float pointComboMax = 2.0f;
+    private float pointComboMax = 1.5f;
     private float pointComboTimer = 0.0f;
     private int comboCounter = 0;
 
@@ -79,7 +79,7 @@ public class AudioManager : MonoBehaviour
     {
         
         pointComboTimer = pointComboMax;
-        comboCounter = Mathf.Min(30, comboCounter + 1);
+        comboCounter = Mathf.Min(50, comboCounter + 1);
         if (destroySound.isPlaying) destroySound.Stop();
         destroySound.Play();
         OnPointGet(pair.points);
@@ -88,7 +88,7 @@ public class AudioManager : MonoBehaviour
     private void OnDynamicDestroy(ObjectScorePair pair, Vector2Int graphicalPos)
     {
         pointComboTimer = pointComboMax;
-        comboCounter = Mathf.Min(30, comboCounter + 1);
+        comboCounter = Mathf.Min(50, comboCounter + 1);
         if (destroySound.isPlaying) destroySound.Stop();
         destroySound.Play();
         OnPointGet(pair.points);
@@ -114,7 +114,7 @@ public class AudioManager : MonoBehaviour
     private void OnPointGet(int points)
     {
         if (pointCollectSound.isPlaying) pointCollectSound.Stop();
-        pointCollectSound.pitch = 1.0f + (points/500.0f) + (comboCounter/50.0f);
+        pointCollectSound.pitch = 1.0f + (points/200.0f) + (comboCounter/50.0f);
         pointCollectSound.Play();
     }
 
@@ -124,12 +124,15 @@ public class AudioManager : MonoBehaviour
         {
             case RuneTypes.Ice:
                 runeCastSound.clip = iceCastSound;
+                runeCastSound.volume = 0.187f;
                 break;
             case RuneTypes.Fire:
                 runeCastSound.clip = fireCastSound;
+                runeCastSound.volume = 0.2f;
                 break;
             case RuneTypes.Invalid:
                 runeCastSound.clip = invalidCastSound;
+                runeCastSound.volume = 0.5f;
                 break;
         }
         runeCastSound.pitch = Random.Range(0.8f, 1.2f);

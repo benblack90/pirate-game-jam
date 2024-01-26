@@ -34,6 +34,7 @@ public class CustomCharacterController : MonoBehaviour
     [Range(0f, 0.5f)]
     public float _cameraMouseRatio = 0.15f;
     public bool _rotatePlayer = false;
+    
 
     [Header("Goo Settings")]
     public GooController _gooScript;
@@ -70,8 +71,13 @@ public class CustomCharacterController : MonoBehaviour
 
     private GameObject castArea;
     private GameObject castAreaDeadZone;
+    private Vector2 cameraShakeIntensity = new Vector2(0, 0);
+    private float cameraInitialShakeTimer = 0.0f;
+    private float cameraShakeTimer = 0.0f;
+    private Vector3 preShakePosition = new Vector3(0,0,0);
     void Start()
     {
+        preShakePosition = _camera.transform.position;  
         _rb = this.GetComponent<Rigidbody2D>();
     }
 
@@ -92,8 +98,23 @@ public class CustomCharacterController : MonoBehaviour
 
         PlayerCastArea();
         PlayerCastAreaDead();
+        if (cameraShakeTimer > 0.0f) ManageCameraShake();
+        else
+        {
+            cameraShakeIntensity = Vector2.zero;
+            cameraInitialShakeTimer = 0.0f;
+        }
     }
-
+    public void CameraShake(Vector2 intensity, float timer)
+    {
+        cameraShakeIntensity = intensity;
+        cameraInitialShakeTimer = timer;
+        cameraShakeTimer = timer;   
+    }
+    void ManageCameraShake()
+    {
+        cameraShakeTimer = Mathf.Max(cameraShakeTimer - Time.deltaTime, 0.0f);
+    }
     private void OnEnable()
     {
         LineGenerator.OnRuneComplete += CastRune;
@@ -233,13 +254,21 @@ public class CustomCharacterController : MonoBehaviour
 
     void CameraMove()
     {
-
+        _camera.transform.position = preShakePosition;
         Vector3 targetPosition = _playerCameraHalf;
-
-
         Vector2 cameraXY = _camera.transform.position * _dampening + targetPosition * (1.0f - _dampening);
 
         _camera.transform.position = new Vector3(cameraXY.x, cameraXY.y, _camera.transform.position.z);
+        preShakePosition = _camera.transform.position;
+        if (cameraInitialShakeTimer > 0)
+        {
+            float timerScale = 1 / cameraInitialShakeTimer * cameraShakeTimer;
+            _camera.transform.position += new Vector3(
+                Random.Range(-cameraShakeIntensity.x, cameraShakeIntensity.x) * timerScale,
+                Random.Range(-cameraShakeIntensity.y, cameraShakeIntensity.y) * timerScale,
+                0);
+        }
+        
     }
 
     public void CastSpell(int spellId, int spellAccuracy)

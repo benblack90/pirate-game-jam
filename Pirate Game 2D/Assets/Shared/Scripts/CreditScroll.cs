@@ -9,17 +9,18 @@ public class CreditScroll : MonoBehaviour
     [SerializeField] GameObject canvas;
 
     private float time = 0;
-    private int scrollSpeed = 45;
+    [SerializeField] private int baseScrollSpeed = 45;
+    private int scrollSpeed;
     // Update is called once per frame
     void Update()
     {
         if (Input.GetKey(KeyCode.Escape))
         {
-            scrollSpeed = 150;
+            scrollSpeed = baseScrollSpeed * 4;
         }
         else
         {
-            scrollSpeed = 45;
+            scrollSpeed = baseScrollSpeed;
         }
         if((thankYou.transform as RectTransform).position.y <= (canvas.transform as RectTransform).position.y)
         {

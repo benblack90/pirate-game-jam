@@ -105,7 +105,7 @@ public class WinGame : MonoBehaviour
             Debug.Log("Exiting");
             if (loadTimer >= 1)
             {
-                if (isExitingLevel) SceneManager.LoadScene(0);
+                if (isExitingLevel) SceneManager.LoadScene(3);
                 else if (isRestartingLevel) SceneManager.LoadScene(1);
             }
             return;

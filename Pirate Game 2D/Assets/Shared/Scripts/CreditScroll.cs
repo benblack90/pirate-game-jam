@@ -6,6 +6,7 @@ using UnityEngine.SceneManagement;
 public class CreditScroll : MonoBehaviour
 {
     [SerializeField] GameObject thankYou;
+    [SerializeField] GameObject canvas;
 
     private float time = 0;
     private int scrollSpeed = 45;
@@ -20,7 +21,7 @@ public class CreditScroll : MonoBehaviour
         {
             scrollSpeed = 45;
         }
-        if((thankYou.transform as RectTransform).position.y <= 300)
+        if((thankYou.transform as RectTransform).position.y <= (canvas.transform as RectTransform).position.y)
         {
             transform.position += new Vector3(0, Time.deltaTime * scrollSpeed, 0);
         }

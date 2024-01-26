@@ -45,7 +45,6 @@ public class PlayerValuesManager : MonoBehaviour
     public void SubtractHealth(int damage)
     {
         if (damage <= 0) return;
-        Debug.Log(_currentHealth);
         _currentHealth -= damage;
         onHealthChanged?.Invoke((float)_currentHealth / (float)_maxHealth);
     }

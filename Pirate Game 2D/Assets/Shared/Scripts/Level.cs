@@ -1,13 +1,8 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.IO;
 using System.Linq;
-using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.Tilemaps;
-using static UnityEditor.PlayerSettings;
 
 public class Level : MonoBehaviour
 {
@@ -36,7 +31,10 @@ public class Level : MonoBehaviour
     float timer;
     float levelTime = 180.0f;
     bool gooRelease;
-    int gooPerGraphTile = 8;
+    const int gooPerGraphTile = 8;
+    const float gooTempThresholdStatics = 200.0f;
+    const float gooTempThresholdDynamics = 180.0f;
+    const float gooTempThresholdPlayer = 190.0f;
 
     Dictionary<Vector2Int, StaticDestructable> staticDestructables = new Dictionary<Vector2Int, StaticDestructable>();
     List<Vector2Int> deathRow = new List<Vector2Int>();
@@ -124,7 +122,7 @@ public class Level : MonoBehaviour
             temp = CheckTempOfPlayerGooTiles(tileType, playerGooPos.x + i, playerGooPos.y);
             maxTemp = (temp > maxTemp) ? temp : maxTemp;
         }
-        playerValues.SubtractHealth((int)((maxTemp - 200) * Time.deltaTime));
+        playerValues.SubtractHealth((int)((maxTemp - gooTempThresholdPlayer) * Time.deltaTime));
     }
 
     float CheckTempOfPlayerGooTiles(float tileType, int posX, int posY)
@@ -179,42 +177,27 @@ public class Level : MonoBehaviour
 
             float leftBorder = gooController.GetTileValue(o.Value.GetGooPos().x - 1, o.Value.GetGooPos().y + i, GridChannel.TYPE);
             float rightBorder = gooController.GetTileValue(o.Value.GetGooPos().x + gooPerGraphTile + 1, o.Value.GetGooPos().y + i, GridChannel.TYPE);
-            float topBorder = gooController.GetTileValue(o.Value.GetGooPos().x + i, o.Value.GetGooPos().y - 1, GridChannel.TYPE);
-            float bottomBorder = gooController.GetTileValue(o.Value.GetGooPos().x + i, o.Value.GetGooPos().y + gooPerGraphTile + 1, GridChannel.TYPE);
-            float gooTemp;
+            float bottomBorder = gooController.GetTileValue(o.Value.GetGooPos().x + i, o.Value.GetGooPos().y - 1, GridChannel.TYPE);
+            float topBorder = gooController.GetTileValue(o.Value.GetGooPos().x + i, o.Value.GetGooPos().y + gooPerGraphTile + 1, GridChannel.TYPE);
 
-            if (leftBorder == (float)GridTileType.GOO_UNSPREADABLE || leftBorder == (float)GridTileType.GOO_SPREADABLE)
-            {
-                //the -200.0f is arbitrary: essentially, I'm scaling down the temperature damage, so only stuff above 200 hurts
-                //staticDestructables ignore negative damage - see the GooDamage method
-                gooTemp = gooController.GetTileValue(o.Value.GetGooPos().x - 1, o.Value.GetGooPos().y + i, GridChannel.TEMP);
-                o.Value.GooDamage(gooTemp - 200.0f);
-                if (o.Value.destroyed) return;
-                o.Value.IgnitionFromGooCheck(gooTemp);
-            }
-            else if (rightBorder == (float)GridTileType.GOO_UNSPREADABLE || rightBorder == (float)GridTileType.GOO_SPREADABLE)
-            {
-                gooTemp = gooController.GetTileValue(o.Value.GetGooPos().x + gooPerGraphTile + 1, o.Value.GetGooPos().y + i, GridChannel.TEMP);
-                o.Value.GooDamage(gooTemp - 200.0f);
-                if (o.Value.destroyed) return;
-                o.Value.IgnitionFromGooCheck(gooTemp);
-            }
-            else if (topBorder == (float)GridTileType.GOO_UNSPREADABLE || topBorder == (float)GridTileType.GOO_SPREADABLE)
-            {
-                gooTemp = gooController.GetTileValue(o.Value.GetGooPos().x + i, o.Value.GetGooPos().y - 1, GridChannel.TEMP);
-                o.Value.GooDamage(gooTemp - 200.0f);
-                if (o.Value.destroyed) return;
-                o.Value.IgnitionFromGooCheck(gooTemp);
-            }
-            else if (bottomBorder == (float)GridTileType.GOO_UNSPREADABLE || bottomBorder == (float)GridTileType.GOO_SPREADABLE)
-            {
-                gooTemp = gooController.GetTileValue(o.Value.GetGooPos().x + i, o.Value.GetGooPos().y + gooPerGraphTile + 1, GridChannel.TEMP);
-                o.Value.GooDamage(gooTemp - 200.0f);
-                if (o.Value.destroyed) return;
-                o.Value.IgnitionFromGooCheck(gooTemp);
-            }
+            IgniteAndDamageStatics(new Vector2Int(o.Value.GetGooPos().x - 1, o.Value.GetGooPos().y + i), o.Value, leftBorder);
+            IgniteAndDamageStatics(new Vector2Int(o.Value.GetGooPos().x + gooPerGraphTile + 1, o.Value.GetGooPos().y + i),o.Value, rightBorder);
+            IgniteAndDamageStatics(new Vector2Int(o.Value.GetGooPos().x + i, o.Value.GetGooPos().y - 1), o.Value, bottomBorder);
+            IgniteAndDamageStatics(new Vector2Int(o.Value.GetGooPos().x + i, o.Value.GetGooPos().y + gooPerGraphTile + 1), o.Value, topBorder);
         }
     }
+
+    void IgniteAndDamageStatics(Vector2Int gooPos, StaticDestructable stObj, float tileType)
+    {
+        if(tileType == (float)GridTileType.GOO_UNSPREADABLE || tileType == (float)GridTileType.GOO_SPREADABLE)
+        {
+            float gooTemp = gooController.GetTileValue(gooPos.x, gooPos.y, GridChannel.TEMP);
+            stObj.GooDamage(gooTemp - gooTempThresholdStatics);
+            if(stObj.destroyed) return;
+            stObj.IgnitionFromGooCheck(gooTemp);
+        }
+    }
+
     void OnStaticDestroy(ObjectScorePair pair, Vector2Int graphicalPos)
     {
 
@@ -309,9 +292,9 @@ public class Level : MonoBehaviour
                 {
                     float gooTemp = gooController.GetTileValue(o.GetGooPos().x + i, o.GetGooPos().y - 1, GridChannel.TEMP);
                     ;
-                    if (gooTemp > 200.0f)
+                    if (gooTemp > gooTempThresholdDynamics)
                     {
-                        o.GooDamage(gooTemp - 200.0f);
+                        o.GooDamage(gooTemp - gooTempThresholdDynamics);
                         break;
                     }
                 }

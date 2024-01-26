@@ -64,8 +64,11 @@ public class LineGenerator : MonoBehaviour
     private float width;
     private float height;
 
+    private bool destroying = false;
+
     private void OnDestroy()
     {
+        destroying = true;
         if (Input.GetMouseButton(0) && activeLine) lines.Add(activeLine);
         List<LineInfo> lineTypes = new List<LineInfo>();
         var lineLookup = new Dictionary<LineTypes, List<int>>();
@@ -104,9 +107,17 @@ public class LineGenerator : MonoBehaviour
                 else AddNewLineInfo(positions, LineTypes.DiagonalLine, 100 - (int)(10 * (maxGradient - minGradient)), i, lineTypes, lineLookup);
 
             }
-            Destroy(lines[i].gameObject);
         }
         CheckRunes(lineTypes, lineLookup);
+        foreach(DrawLine line in lines)
+        {
+            Destroy(line.gameObject);
+        }
+        GameObject strayLine = GameObject.Find("Line (Clone)");
+        if (strayLine)
+        {
+            Destroy(strayLine);
+        }
     }
 
     void CheckRunes(List<LineInfo> lineTypes, Dictionary<LineTypes, List<int>> lineLookup)
@@ -277,50 +288,53 @@ public class LineGenerator : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetMouseButtonDown(0))
+        if (!destroying)
         {
-            if (InsideBox())
+            if (Input.GetMouseButtonDown(0))
             {
-                drawingSound.pitch = UnityEngine.Random.Range(0.8f, 1.2f);
-                drawingSound.Play();
-                GameObject newLine = Instantiate(linePrefab);
-                activeLine = newLine.GetComponent<DrawLine>();
+                if (InsideBox())
+                {
+                    drawingSound.pitch = UnityEngine.Random.Range(0.8f, 1.2f);
+                    drawingSound.Play();
+                    GameObject newLine = Instantiate(linePrefab, transform);
+                    activeLine = newLine.GetComponent<DrawLine>();
+                }
             }
-        }
-        if (Input.GetMouseButtonUp(0))
+            if (Input.GetMouseButtonUp(0))
             {
-            if (activeLine)
+                if (activeLine)
+                {
+                    drawingSound.Stop();
+                    Vector3 mousePos = Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, Camera.main.transform.position.z))
+                        - new Vector3(Camera.main.transform.position.x, Camera.main.transform.position.y, 0);
+                    activeLine.FinishLine(mousePos);
+                    lines.Add(activeLine);
+                    activeLine = null;
+                }
+            }
+            if (Input.GetMouseButton(0))
             {
-                drawingSound.Stop();
+                if (!InsideBox() && activeLine)
+                {
+                    drawingSound.Stop();
+                    lines.Add(activeLine);
+                    activeLine = null;
+                }
+                else if (InsideBox() && !activeLine)
+                {
+                    drawingSound.pitch = UnityEngine.Random.Range(0.8f, 1.2f);
+                    drawingSound.Play();
+                    GameObject newLine = Instantiate(linePrefab, transform);
+                    activeLine = newLine.GetComponent<DrawLine>();
+                }
+            }
+
+            if (activeLine != null)
+            {
                 Vector3 mousePos = Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, Camera.main.transform.position.z))
                     - new Vector3(Camera.main.transform.position.x, Camera.main.transform.position.y, 0);
-                activeLine.FinishLine(mousePos);
-                lines.Add(activeLine);
-                activeLine = null;
+                activeLine.UpdateLine(mousePos);
             }
-        }
-        if(Input.GetMouseButton(0))
-        {
-            if (!InsideBox() && activeLine)
-            {
-                drawingSound.Stop();
-                lines.Add(activeLine);
-                activeLine = null;
-            }
-            else if(InsideBox() && !activeLine)
-            {
-                drawingSound.pitch = UnityEngine.Random.Range(0.8f, 1.2f);
-                drawingSound.Play();
-                GameObject newLine = Instantiate(linePrefab);
-                activeLine = newLine.GetComponent<DrawLine>();
-            }
-        }
-        
-        if(activeLine != null)
-        {
-            Vector3 mousePos = Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, Camera.main.transform.position.z))
-                - new Vector3(Camera.main.transform.position.x, Camera.main.transform.position.y, 0);
-            activeLine.UpdateLine(mousePos);
         }
     }
 

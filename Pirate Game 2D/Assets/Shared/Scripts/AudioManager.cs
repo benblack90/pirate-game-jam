@@ -114,7 +114,7 @@ public class AudioManager : MonoBehaviour
     private void OnPointGet(int points)
     {
         if (pointCollectSound.isPlaying) pointCollectSound.Stop();
-        pointCollectSound.pitch = 1.0f + (points/500.0f) + (comboCounter/10.0f);
+        pointCollectSound.pitch = 1.0f + (points/500.0f) + (comboCounter/50.0f);
         pointCollectSound.Play();
     }
 

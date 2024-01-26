@@ -26,10 +26,10 @@ public class MessageController : MonoBehaviour
     void Update()
     {
         sceneTime += Time.deltaTime;
-        if (sceneTime < 1.0f) windSound.volume = sceneTime;
-        if (sceneTime > 5.0f) windSound.volume = 1 - (sceneTime - 5);
         quote.color = new Color(1f, 1f, 1f, sceneTime);
         if(sceneTime > quoteTime) gooCouncil.color = new Color(1f, 1f, 1f, (sceneTime - quoteTime) * 0.5f);
         if(sceneTime > 6.0f) SceneManager.LoadScene(1);
+        if (sceneTime < 2.0f) windSound.volume = sceneTime / 4;
+        if (sceneTime > 4.0f) windSound.volume = 0.5f - ((sceneTime - 4.0f) / 4);
     }
 }

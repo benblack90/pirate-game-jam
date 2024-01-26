@@ -9,6 +9,7 @@ public class MessageController : MonoBehaviour
 {
     [SerializeField] TextMeshProUGUI quote;
     [SerializeField] TextMeshProUGUI gooCouncil;
+    [SerializeField] AudioSource windSound;
     float sceneTime;
     float quoteTime;
 
@@ -25,6 +26,7 @@ public class MessageController : MonoBehaviour
     void Update()
     {
         sceneTime += Time.deltaTime;
+        if (sceneTime < 1.0f) windSound.volume = sceneTime;
         quote.color = new Color(1f, 1f, 1f, sceneTime);
         if(sceneTime > quoteTime) gooCouncil.color = new Color(1f, 1f, 1f, (sceneTime - quoteTime) * 0.5f);
         if(sceneTime > 6.0f) SceneManager.LoadScene(1);

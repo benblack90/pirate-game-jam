@@ -403,11 +403,22 @@ public class Level : MonoBehaviour
     {
         foreach(Vector2Int pos in doorPositions.Keys)
         {
-            for(int i = 0; i < 8; i++)
+            for(int i = -1; i < 9; i++)
             {
-                for(int j = 0; j < 8; j++)
+                for(int j = -1; j < 9; j++)
                 {
-                    gooController.WriteToGooTile(pos.x * gooPerGraphTile + i, pos.y * gooPerGraphTile + j, GridChannel.TYPE, (float)gridType);
+                    if(i == -1 || j == -1 || i == 8 || j == 8)
+                    {
+                        //make goo round the edges spreadable
+                        float edgeTile = gooController.GetTileValue(pos.x * gooPerGraphTile + i, pos.y * gooPerGraphTile + j, GridChannel.TYPE);
+                        if(edgeTile == (float) GridTileType.GOO_UNSPREADABLE) 
+                            gooController.WriteToGooTile(pos.x * gooPerGraphTile + i, pos.y * gooPerGraphTile + j, GridChannel.TYPE, (float)GridTileType.GOO_SPREADABLE);
+                    }
+                    else
+                    {
+                        gooController.WriteToGooTile(pos.x * gooPerGraphTile + i, pos.y * gooPerGraphTile + j, GridChannel.TYPE, (float)gridType);
+                    }
+                    
                     
                 }
             }

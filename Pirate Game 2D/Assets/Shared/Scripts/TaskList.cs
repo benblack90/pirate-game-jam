@@ -18,6 +18,8 @@ public class TaskList : MonoBehaviour
     [SerializeField] List<Task> postGooTasks = new List<Task>();
     [SerializeField] TextMeshProUGUI taskText;
 
+    bool hasTriggered = false;
+
     private void Start()
     {
         currentTasks = preGooTasks;
@@ -26,6 +28,7 @@ public class TaskList : MonoBehaviour
     private void OnEnable()
     {
         Collectable.onGenericCollectable += KeyCardTask;
+        Collectable.onGenericCollectable += SchematicTask;
         TriggerArea.onPlayerEnterTrigger += ChamberOpenTask;
         GooChamber.onGooRelease += GooReleaseTask;
 
@@ -76,8 +79,9 @@ public class TaskList : MonoBehaviour
 
     void ChamberOpenTask(string trig)
     {
-        if (trig == "Chamber")
+        if (trig == "Chamber" && !hasTriggered)
         {
+            hasTriggered = true;
             CompleteTask(1);
         }
     }
@@ -86,6 +90,12 @@ public class TaskList : MonoBehaviour
     {
         CompleteTask(2);
         StartCoroutine(TaskSwap());
+    }
+
+    void SchematicTask(string obj)
+    {
+        if(obj=="Schematics")
+        CompleteTask(1);
     }
 
     IEnumerator TaskSwap()

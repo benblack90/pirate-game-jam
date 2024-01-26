@@ -51,13 +51,13 @@ public class MenuUIManager : MonoBehaviour
             {
                 if (_isGoingToMainMenu)
                 {
-                    transform.GetChild(1).gameObject.SetActive(true);
+                    transform.GetChild(2).gameObject.SetActive(true);
                     _isGoingToMainMenu = false;
                     _book.transform.Rotate(new Vector3(0, 180, 0));
                 }
                 else if (_isGoingToDisplayControls)
                 {
-                    transform.GetChild(2).gameObject.SetActive(true);
+                    transform.GetChild(3).gameObject.SetActive(true);
                     _isGoingToDisplayControls = false;
                 }
                 _isFlippingPages = false;
@@ -91,7 +91,7 @@ public class MenuUIManager : MonoBehaviour
     {
         foreach(Transform child in transform)
         {
-            if (child.gameObject.name == "Image") continue;
+            if (child.gameObject.name == "Image" || child.gameObject.name == "Bckgrnd") continue;
             child.gameObject.SetActive(false);
         }
         _isFlippingPages = true;

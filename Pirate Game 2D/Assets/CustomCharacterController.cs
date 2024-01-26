@@ -37,6 +37,7 @@ public class CustomCharacterController : MonoBehaviour
     [Range(0f, 1.0f)]
     public float _globalShakeIntensity = 1.0f;
 
+    [SerializeField] GameObject _aimingGizmo;
 
     [Header("Goo Settings")]
     public GooController _gooScript;
@@ -81,6 +82,7 @@ public class CustomCharacterController : MonoBehaviour
     {
         preShakePosition = _camera.transform.position;  
         _rb = this.GetComponent<Rigidbody2D>();
+        _aimingGizmo.SetActive(false);
     }
 
     // Update is called once per frame
@@ -90,14 +92,15 @@ public class CustomCharacterController : MonoBehaviour
         {
             lockCamera = (Input.GetMouseButton(1));
             int spellAccuracyTest = Input.GetKey(KeyCode.LeftShift) ? 50 : 100;
-            if (Input.GetKeyDown(KeyCode.Alpha1))
+
+/*            if (Input.GetKeyDown(KeyCode.Alpha1))
             {
                 CastSpell(SPELL_HOT, spellAccuracyTest);
             }
             if (Input.GetKeyDown(KeyCode.Alpha2))
             {
                 CastSpell(SPELL_COLD, spellAccuracyTest);
-            }
+            }*/
 
 
             PlayerCastArea();
@@ -214,6 +217,10 @@ public class CustomCharacterController : MonoBehaviour
 
         GameObject.Destroy(castArea);
         castArea = new GameObject();
+        if (!lockCamera)
+        {
+            return;
+        }
         castArea.AddComponent<LineRenderer>();
         LineRenderer lr = castArea.GetComponent<LineRenderer>();
         lr.material = new Material(Shader.Find("Legacy Shaders/Particles/Alpha Blended Premultiply"));
@@ -244,6 +251,11 @@ public class CustomCharacterController : MonoBehaviour
 
         GameObject.Destroy(castAreaDeadZone);
         castAreaDeadZone = new GameObject();
+
+        if (!lockCamera)
+        {
+            return;
+        }
         castAreaDeadZone.AddComponent<LineRenderer>();
         LineRenderer lr = castAreaDeadZone.GetComponent<LineRenderer>();
         lr.material = new Material(Shader.Find("Legacy Shaders/Particles/Alpha Blended Premultiply"));

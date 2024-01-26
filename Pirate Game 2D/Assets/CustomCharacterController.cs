@@ -17,12 +17,12 @@ public class CustomCharacterController : MonoBehaviour
     //
     
     [Header("Controller Settings")]
+    public bool _characeterActive = true;
     public float _characeterSpeed = 600.0f;
     public float _characeterRunSpeed = 800.0f; 
     [Range(0.0f, 100.0f)]
     public float _castRange = 5.0f;
     [Range(0.0f, 0.5f)] public float _castStartRangeMultiplier = 0.0f;
-
     [Range(0.0f,360.0f)]
     public float _castFieldOfView = 90.0f;
     public float _aimDirection = 0.0f;
@@ -34,6 +34,9 @@ public class CustomCharacterController : MonoBehaviour
     [Range(0f, 0.5f)]
     public float _cameraMouseRatio = 0.15f;
     public bool _rotatePlayer = false;
+    [Range(0f, 1.0f)]
+    public float _globalShakeIntensity = 1.0f;
+
 
     [Header("Goo Settings")]
     public GooController _gooScript;
@@ -70,40 +73,69 @@ public class CustomCharacterController : MonoBehaviour
 
     private GameObject castArea;
     private GameObject castAreaDeadZone;
+    private Vector2 cameraShakeIntensity = new Vector2(0, 0);
+    private float cameraInitialShakeTimer = 0.0f;
+    private float cameraShakeTimer = 0.0f;
+    private Vector3 preShakePosition = new Vector3(0,0,0);
     void Start()
     {
+        preShakePosition = _camera.transform.position;  
         _rb = this.GetComponent<Rigidbody2D>();
     }
 
     // Update is called once per frame
     void Update()
     {
-        lockCamera = (Input.GetMouseButton(1));
-        int spellAccuracyTest = Input.GetKey(KeyCode.LeftShift) ? 50 : 100;
-        if (Input.GetKeyDown(KeyCode.Alpha1))
+        if (_characeterActive)
         {
-            CastSpell(SPELL_HOT, spellAccuracyTest);
-        }
-        if (Input.GetKeyDown(KeyCode.Alpha2))
-        {
-            CastSpell(SPELL_COLD, spellAccuracyTest);
-        }
+            lockCamera = (Input.GetMouseButton(1));
+            int spellAccuracyTest = Input.GetKey(KeyCode.LeftShift) ? 50 : 100;
+            if (Input.GetKeyDown(KeyCode.Alpha1))
+            {
+                CastSpell(SPELL_HOT, spellAccuracyTest);
+            }
+            if (Input.GetKeyDown(KeyCode.Alpha2))
+            {
+                CastSpell(SPELL_COLD, spellAccuracyTest);
+            }
 
 
-        PlayerCastArea();
-        PlayerCastAreaDead();
+            PlayerCastArea();
+            PlayerCastAreaDead();
+            if (cameraShakeTimer > 0.0f) ManageCameraShake();
+            else
+            {
+                cameraShakeIntensity = Vector2.zero;
+                cameraInitialShakeTimer = 0.0f;
+            }
+        }
     }
-
+    void DestroyedObject(ObjectScorePair pair, Vector2Int graphicalPos)
+    {
+        CameraShake(new Vector2(1.0f,1.0f) * 0.0005f * pair.points, 0.5f);
+    }
+    public void CameraShake(Vector2 intensity, float timer)
+    {
+        cameraShakeIntensity = intensity;
+        cameraInitialShakeTimer = timer;
+        cameraShakeTimer = timer;   
+    }
+    void ManageCameraShake()
+    {
+        cameraShakeTimer = Mathf.Max(cameraShakeTimer - Time.deltaTime, 0.0f);
+    }
     private void OnEnable()
     {
         LineGenerator.OnRuneComplete += CastRune;
+        DynamicDestructable.onDynamicDestroyed += DestroyedObject;
     }
 
     private void OnDisable()
     {
         LineGenerator.OnRuneComplete -= CastRune;
+        DynamicDestructable.onDynamicDestroyed -= DestroyedObject;
     }
-
+    
     public void CastRune(RuneInfo info)
     {
 
@@ -128,13 +160,16 @@ public class CustomCharacterController : MonoBehaviour
 
     void FixedUpdate()
     {
-        PlayerMove();
-        PlayerLook();
-        
-        CameraMove();
+        if (_characeterActive)
+        {
+            PlayerMove();
+            PlayerLook();
+
+            CameraMove();
+        }
     }
 
-    void PlayerMove()
+        void PlayerMove()
     {
         _rb.velocity = Vector2.zero;
         Vector2 inputs = new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
@@ -233,13 +268,21 @@ public class CustomCharacterController : MonoBehaviour
 
     void CameraMove()
     {
-
+        _camera.transform.position = preShakePosition;
         Vector3 targetPosition = _playerCameraHalf;
-
-
         Vector2 cameraXY = _camera.transform.position * _dampening + targetPosition * (1.0f - _dampening);
 
         _camera.transform.position = new Vector3(cameraXY.x, cameraXY.y, _camera.transform.position.z);
+        preShakePosition = _camera.transform.position;
+        if (cameraInitialShakeTimer > 0)
+        {
+            float timerScale = 1 / cameraInitialShakeTimer * cameraShakeTimer;
+            _camera.transform.position += new Vector3(
+                Random.Range(-cameraShakeIntensity.x, cameraShakeIntensity.x) * timerScale * _globalShakeIntensity,
+                Random.Range(-cameraShakeIntensity.y, cameraShakeIntensity.y) * timerScale * _globalShakeIntensity,
+                0);
+        }
+        
     }
 
     public void CastSpell(int spellId, int spellAccuracy)

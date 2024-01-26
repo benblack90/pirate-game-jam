@@ -15,17 +15,21 @@ public class Level : MonoBehaviour
         public bool inUse;
 
     }
-
+    [Header("Tile Settings")]
     public GooController gooController;
     public Tilemap destructableWalls;
     public Tilemap destructableCovers;
     public Tilemap baseWalls;
+    [Header("Player Settings")]
     [SerializeField] CustomCharacterController playerController;
     [SerializeField] PlayerValuesManager playerValues;
     public Camera mainCam;
+    [Header("Fire Settings")]
     public TileBase ashTile;
     [SerializeField] GameObject fireSpritePrefab;
     List<FireSprite> fireSpritePool = new List<FireSprite>();
+    [Header("End UI")]
+    public LoseGame loseGameRef;
 
 
     float timer;
@@ -89,10 +93,15 @@ public class Level : MonoBehaviour
         }
         UpdateDynamics();
         UpdatePlayerHealth();
-        if(CheckLoseConditions())
+        if (Input.GetKeyDown(KeyCode.K))
         {
-            //DISPLAY LOSE SCREEN
-            //RESTART GAME
+            playerValues.SubtractHealth(playerValues.GetHealth());
+        }
+        if (CheckLoseConditions() && !loseGameRef.IsEnabled())
+        {
+            playerController._characeterActive = false;
+            Debug.Log("LOL U SUCK");
+            loseGameRef.EnableScreen();
         }
     }
 

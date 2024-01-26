@@ -34,12 +34,12 @@ public class Level : MonoBehaviour
 
 
     float timer;
-    float levelTime = 180.0f;
+    float levelTime = 360.0f;
     bool gooRelease;
     const int gooPerGraphTile = 8;
     const float gooTempThresholdStatics = 200.0f;
     const float gooTempThresholdDynamics = 180.0f;
-    const float gooTempThresholdPlayer = 190.0f;
+    const float gooTempThresholdPlayer = 140.0f;
 
     Dictionary<Vector2Int, StaticDestructable> staticDestructables = new Dictionary<Vector2Int, StaticDestructable>();
     List<Vector2Int> deathRow = new List<Vector2Int>();

@@ -12,6 +12,7 @@ public class MenuUIManager : MonoBehaviour
     [SerializeField] Image _gooThree;
     [SerializeField] GameObject _book;
     bool _isLoadingLevel = false;
+    bool _isLoadingCredits = false;
     bool _isLoadingMenu = true;
     bool _isFlippingPages = false;
     bool _isGoingToDisplayControls = false;
@@ -36,12 +37,19 @@ public class MenuUIManager : MonoBehaviour
             if (_loadTimer <= 0) _isLoadingMenu = false;
             return;
         }
-        if (_isLoadingLevel)
+        if (_isLoadingLevel || _isLoadingCredits)
         {
             LoadLevel();
             if (_loadTimer >= 1)
             {
-                SceneManager.LoadScene(2);
+                if (_isLoadingLevel)
+                {
+                    SceneManager.LoadScene(2);
+                }
+                else if (_isLoadingCredits)
+                {
+                    SceneManager.LoadScene(3);
+                }
             }
             return;
         }
@@ -73,6 +81,11 @@ public class MenuUIManager : MonoBehaviour
     {
         FlipPages();
         _isGoingToDisplayControls = true;
+    }
+
+    public void OnCreditsClicked()
+    {
+        _isLoadingCredits = true;
     }
 
     public void OnExitClicked()

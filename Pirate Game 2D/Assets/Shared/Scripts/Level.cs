@@ -49,6 +49,9 @@ public class Level : MonoBehaviour
     public delegate void OnTimerChange(int timer);
     public static event OnTimerChange onTimerChange;
 
+    public delegate void OnLose();
+    public static event OnLose onLose;
+
 
 
 
@@ -107,6 +110,7 @@ public class Level : MonoBehaviour
             playerController._characeterActive = false;
             Debug.Log("LOL U SUCK");
             loseGameRef.EnableScreen();
+            onLose?.Invoke();
         }
     }
 

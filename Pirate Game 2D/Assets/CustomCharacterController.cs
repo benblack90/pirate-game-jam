@@ -34,7 +34,9 @@ public class CustomCharacterController : MonoBehaviour
     [Range(0f, 0.5f)]
     public float _cameraMouseRatio = 0.15f;
     public bool _rotatePlayer = false;
-    
+    [Range(0f, 1.0f)]
+    public float _globalShakeIntensity = 1.0f;
+
 
     [Header("Goo Settings")]
     public GooController _gooScript;
@@ -264,8 +266,8 @@ public class CustomCharacterController : MonoBehaviour
         {
             float timerScale = 1 / cameraInitialShakeTimer * cameraShakeTimer;
             _camera.transform.position += new Vector3(
-                Random.Range(-cameraShakeIntensity.x, cameraShakeIntensity.x) * timerScale,
-                Random.Range(-cameraShakeIntensity.y, cameraShakeIntensity.y) * timerScale,
+                Random.Range(-cameraShakeIntensity.x, cameraShakeIntensity.x) * timerScale * _globalShakeIntensity,
+                Random.Range(-cameraShakeIntensity.y, cameraShakeIntensity.y) * timerScale * _globalShakeIntensity,
                 0);
         }
         

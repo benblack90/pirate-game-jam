@@ -21,6 +21,7 @@ public class TaskList : MonoBehaviour
     private void Start()
     {
         currentTasks = preGooTasks;
+        UpdateTaskText();
     }
     private void OnEnable()
     {

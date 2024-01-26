@@ -101,8 +101,8 @@ public class StaticDestructable
         if (destroyed) return;
         level.ExtinguishFire(usingFireIndex);
         ObjectScorePair pair = new ObjectScorePair();
-        pair.name = objectName;
-        pair.points = points;
+        pair.name = "Wall";
+        pair.points = 10;
         destroyed = true;
         onStaticDestroyed?.Invoke(pair, graphicalPos);
     }

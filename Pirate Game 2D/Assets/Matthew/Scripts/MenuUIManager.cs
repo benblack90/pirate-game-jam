@@ -10,6 +10,7 @@ public class MenuUIManager : MonoBehaviour
     [SerializeField] Image _gooOne;
     [SerializeField] Image _gooTwo;
     [SerializeField] Image _gooThree;
+    [SerializeField] GameObject _book;
     bool _isLoadingLevel = false;
     bool _isLoadingMenu = true;
     bool _isFlippingPages = false;
@@ -46,17 +47,21 @@ public class MenuUIManager : MonoBehaviour
         }
         if (_isFlippingPages)
         {
-            if (_isGoingToMainMenu)
+            if (_book.GetComponent<BookAnimatorAlert>().isFinished)
             {
-                transform.GetChild(1).gameObject.SetActive(true);
-                _isGoingToMainMenu = false;
+                if (_isGoingToMainMenu)
+                {
+                    transform.GetChild(1).gameObject.SetActive(true);
+                    _isGoingToMainMenu = false;
+                    _book.transform.Rotate(new Vector3(0, 180, 0));
+                }
+                else if (_isGoingToDisplayControls)
+                {
+                    transform.GetChild(2).gameObject.SetActive(true);
+                    _isGoingToDisplayControls = false;
+                }
+                _isFlippingPages = false;
             }
-            else if (_isGoingToDisplayControls)
-            {
-                transform.GetChild(2).gameObject.SetActive(true);
-                _isGoingToDisplayControls = false;
-            }
-            _isFlippingPages = false;
         }
     }
     public void OnPlayClicked()
@@ -78,6 +83,7 @@ public class MenuUIManager : MonoBehaviour
     public void OnBackClicked()
     {
         FlipPages();
+        _book.transform.Rotate(new Vector3(0, 180, 0));
         _isGoingToMainMenu = true;
     }
 
@@ -90,6 +96,7 @@ public class MenuUIManager : MonoBehaviour
         }
         _isFlippingPages = true;
         _audioSource.Play();
+        _book.GetComponent<Animator>().SetBool("_isFlipping", true);
     }
 
     void LoadLevel()

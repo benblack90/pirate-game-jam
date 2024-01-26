@@ -7,6 +7,9 @@ using UnityEngine.UI;
 public class MenuUIManager : MonoBehaviour
 {
     [SerializeField] Image _blackScreen;
+    [SerializeField] Image _gooOne;
+    [SerializeField] Image _gooTwo;
+    [SerializeField] Image _gooThree;
     bool _isLoadingLevel = false;
     bool _isLoadingMenu = true;
     bool _isFlippingPages = false;
@@ -16,10 +19,12 @@ public class MenuUIManager : MonoBehaviour
     [SerializeField] AudioSource _audioSource;
 
     Color _fadeColour;
+    Color _gooFade;
 
     private void Start()
     {
         _fadeColour = Color.black;
+        _gooFade = _gooOne.color;
         _blackScreen.color = _fadeColour;
     }
     private void Update()
@@ -101,6 +106,10 @@ public class MenuUIManager : MonoBehaviour
     {
         _loadTimer += change;
         _fadeColour.a = _loadTimer;
+        _gooFade.a = (1 - _loadTimer) / 2;
         _blackScreen.color = _fadeColour;
+        _gooOne.color = _gooFade;
+        _gooTwo.color = _gooFade;
+        _gooThree.color = _gooFade;
     }
 }

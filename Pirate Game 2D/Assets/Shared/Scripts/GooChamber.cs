@@ -8,9 +8,19 @@ public class GooChamber : MonoBehaviour
     [SerializeField] Vector2Int _gooOffset;
     [SerializeField] Animator _anim;
     bool _hasReleased = false;
+    bool _hasAnotherReleased = false;
 
     public delegate void OnGooRelease();
     public static event OnGooRelease onGooRelease;
+
+    private void OnEnable()
+    {
+        GooChamber.onGooRelease += DetectRelease;
+    }
+    private void OnDisable()
+    {
+        GooChamber.onGooRelease -= DetectRelease;
+    }
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
@@ -25,10 +35,15 @@ public class GooChamber : MonoBehaviour
             _level.gooController.WriteToGooTile(gooPos.x,gooPos.y,GridChannel.TYPE,(float)GridTileType.GOO_SPREADABLE);
             _level.gooController.WriteToGooTile(gooPos.x,gooPos.y,GridChannel.TEMP,127.0f);
             _level.gooController.SendTexToGPU();
-            onGooRelease?.Invoke();
+            if(!_hasAnotherReleased)onGooRelease?.Invoke();
             _anim.SetTrigger("OnBreak");
             _hasReleased = true;
             //gameObject.SetActive(false);
         }
+    }
+
+    void DetectRelease()
+    {
+        _hasAnotherReleased = true;
     }
 }

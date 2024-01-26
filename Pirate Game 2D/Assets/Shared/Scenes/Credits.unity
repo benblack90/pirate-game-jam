@@ -2654,6 +2654,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   thankYou: {fileID: 1837456769}
   canvas: {fileID: 631029276}
+  baseScrollSpeed: 90
 --- !u!1 &1293502502
 GameObject:
   m_ObjectHideFlags: 0

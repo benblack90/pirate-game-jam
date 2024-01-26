@@ -11,4 +11,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Shared/Scenes/Level 1.unity
     guid: d74eea661846ff34f95b8438b62b91e9
+  - enabled: 1
+    path: Assets/Shared/Scenes/MessageFromTheGooCouncil.unity
+    guid: 42da93b0f7b245f46a022dce85d04d31
   m_configObjects: {}

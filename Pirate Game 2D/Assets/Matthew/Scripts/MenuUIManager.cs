@@ -40,7 +40,7 @@ public class MenuUIManager : MonoBehaviour
             LoadLevel();
             if (_loadTimer >= 1)
             {
-                SceneManager.LoadScene(1);
+                SceneManager.LoadScene(2);
             }
             return;
         }

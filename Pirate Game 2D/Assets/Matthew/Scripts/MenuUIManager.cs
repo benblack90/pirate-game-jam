@@ -9,7 +9,11 @@ public class MenuUIManager : MonoBehaviour
     [SerializeField] Image _blackScreen;
     bool _isLoadingLevel = false;
     bool _isLoadingMenu = true;
+    bool _isFlippingPages = false;
+    bool _isGoingToDisplayControls = false;
+    bool _isGoingToMainMenu = false;
     float _loadTimer = 1;
+    [SerializeField] AudioSource _audioSource;
 
     Color _fadeColour;
 
@@ -35,10 +39,30 @@ public class MenuUIManager : MonoBehaviour
             }
             return;
         }
+        if (_isFlippingPages)
+        {
+            if (_isGoingToMainMenu)
+            {
+                transform.GetChild(1).gameObject.SetActive(true);
+                _isGoingToMainMenu = false;
+            }
+            else if (_isGoingToDisplayControls)
+            {
+                transform.GetChild(2).gameObject.SetActive(true);
+                _isGoingToDisplayControls = false;
+            }
+            _isFlippingPages = false;
+        }
     }
     public void OnPlayClicked()
     {
         _isLoadingLevel = true;
+    }
+
+    public void OnControlsClicked()
+    {
+        FlipPages();
+        _isGoingToDisplayControls = true;
     }
 
     public void OnExitClicked()
@@ -46,6 +70,22 @@ public class MenuUIManager : MonoBehaviour
         Application.Quit();
     }
 
+    public void OnBackClicked()
+    {
+        FlipPages();
+        _isGoingToMainMenu = true;
+    }
+
+    void FlipPages()
+    {
+        foreach(Transform child in transform)
+        {
+            if (child.gameObject.name == "Image") continue;
+            child.gameObject.SetActive(false);
+        }
+        _isFlippingPages = true;
+        _audioSource.Play();
+    }
 
     void LoadLevel()
     {

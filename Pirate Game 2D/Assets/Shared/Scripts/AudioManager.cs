@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 
 public class AudioManager : MonoBehaviour
 {
@@ -16,6 +17,9 @@ public class AudioManager : MonoBehaviour
     public AudioClip iceCastSound;
     public AudioClip fireCastSound;
     public AudioClip invalidCastSound;
+    public AudioSource doorOperateSound;
+    public AudioClip doorOpenSound;
+    public AudioClip doorCloseSound;
 
     private float pointComboMax = 2.0f;
     private float pointComboTimer = 0.0f;
@@ -28,6 +32,7 @@ public class AudioManager : MonoBehaviour
         GooChamber.onGooRelease += OnAlarm;
         Collectable.onGenericCollectable += OnItemCollect;
         LineGenerator.OnRuneComplete += OnRuneComplete;
+        DoorBase.onDoorOpenClose += OnDoorOpenClose;
     }
 
     private void OnDisable()
@@ -37,6 +42,7 @@ public class AudioManager : MonoBehaviour
         GooChamber.onGooRelease -= OnAlarm;
         Collectable.onGenericCollectable -= OnItemCollect;
         LineGenerator.OnRuneComplete -= OnRuneComplete;
+        DoorBase.onDoorOpenClose -= OnDoorOpenClose;
     }
 
     // Update is called once per frame
@@ -89,7 +95,7 @@ public class AudioManager : MonoBehaviour
         backgroundMusic.loop = false;
         backgroundMusic.clip = postAlarmMusic;
         backgroundMusicLoop = postAlarmLoop;
-        backgroundMusic.volume += 0.2f;
+        backgroundMusic.volume += 0.1f;
         backgroundMusic.Play();
     }
 
@@ -122,5 +128,19 @@ public class AudioManager : MonoBehaviour
         }
         runeCastSound.pitch = Random.Range(0.8f, 1.2f);
         runeCastSound.Play();
+    }
+
+    private void OnDoorOpenClose(Dictionary<Vector2Int, TileBase> doorPositions, GridTileType gridType)
+    {
+        switch (gridType)
+        {
+            case GridTileType.BLANK:
+                doorOperateSound.clip = doorOpenSound;
+                break;
+            case GridTileType.STATIC:
+                doorOperateSound.clip = doorCloseSound;
+                break;
+        }
+        doorOperateSound.Play();
     }
 }

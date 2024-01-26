@@ -99,6 +99,7 @@ public class Level : MonoBehaviour
         }
         if (CheckLoseConditions() && !loseGameRef.IsEnabled())
         {
+            playerController._characeterActive = false;
             Debug.Log("LOL U SUCK");
             loseGameRef.EnableScreen();
         }

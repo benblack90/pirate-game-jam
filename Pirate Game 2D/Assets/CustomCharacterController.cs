@@ -17,12 +17,12 @@ public class CustomCharacterController : MonoBehaviour
     //
     
     [Header("Controller Settings")]
+    public bool _characeterActive = true;
     public float _characeterSpeed = 600.0f;
     public float _characeterRunSpeed = 800.0f; 
     [Range(0.0f, 100.0f)]
     public float _castRange = 5.0f;
     [Range(0.0f, 0.5f)] public float _castStartRangeMultiplier = 0.0f;
-
     [Range(0.0f,360.0f)]
     public float _castFieldOfView = 90.0f;
     public float _aimDirection = 0.0f;
@@ -86,25 +86,28 @@ public class CustomCharacterController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        lockCamera = (Input.GetMouseButton(1));
-        int spellAccuracyTest = Input.GetKey(KeyCode.LeftShift) ? 50 : 100;
-        if (Input.GetKeyDown(KeyCode.Alpha1))
+        if (_characeterActive)
         {
-            CastSpell(SPELL_HOT, spellAccuracyTest);
-        }
-        if (Input.GetKeyDown(KeyCode.Alpha2))
-        {
-            CastSpell(SPELL_COLD, spellAccuracyTest);
-        }
+            lockCamera = (Input.GetMouseButton(1));
+            int spellAccuracyTest = Input.GetKey(KeyCode.LeftShift) ? 50 : 100;
+            if (Input.GetKeyDown(KeyCode.Alpha1))
+            {
+                CastSpell(SPELL_HOT, spellAccuracyTest);
+            }
+            if (Input.GetKeyDown(KeyCode.Alpha2))
+            {
+                CastSpell(SPELL_COLD, spellAccuracyTest);
+            }
 
 
-        PlayerCastArea();
-        PlayerCastAreaDead();
-        if (cameraShakeTimer > 0.0f) ManageCameraShake();
-        else
-        {
-            cameraShakeIntensity = Vector2.zero;
-            cameraInitialShakeTimer = 0.0f;
+            PlayerCastArea();
+            PlayerCastAreaDead();
+            if (cameraShakeTimer > 0.0f) ManageCameraShake();
+            else
+            {
+                cameraShakeIntensity = Vector2.zero;
+                cameraInitialShakeTimer = 0.0f;
+            }
         }
     }
     public void CameraShake(Vector2 intensity, float timer)
@@ -151,13 +154,16 @@ public class CustomCharacterController : MonoBehaviour
 
     void FixedUpdate()
     {
-        PlayerMove();
-        PlayerLook();
-        
-        CameraMove();
+        if (_characeterActive)
+        {
+            PlayerMove();
+            PlayerLook();
+
+            CameraMove();
+        }
     }
 
-    void PlayerMove()
+        void PlayerMove()
     {
         _rb.velocity = Vector2.zero;
         Vector2 inputs = new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));

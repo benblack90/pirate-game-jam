@@ -65,7 +65,10 @@ public class UIManager : MonoBehaviour
         scoreCache = score;
         scoreDisplay.text = "SCORE: " + score;
     }
-
+    public int GetScore()
+    {
+        return scoreCache;
+    }
     public void SetTimer(int time)
     {
         timeDisplay.text = "TIME: " + time;

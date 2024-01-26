@@ -49,11 +49,14 @@ public class Level : MonoBehaviour
     public delegate void OnTimerChange(int timer);
     public static event OnTimerChange onTimerChange;
 
+
+    public float GetTimer()
+    {
+        return timer;
+    }
+
     public delegate void OnLose();
     public static event OnLose onLose;
-
-
-
 
 
     public int GetGooPerTile()
@@ -63,6 +66,7 @@ public class Level : MonoBehaviour
     private void OnEnable()
     {
         StaticDestructable.onStaticDestroyed += OnStaticDestroy;
+        DynamicDestructable.onDynamicDestroyed += OnDynamicDestroy;
         DoorBase.onDoorOpenClose += ChangeGooTilesForDoors;
         GooChamber.onGooRelease += SetGooReleaseTrue;
         LevelExit.onLevelOver += WinScreenStuff;
@@ -72,6 +76,7 @@ public class Level : MonoBehaviour
     {
         //unsubscribe from events
         StaticDestructable.onStaticDestroyed -= OnStaticDestroy;
+        DynamicDestructable.onDynamicDestroyed -= OnDynamicDestroy;
         DoorBase.onDoorOpenClose -= ChangeGooTilesForDoors;
         GooChamber.onGooRelease -= SetGooReleaseTrue;
         LevelExit.onLevelOver -= WinScreenStuff;
@@ -104,6 +109,10 @@ public class Level : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.K))
         {
             playerValues.SubtractHealth(playerValues.GetHealth());
+        }
+        if (Input.GetKeyDown(KeyCode.J))
+        {
+            WinScreenStuff();
         }
         if (CheckLoseConditions() && !loseGameRef.IsEnabled())
         {
@@ -223,7 +232,9 @@ public class Level : MonoBehaviour
 
     void OnStaticDestroy(ObjectScorePair pair, Vector2Int graphicalPos)
     {
-
+        winGameRef.AddWallDestroyed();
+        //totalWallsDestroyed++;
+        //Debug.Log("Walls Destroyed: " + totalWallsDestroyed.ToString());
         for (int x = graphicalPos.x * gooPerGraphTile; x < graphicalPos.x * gooPerGraphTile + gooPerGraphTile; x++)
         {
             for (int y = graphicalPos.y * gooPerGraphTile; y < graphicalPos.y * gooPerGraphTile + gooPerGraphTile; y++)
@@ -253,6 +264,12 @@ public class Level : MonoBehaviour
         deathRow.Add(graphicalPos);
     }
 
+    void OnDynamicDestroy(ObjectScorePair pair, Vector2Int graphicalPos)
+    {
+        winGameRef.AddItemDestroyed();
+        //totalItemsDestroyed++;
+        //Debug.Log("Stuff Destroyed: " + totalItemsDestroyed.ToString());
+    }
 
     void SetGooAtEdgeToSpreadable(Vector2Int corner)
     {

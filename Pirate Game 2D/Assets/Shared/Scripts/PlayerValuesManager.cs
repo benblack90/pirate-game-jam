@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SocialPlatforms.Impl;
 
 public class PlayerValuesManager : MonoBehaviour
 {
@@ -39,8 +40,15 @@ public class PlayerValuesManager : MonoBehaviour
         onHealthChanged?.Invoke(_currentHealth/_maxHealth);
     }
 
+    public int GetPoints()
+    {
+        return _points;
+    }
+
     public int GetHealth()
-    { return _currentHealth; }
+    { 
+        return _currentHealth; 
+    }
 
     public void SubtractHealth(int damage)
     {

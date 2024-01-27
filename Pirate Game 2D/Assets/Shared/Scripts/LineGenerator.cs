@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 using UnityEngine.UIElements;
+using static Level;
 
 enum LineTypes
 {
@@ -63,6 +64,18 @@ public class LineGenerator : MonoBehaviour
     private float height;
 
     private bool destroying = false;
+
+    private bool lost = false;
+
+    private void OnEnable()
+    {
+        Level.onLose += OnLose;
+    }
+
+    private void OnDisable()
+    {
+        Level.onLose -= OnLose;
+    }
 
     private void OnDestroy()
     {
@@ -286,7 +299,7 @@ public class LineGenerator : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (!destroying)
+        if (!destroying && !lost)
         {
             if (Input.GetMouseButtonDown(0))
             {
@@ -341,5 +354,10 @@ public class LineGenerator : MonoBehaviour
         Vector2 mousePos = Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, Camera.main.transform.position.z));
         return mousePos.x > transform.position.x && mousePos.x < transform.position.x + width 
             && mousePos.y < transform.position.y && mousePos.y > transform.position.y - height;
+    }
+
+    private void OnLose()
+    {
+        lost = true;
     }
 }

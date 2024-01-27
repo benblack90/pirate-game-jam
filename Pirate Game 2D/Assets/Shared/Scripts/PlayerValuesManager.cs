@@ -6,7 +6,7 @@ using UnityEngine.SocialPlatforms.Impl;
 public class PlayerValuesManager : MonoBehaviour
 {
     [SerializeField] int _maxHealth;
-    int _currentHealth;
+    float _currentHealth;
 
     int _points;
 
@@ -45,12 +45,12 @@ public class PlayerValuesManager : MonoBehaviour
         return _points;
     }
 
-    public int GetHealth()
+    public float GetHealth()
     { 
         return _currentHealth; 
     }
 
-    public void SubtractHealth(int damage)
+    public void SubtractHealth(float damage)
     {
         if (damage <= 0) return;
         _currentHealth -= damage;

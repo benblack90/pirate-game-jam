@@ -13,7 +13,7 @@ public class TriggerArea : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Player"))
         {
-            onPlayerEnterTrigger(triggerName);
+            onPlayerEnterTrigger?.Invoke(triggerName);
         }
     }
 }

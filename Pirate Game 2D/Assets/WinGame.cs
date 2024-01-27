@@ -31,7 +31,7 @@ public class WinGame : MonoBehaviour
     private float time = 0;
     private int totalItemsDestroyed = 0;
     private int totalWallsDestroyed = 0;
-    private int health;
+    private float health;
 
     private int scoreFinal;
 
@@ -73,7 +73,7 @@ public class WinGame : MonoBehaviour
         int multiplierTime = Mathf.RoundToInt(time) * 15;
         int multiplierWall = totalWallsDestroyed * 10;
         int multiplierObject = totalItemsDestroyed * 10;
-        int multiplierHealth = health * 20;
+        int multiplierHealth = (int)health * 20;
 
         scoreFinal = score + multiplierTime + multiplierWall + multiplierObject + multiplierTime;
 

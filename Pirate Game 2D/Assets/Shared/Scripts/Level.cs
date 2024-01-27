@@ -106,14 +106,6 @@ public class Level : MonoBehaviour
         }
         UpdateDynamics();
         UpdatePlayerHealth();
-        if (Input.GetKeyDown(KeyCode.K))
-        {
-            playerValues.SubtractHealth(playerValues.GetHealth());
-        }
-        if (Input.GetKeyDown(KeyCode.J))
-        {
-            WinScreenStuff();
-        }
         if (CheckLoseConditions() && !loseGameRef.IsEnabled())
         {
             playerController._characeterActive = false;
@@ -145,16 +137,17 @@ public class Level : MonoBehaviour
     {
 
         Vector2Int playerGooPos = playerController.GetPlayerPos() * gooPerGraphTile;
+        playerGooPos.y -= 3;
         float temp;
         float maxTemp = 0.0f;
-        for(int i = -1; i < 2; i++)
+        for(int i = -2; i < 3; i++)
         {
             float tileType = gooController.GetTileValue(playerGooPos.x + i, playerGooPos.y, GridChannel.TYPE);
             if (tileType < 1f || tileType > 2f)continue;
             temp = CheckTempOfPlayerGooTiles(tileType, playerGooPos.x + i, playerGooPos.y);
             maxTemp = (temp > maxTemp) ? temp : maxTemp;
         }
-        playerValues.SubtractHealth((int)((maxTemp - gooTempThresholdPlayer) * Time.deltaTime));
+        playerValues.SubtractHealth(((maxTemp - gooTempThresholdPlayer) * Time.deltaTime * 0.4f)); 
     }
 
     float CheckTempOfPlayerGooTiles(float tileType, int posX, int posY)
